@@ -4,6 +4,11 @@
     "subtitle": "Practice real code review. Learn to identify bugs, performance improvements, and style issues.",
     "cta": "Get Started"
   },
+  "auth": {
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "greeting": "Hello, {name}"
+  },
   "review": {
     "page": {
       "title": "Code Review",

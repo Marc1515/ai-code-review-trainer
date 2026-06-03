@@ -4,6 +4,11 @@
     "subtitle": "Practica la revisión de código real. Aprende a identificar errores, mejoras de rendimiento y problemas de estilo.",
     "cta": "Comenzar"
   },
+  "auth": {
+    "signIn": "Iniciar sesión",
+    "signOut": "Cerrar sesión",
+    "greeting": "Hola, {name}"
+  },
   "review": {
     "page": {
       "title": "Revisión de código",

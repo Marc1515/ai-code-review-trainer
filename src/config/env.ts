@@ -11,6 +11,8 @@ const serverEnvSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   /** Active AI provider. MVP is locked to the cost-free mock. */
   AI_PROVIDER: z.enum(["mock"]).default("mock"),
+  /** Auth.js signing secret — required. Generate with: openssl rand -base64 32 */
+  AUTH_SECRET: z.string().min(1),
 });
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;
