@@ -15,6 +15,7 @@
       "languageLabel": "Lenguaje (opcional)",
       "languagePlaceholder": "p. ej. TypeScript, Python, Go...",
       "reviewTypeLabel": "Tipo de revisión",
+      "codeHint": "Máximo 10 000 caracteres.",
       "submit": "Revisar código",
       "submitting": "Revisando..."
     },

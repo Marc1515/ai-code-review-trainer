@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { useTranslations } from "next-intl";
 import { REVIEW_TYPES, type ReviewType } from "@/modules/reviews/domain/types";
+import { MAX_CODE_LENGTH } from "@/modules/reviews/schemas/review.schema";
 import { reviewAction } from "@/server/actions/review.action";
 import type { ReviewActionState } from "@/server/actions/review.action";
 import { ReviewResult } from "@/modules/reviews/ui/review-result";
@@ -35,9 +36,11 @@ export function ReviewForm() {
             name="code"
             rows={14}
             required
+            maxLength={MAX_CODE_LENGTH}
             placeholder={t("form.codePlaceholder")}
             className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 font-mono text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:ring-2 focus:ring-zinc-500/20 focus:outline-none"
           />
+          <p className="mt-1.5 text-xs text-zinc-400">{t("form.codeHint")}</p>
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2">

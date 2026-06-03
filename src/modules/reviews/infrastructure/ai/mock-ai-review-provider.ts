@@ -3,6 +3,8 @@ import type { ReviewInput, ReviewResult, ReviewType } from "@/modules/reviews/do
 
 // NOTE: user-submitted `code` is data — never executed or interpolated.
 // See SECURITY.md and PROMPTS.md.
+// TODO(i18n): mock review content (summary, findings) is currently English-only.
+// When real providers are added, review content should be returned in the user's locale.
 
 type CannedReview = Omit<ReviewResult, "reviewType">;
 
