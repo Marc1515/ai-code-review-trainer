@@ -1,0 +1,54 @@
+{
+  "home": {
+    "title": "AI Code Review Trainer",
+    "subtitle": "Practice real code review. Learn to identify bugs, performance improvements, and style issues.",
+    "cta": "Get Started"
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "greeting": "Hello, {name}"
+  },
+  "review": {
+    "page": {
+      "title": "Code Review",
+      "subtitle": "Paste your code, choose a review type, and get educational feedback."
+    },
+    "form": {
+      "codeLabel": "Code",
+      "codePlaceholder": "Paste the code you want reviewed here...",
+      "languageLabel": "Language (optional)",
+      "languagePlaceholder": "e.g. TypeScript, Python, Go...",
+      "reviewTypeLabel": "Review type",
+      "codeHint": "Maximum 10,000 characters.",
+      "submit": "Review code",
+      "submitting": "Reviewing..."
+    },
+    "types": {
+      "general": "General",
+      "cleanCode": "Clean code",
+      "bugs": "Bugs",
+      "security": "Security",
+      "performance": "Performance",
+      "architecture": "Architecture",
+      "testing": "Testing"
+    },
+    "result": {
+      "summary": "Summary",
+      "findings": "Findings",
+      "noFindings": "No findings to display.",
+      "suggestion": "Suggestion",
+      "line": "Line",
+      "severity": {
+        "info": "Info",
+        "minor": "Minor",
+        "major": "Major",
+        "critical": "Critical"
+      }
+    },
+    "error": {
+      "validation": "Please check your form inputs.",
+      "generic": "Review failed. Please try again."
+    }
+  }
+}
