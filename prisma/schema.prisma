@@ -1,0 +1,17 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Phase 3: userId relation added when Auth is wired up.
+model Review {
+  id         String   @id @default(cuid())
+  reviewType String
+  language   String?
+  summary    String
+  findings   Json
+  createdAt  DateTime @default(now())
+}
