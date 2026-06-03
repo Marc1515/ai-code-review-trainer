@@ -3,5 +3,46 @@
     "title": "Entrenador de revisión de código con IA",
     "subtitle": "Practica la revisión de código real. Aprende a identificar errores, mejoras de rendimiento y problemas de estilo.",
     "cta": "Comenzar"
+  },
+  "review": {
+    "page": {
+      "title": "Revisión de código",
+      "subtitle": "Pega tu código, elige el tipo de revisión y recibe retroalimentación educativa."
+    },
+    "form": {
+      "codeLabel": "Código",
+      "codePlaceholder": "Pega aquí el código que quieres revisar...",
+      "languageLabel": "Lenguaje (opcional)",
+      "languagePlaceholder": "p. ej. TypeScript, Python, Go...",
+      "reviewTypeLabel": "Tipo de revisión",
+      "submit": "Revisar código",
+      "submitting": "Revisando..."
+    },
+    "types": {
+      "general": "General",
+      "cleanCode": "Código limpio",
+      "bugs": "Errores",
+      "security": "Seguridad",
+      "performance": "Rendimiento",
+      "architecture": "Arquitectura",
+      "testing": "Pruebas"
+    },
+    "result": {
+      "summary": "Resumen",
+      "findings": "Hallazgos",
+      "noFindings": "No se encontraron hallazgos.",
+      "suggestion": "Sugerencia",
+      "line": "Línea",
+      "severity": {
+        "info": "Info",
+        "minor": "Menor",
+        "major": "Mayor",
+        "critical": "Crítico"
+      }
+    },
+    "error": {
+      "validation": "Por favor, revisa los campos del formulario.",
+      "generic": "No se pudo procesar la revisión. Inténtalo de nuevo."
+    }
   }
 }
