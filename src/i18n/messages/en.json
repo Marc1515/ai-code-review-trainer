@@ -9,6 +9,14 @@
     "signOut": "Sign out",
     "greeting": "Hello, {name}"
   },
+  "dashboard": {
+    "navLink": "My reviews",
+    "title": "My reviews",
+    "subtitle": "Code reviews you have submitted.",
+    "empty": "You have no saved reviews yet.",
+    "signInPrompt": "Sign in to view your review history.",
+    "signInLink": "Sign in"
+  },
   "review": {
     "page": {
       "title": "Code Review",
