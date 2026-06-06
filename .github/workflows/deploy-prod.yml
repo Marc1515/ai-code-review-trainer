@@ -1,0 +1,23 @@
+name: Deploy production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy production
+    runs-on: [self-hosted, ai-code-review-trainer]
+
+    steps:
+      - name: Deploy production app
+        run: |
+          cd ~/apps/ai-code-review-trainer
+          git fetch origin
+          git checkout main
+          git reset --hard origin/main
+          docker compose -f docker-compose.prod.yml up -d --build --force-recreate
+          docker image prune -af
+          docker builder prune -af --filter "until=24h"
