@@ -1,6 +1,6 @@
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/shared/db/client";
-import type { ReviewInput, ReviewResult } from "@/modules/reviews/domain/types";
+import type { Finding, ReviewInput, ReviewResult } from "@/modules/reviews/domain/types";
 
 export interface SaveReviewParams {
   userId: string;
@@ -41,4 +41,34 @@ export async function listReviewsByUser(userId: string): Promise<ReviewSummary[]
     },
     orderBy: { createdAt: "desc" },
   });
+}
+
+export interface ReviewDetail extends ReviewSummary {
+  code: string;
+  findings: Finding[];
+}
+
+export async function getReviewByIdAndUser(
+  id: string,
+  userId: string,
+): Promise<ReviewDetail | null> {
+  const row = await prisma.review.findFirst({
+    where: { id, userId },
+    select: {
+      id: true,
+      reviewType: true,
+      language: true,
+      summary: true,
+      createdAt: true,
+      code: true,
+      findings: true,
+    },
+  });
+
+  if (!row) return null;
+
+  return {
+    ...row,
+    findings: row.findings as unknown as Finding[],
+  };
 }

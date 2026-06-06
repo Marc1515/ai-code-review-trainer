@@ -9,6 +9,11 @@
     "signOut": "Sign out",
     "greeting": "Hello, {name}"
   },
+  "reviewDetail": {
+    "back": "Back to dashboard",
+    "submittedCode": "Submitted code",
+    "notFound": "Review not found."
+  },
   "dashboard": {
     "navLink": "My reviews",
     "title": "My reviews",

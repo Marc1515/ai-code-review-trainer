@@ -57,35 +57,44 @@ Layer rules:
 ## Review flow (end-to-end)
 
 1. UI form submits → `server/actions/review.action.ts` validates with `reviewInputSchema` (Zod).
-2. Action calls `createCodeReview(input)` use-case with validated `ReviewInput`.
-3. Use-case calls `getAiReviewProvider()` (from `infrastructure/ai/provider-factory.ts`) and validates provider output with `reviewResultSchema`.
-4. For authenticated users, the result is persisted via the review repository (`infrastructure/db/`); anonymous reviews are stateless.
-5. Structured `ReviewResult` is returned to the UI.
+2. Action calls `auth()` server-side to resolve `userId` (anonymous if absent).
+3. Action calls `createCodeReview(input, userId?)` use-case.
+4. Use-case calls `getAiReviewProvider()` and validates provider output with `reviewResultSchema`.
+5. If `userId` is present, use-case calls `saveReview()` in the repository — **anonymous reviews are never persisted**.
+6. Structured `ReviewResult` is returned to the UI.
 
-To add a new AI provider: implement the `AiReviewProvider` port and wire it in `provider-factory.ts` — no other layer changes.
+To add a new AI provider: implement the `AiReviewProvider` port and wire it in `provider-factory.ts` — no other layer changes needed.
 
-## Prisma schema notes
+## Prisma / data access patterns
 
-- `Review` model: `userId` is nullable — anonymous reviews are **not** persisted; only authenticated users' reviews are saved.
-- Auth.js adapter models (`User`, `Account`, `Session`, `VerificationToken`) — do not rename fields without updating the adapter.
-- Shared singleton client: `src/shared/db/client.ts` — import `prisma` from there everywhere.
+- `Review.userId` is nullable — only authenticated users' reviews are stored.
+- All repository queries that fetch reviews **must filter by `userId`** to prevent cross-user data exposure. See `listReviewsByUser` and (future) `getReviewByIdAndUser` in `infrastructure/db/review-repository.ts` for the pattern.
+- Shared singleton client: `src/shared/db/client.ts` — import `prisma` from there everywhere. Never instantiate `PrismaClient` elsewhere.
+- After any schema change, run `pnpm prisma generate` before `pnpm typecheck`.
+
+## Auth / session
+
+- `auth()` from `src/auth.ts` is the server-side session accessor — call it in Server Actions and page components, never in UI components.
+- With `PrismaAdapter`, `session.user.id` is populated at runtime but **not typed by default**. Access it as `session?.user?.id` and treat it as `string | undefined`. Add a `next-auth.d.ts` augmentation if stricter typing is needed.
+- `AuthHeader` catches errors from `auth()` and renders an unauthenticated state — this handles unconfigured environments gracefully.
 
 ## Validation
 
 - Validate Server Action input and provider output with **Zod**.
 - `MAX_CODE_LENGTH = 10_000` characters enforced on review input.
-- Submitted code is treated as untrusted data — render as inert text only.
+- Submitted code is treated as untrusted data — render as inert text only, never as executable HTML.
 
 ## i18n
 
 - Spanish (`es`) is the default UI language; English (`en`) is secondary.
 - Code, comments, and docs are in **English**. User-facing strings go through next-intl message catalogs (`src/i18n/messages/{es,en}.json`).
 - Routes are locale-prefixed via `src/i18n/routing.ts` and middleware.
+- `ReviewResult` UI component is `"use client"` (uses `useTranslations`). Server page components use `getTranslations` from `next-intl/server`.
 
 ## Phasing
 
-Completed: scaffold → next-intl i18n → mock review flow → auth.  
-**Current phase:** authenticated review persistence (store reviews for signed-in users only).  
-Next: infra/deploy → post-MVP (Sentry, BYOK, simulated pull requests, dashboard).
+Completed: scaffold → next-intl i18n → mock review flow → auth → authenticated persistence → dashboard (list).  
+**Current phase:** review detail page.  
+Next: infra/deploy → post-MVP (Sentry, BYOK, simulated pull requests).
 
-Don't pull later-phase work forward. In particular: no dashboard, no review detail page, no real AI providers, no BYOK, no Sentry yet.
+Don't pull later-phase work forward. Off-limits until explicitly planned: edit/delete reviews, pagination, real AI providers, BYOK, Sentry, Docker/CI changes.
