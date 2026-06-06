@@ -10,6 +10,7 @@ services:
       - ai-code-review-trainer-prod-backend
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=traefik-proxy"
       - "traefik.http.routers.act-prod.rule=Host(`trainer.marcespana.com`)"
       - "traefik.http.routers.act-prod.entrypoints=websecure"
       - "traefik.http.routers.act-prod.tls.certresolver=letsencrypt"
