@@ -10,6 +10,7 @@ model Review {
   id         String   @id @default(cuid())
   reviewType String
   language   String?
+  code       String   @db.Text
   summary    String
   findings   Json
   userId     String?
