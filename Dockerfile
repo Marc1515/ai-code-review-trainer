@@ -36,12 +36,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
-# Prisma generated client (real files, no pnpm symlinks)
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-
-# Prisma CLI package + binary for running migrate deploy at startup
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
+# Runtime dependencies required by Prisma and the standalone server
+COPY --from=builder /app/node_modules ./node_modules
 
 # Prisma schema + migrations
 COPY --from=builder /app/prisma ./prisma
