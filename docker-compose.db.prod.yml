@@ -15,4 +15,4 @@ volumes:
 
 networks:
   ai-code-review-trainer-prod-backend:
-    name: ai-code-review-trainer-prod-backend
+    external: true
