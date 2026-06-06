@@ -1,0 +1,23 @@
+services:
+  ai-code-review-trainer-prod:
+    container_name: ai-code-review-trainer-prod
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: .env.production
+    networks:
+      - traefik-proxy
+      - ai-code-review-trainer-prod-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.act-prod.rule=Host(`trainer.marcespana.com`)"
+      - "traefik.http.routers.act-prod.entrypoints=websecure"
+      - "traefik.http.routers.act-prod.tls.certresolver=letsencrypt"
+      - "traefik.http.services.act-prod.loadbalancer.server.port=3000"
+    restart: unless-stopped
+
+networks:
+  traefik-proxy:
+    external: true
+  ai-code-review-trainer-prod-network:
+    external: true

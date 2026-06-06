@@ -1,0 +1,23 @@
+services:
+  ai-code-review-trainer-dev:
+    container_name: ai-code-review-trainer-dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: .env.development
+    networks:
+      - traefik-proxy
+      - ai-code-review-trainer-dev-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.act-dev.rule=Host(`dev-trainer.marcespana.com`)"
+      - "traefik.http.routers.act-dev.entrypoints=websecure"
+      - "traefik.http.routers.act-dev.tls.certresolver=letsencrypt"
+      - "traefik.http.services.act-dev.loadbalancer.server.port=3000"
+    restart: unless-stopped
+
+networks:
+  traefik-proxy:
+    external: true
+  ai-code-review-trainer-dev-network:
+    external: true
