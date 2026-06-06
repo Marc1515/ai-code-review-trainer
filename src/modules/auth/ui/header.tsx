@@ -1,5 +1,7 @@
 import { getTranslations } from "next-intl/server";
 
+import NextLink from "next/link";
+
 import { auth, signOut } from "@/auth";
 import { Link } from "@/i18n/navigation";
 
@@ -41,12 +43,12 @@ export async function AuthHeader() {
               </form>
             </>
           ) : (
-            <Link
+            <NextLink
               href="/api/auth/signin"
               className="text-sm text-zinc-500 underline-offset-2 hover:text-zinc-900 hover:underline"
             >
               {t("signIn")}
-            </Link>
+            </NextLink>
           )}
         </div>
       </div>
