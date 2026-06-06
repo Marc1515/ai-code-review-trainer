@@ -20,6 +20,7 @@ RUN pnpm build
 
 # ---- runner ----
 FROM node:22-alpine AS runner
+RUN corepack enable
 WORKDIR /app
 ENV NODE_ENV=production
 
@@ -34,11 +35,12 @@ COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 # Prisma generated client (real files, no pnpm symlinks)
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
-# Prisma schema + migrations for migrate deploy at startup
-COPY --from=builder /app/prisma ./prisma
+# Prisma CLI package + binary for running migrate deploy at startup
+COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
+COPY --from=builder /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
 
-# Prisma CLI for running migrations (avoids pnpm symlink issues in runner)
-RUN npm install -g prisma
+# Prisma schema + migrations
+COPY --from=builder /app/prisma ./prisma
 
 COPY --chown=nextjs:nodejs docker-entrypoint.sh ./
 RUN chmod +x docker-entrypoint.sh

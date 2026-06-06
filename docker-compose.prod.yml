@@ -7,7 +7,7 @@ services:
     env_file: .env.production
     networks:
       - traefik-proxy
-      - ai-code-review-trainer-prod-network
+      - ai-code-review-trainer-prod-backend
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.act-prod.rule=Host(`trainer.marcespana.com`)"
@@ -19,5 +19,5 @@ services:
 networks:
   traefik-proxy:
     external: true
-  ai-code-review-trainer-prod-network:
+  ai-code-review-trainer-prod-backend:
     external: true

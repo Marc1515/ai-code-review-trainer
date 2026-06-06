@@ -6,7 +6,7 @@ services:
     volumes:
       - ai-code-review-trainer-postgres-prod-data:/var/lib/postgresql/data
     networks:
-      - ai-code-review-trainer-prod-network
+      - ai-code-review-trainer-prod-backend
     restart: unless-stopped
 
 volumes:
@@ -14,5 +14,5 @@ volumes:
     external: true
 
 networks:
-  ai-code-review-trainer-prod-network:
-    name: ai-code-review-trainer-prod-network
+  ai-code-review-trainer-prod-backend:
+    name: ai-code-review-trainer-prod-backend
