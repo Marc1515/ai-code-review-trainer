@@ -1,0 +1,18 @@
+services:
+  ai-code-review-trainer-postgres-prod:
+    image: postgres:16-alpine
+    container_name: ai-code-review-trainer-postgres-prod
+    env_file: .env.production
+    volumes:
+      - ai-code-review-trainer-postgres-prod-data:/var/lib/postgresql/data
+    networks:
+      - ai-code-review-trainer-prod-backend
+    restart: unless-stopped
+
+volumes:
+  ai-code-review-trainer-postgres-prod-data:
+    external: true
+
+networks:
+  ai-code-review-trainer-prod-backend:
+    external: true

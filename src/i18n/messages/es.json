@@ -9,6 +9,19 @@
     "signOut": "Cerrar sesión",
     "greeting": "Hola, {name}"
   },
+  "reviewDetail": {
+    "back": "Volver al panel",
+    "submittedCode": "Código enviado",
+    "notFound": "Revisión no encontrada."
+  },
+  "dashboard": {
+    "navLink": "Mis revisiones",
+    "title": "Mis revisiones",
+    "subtitle": "Historial de revisiones de código que has realizado.",
+    "empty": "Todavía no tienes ninguna revisión guardada.",
+    "signInPrompt": "Inicia sesión para ver tu historial de revisiones.",
+    "signInLink": "Iniciar sesión"
+  },
   "review": {
     "page": {
       "title": "Revisión de código",

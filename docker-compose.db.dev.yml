@@ -1,0 +1,18 @@
+services:
+  ai-code-review-trainer-postgres-dev:
+    image: postgres:16-alpine
+    container_name: ai-code-review-trainer-postgres-dev
+    env_file: .env.development
+    volumes:
+      - ai-code-review-trainer-postgres-dev-data:/var/lib/postgresql/data
+    networks:
+      - ai-code-review-trainer-dev-backend
+    restart: unless-stopped
+
+volumes:
+  ai-code-review-trainer-postgres-dev-data:
+    external: true
+
+networks:
+  ai-code-review-trainer-dev-backend:
+    external: true

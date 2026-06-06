@@ -1,10 +1,13 @@
 import { getTranslations } from "next-intl/server";
 
+import NextLink from "next/link";
+
 import { auth, signOut } from "@/auth";
 import { Link } from "@/i18n/navigation";
 
 export async function AuthHeader() {
   const t = await getTranslations("auth");
+  const tDash = await getTranslations("dashboard");
 
   let session = null;
   try {
@@ -23,6 +26,12 @@ export async function AuthHeader() {
         <div className="flex items-center gap-4">
           {session?.user ? (
             <>
+              <Link
+                href="/dashboard"
+                className="text-sm text-zinc-500 underline-offset-2 hover:text-zinc-900 hover:underline"
+              >
+                {tDash("navLink")}
+              </Link>
               <span className="text-sm text-zinc-600">
                 {t("greeting", { name: session.user.name ?? session.user.email ?? "" })}
               </span>
@@ -41,12 +50,12 @@ export async function AuthHeader() {
               </form>
             </>
           ) : (
-            <Link
+            <NextLink
               href="/api/auth/signin"
               className="text-sm text-zinc-500 underline-offset-2 hover:text-zinc-900 hover:underline"
             >
               {t("signIn")}
-            </Link>
+            </NextLink>
           )}
         </div>
       </div>

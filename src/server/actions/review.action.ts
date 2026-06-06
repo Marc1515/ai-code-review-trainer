@@ -1,5 +1,6 @@
 "use server";
 
+import { auth } from "@/auth";
 import type { ReviewResult } from "@/modules/reviews/domain/types";
 import { reviewInputSchema } from "@/modules/reviews/schemas/review.schema";
 import { createCodeReview } from "@/modules/reviews/use-cases/create-review";
@@ -26,8 +27,16 @@ export async function reviewAction(
     return { status: "error", code: "validation" };
   }
 
+  let userId: string | undefined;
   try {
-    const result = await createCodeReview(parsed.data);
+    const session = await auth();
+    userId = session?.user?.id ?? undefined;
+  } catch {
+    // AUTH_SECRET or DATABASE_URL not configured; proceed as anonymous.
+  }
+
+  try {
+    const result = await createCodeReview(parsed.data, userId);
     return { status: "success", result };
   } catch {
     return { status: "error", code: "provider" };
