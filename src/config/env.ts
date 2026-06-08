@@ -13,6 +13,12 @@ const serverEnvSchema = z.object({
   AI_PROVIDER: z.enum(["mock"]).default("mock"),
   /** Auth.js signing secret — required. Generate with: openssl rand -base64 32 */
   AUTH_SECRET: z.string().min(1),
+  /** Rate limiting — anonymous users: max requests per window. */
+  RATE_LIMIT_ANON_MAX: z.coerce.number().int().positive().default(5),
+  /** Rate limiting — authenticated users: max requests per window. */
+  RATE_LIMIT_AUTH_MAX: z.coerce.number().int().positive().default(15),
+  /** Rate limit window in milliseconds. */
+  RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(60_000),
 });
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;

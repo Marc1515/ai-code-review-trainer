@@ -61,6 +61,7 @@
     },
     "error": {
       "validation": "Please check your form inputs.",
+      "rateLimit": "Too many requests. Please wait a moment and try again.",
       "generic": "Review failed. Please try again."
     }
   }
