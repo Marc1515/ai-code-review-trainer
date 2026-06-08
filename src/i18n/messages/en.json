@@ -33,9 +33,11 @@
       "languageLabel": "Language (optional)",
       "languagePlaceholder": "e.g. TypeScript, Python, Go...",
       "reviewTypeLabel": "Review type",
-      "codeHint": "Maximum 10,000 characters.",
+      "charCount": "{current} / {max} characters",
       "submit": "Review code",
-      "submitting": "Reviewing..."
+      "submitting": "Reviewing...",
+      "trustNotice": "Your code is analyzed as data and never executed. It is only saved if you are signed in.",
+      "saveHint": "Want to save this review? Sign in to keep your history."
     },
     "types": {
       "general": "General",
@@ -47,6 +49,7 @@
       "testing": "Testing"
     },
     "result": {
+      "reviewedAs": "Review: {type}",
       "summary": "Summary",
       "findings": "Findings",
       "noFindings": "No findings to display.",
