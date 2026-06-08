@@ -50,6 +50,7 @@ export async function reviewAction(
     const result = await createCodeReview(parsed.data, userId);
     return { status: "success", result };
   } catch {
+    console.error("[provider] review failed");
     return { status: "error", code: "provider" };
   }
 }

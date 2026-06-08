@@ -51,7 +51,8 @@ src/
   server/actions/                # Server Actions (thin entrypoints)
   shared/
     lib/                         # cross-module utilities (cn, ...)
-    db/                          # shared Prisma client singleton (Phase 3)
+    db/                          # shared Prisma client singleton
+    security/                    # server-only security utilities (rate limiter)
   config/
     env.ts                       # environment validation (Zod)
   i18n/                          # next-intl config + messages/{es,en}.json (next step)
