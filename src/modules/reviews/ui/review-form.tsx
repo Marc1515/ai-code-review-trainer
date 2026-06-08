@@ -78,7 +78,11 @@ export function ReviewForm() {
 
         {state.status === "error" && (
           <p role="alert" className="text-sm text-red-600">
-            {state.code === "validation" ? t("error.validation") : t("error.generic")}
+            {state.code === "validation"
+              ? t("error.validation")
+              : state.code === "rate-limit"
+                ? t("error.rateLimit")
+                : t("error.generic")}
           </p>
         )}
 

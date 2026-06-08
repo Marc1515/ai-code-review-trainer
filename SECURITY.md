@@ -53,6 +53,39 @@ threat model and the non-negotiable rules.
   When enabled, ensure no secrets or full user code payloads are sent in error
   reports.
 
+## Rate Limiting
+
+Requests to the review Server Action are rate-limited using an in-memory
+fixed-window counter (`src/shared/security/rate-limiter.ts`).
+
+**Limits (configurable via env vars; container restart/recreate is required after env changes):**
+
+| User type     | Default limit | Env var               |
+|---------------|---------------|-----------------------|
+| Anonymous     | 5 req / 60 s  | `RATE_LIMIT_ANON_MAX` |
+| Authenticated | 15 req / 60 s | `RATE_LIMIT_AUTH_MAX` |
+| Window        | 60 000 ms     | `RATE_LIMIT_WINDOW_MS`|
+
+**Key strategy:**
+- Authenticated users are keyed by their stable `userId` — not spoofable.
+- Anonymous users are keyed by `X-Forwarded-For` (first IP, set by Traefik) or
+  `X-Real-IP`; falls back to `"unknown"` in local dev without a proxy.
+
+**Known limitations of in-memory rate limiting (acceptable for MVP):**
+
+1. **Per-process state.** Each Node.js worker tracks its own counters. On this
+   single-container VPS deployment this is not a concern; a clustered or
+   multi-replica setup would allow users to exceed limits across processes.
+2. **Resets on restart.** Counters clear on every container restart or deploy.
+3. **IP spoofing.** `X-Forwarded-For` can be manipulated if traffic bypasses
+   Traefik and reaches the container directly. Ensure the VPS firewall blocks
+   direct access to the container port.
+4. **No persistence.** Limits are not stored to disk or a shared store.
+
+**Upgrade path:** When scaling horizontally, replace the `Map`-based store in
+`rate-limiter.ts` with a Redis or Upstash adapter. The `checkRateLimit`
+interface and all callers remain unchanged.
+
 ## Transport
 
 - Production and development are served over HTTPS via Traefik. TLS termination
