@@ -33,9 +33,11 @@
       "languageLabel": "Lenguaje (opcional)",
       "languagePlaceholder": "p. ej. TypeScript, Python, Go...",
       "reviewTypeLabel": "Tipo de revisión",
-      "codeHint": "Máximo 10 000 caracteres.",
+      "charCount": "{current} / {max} caracteres",
       "submit": "Revisar código",
-      "submitting": "Revisando..."
+      "submitting": "Revisando...",
+      "trustNotice": "Tu código es analizado como dato, nunca ejecutado ni almacenado si no has iniciado sesión.",
+      "saveHint": "¿Quieres guardar esta revisión? Inicia sesión para conservar tu historial."
     },
     "types": {
       "general": "General",
@@ -47,6 +49,7 @@
       "testing": "Pruebas"
     },
     "result": {
+      "reviewedAs": "Revisión: {type}",
       "summary": "Resumen",
       "findings": "Hallazgos",
       "noFindings": "No se encontraron hallazgos.",
