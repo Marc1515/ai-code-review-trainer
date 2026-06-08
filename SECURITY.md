@@ -58,7 +58,7 @@ threat model and the non-negotiable rules.
 Requests to the review Server Action are rate-limited using an in-memory
 fixed-window counter (`src/shared/security/rate-limiter.ts`).
 
-**Limits (configurable via env vars, no restart required on env change):**
+**Limits (configurable via env vars; container restart/recreate is required after env changes):**
 
 | User type     | Default limit | Env var               |
 |---------------|---------------|-----------------------|
