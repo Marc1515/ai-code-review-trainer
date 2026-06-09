@@ -96,8 +96,8 @@ To add a new AI provider: implement the `AiReviewProvider` port and wire it in `
 
 ## Phasing
 
-Completed: scaffold → next-intl i18n → mock review flow → auth → authenticated persistence → dashboard (list) → review detail page → security hardening & rate limiting.  
-**Current phase:** infra/deploy preparation.  
-Next: post-MVP (Sentry, BYOK, simulated pull requests).
+Completed: scaffold → next-intl i18n → mock review flow → auth → authenticated persistence → dashboard (list) → review detail page → security hardening & rate limiting → infra/deploy preparation → Sentry observability.  
+**Current phase:** complete.  
+Next: post-MVP (BYOK, simulated pull requests).
 
 Don't pull later-phase work forward. Off-limits until explicitly planned: edit/delete reviews, pagination, real AI providers, BYOK, Sentry, Docker/CI changes.

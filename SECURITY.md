@@ -49,9 +49,13 @@ threat model and the non-negotiable rules.
 
 ## Observability
 
-- **Sentry** is documented now and implemented after the MVP flow (ADR-009).
-  When enabled, ensure no secrets or full user code payloads are sent in error
-  reports.
+- **Sentry** is active (`@sentry/nextjs`). Three guarantees are enforced by `beforeSend` in all three Sentry config files (client, server, edge):
+  1. `event.request.data` is always deleted — no FormData or request bodies leave the server.
+  2. `event.extra.code` and `event.extra.input` are deleted — use-case inputs cannot leak via manually attached context.
+  3. Breadcrumbs carrying a `code` or `input` data key are dropped.
+- Sentry is **disabled when `SENTRY_DSN` is blank** — local dev without a DSN configured produces no traffic.
+- Source map upload is intentionally deferred (see ADR-009). Stack traces show minified identifiers until enabled.
+- The test error route (`GET /api/test-error`) returns 404 in production and throws intentionally in other environments.
 
 ## Rate Limiting
 
