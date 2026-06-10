@@ -30,7 +30,28 @@ threat model and the non-negotiable rules.
   public users (see [DECISIONS.md](./DECISIONS.md), ADR-001).
 - Future real AI is **BYOK**: authenticated users supply their own key and bear
   their own cost (ADR-002). BYOK keys, when implemented, are handled server-side
-  only and never logged or returned to the client.
+  only and never logged or returned to the client. See [BYOK key rules](#byok-api-key-rules) below.
+
+## BYOK API key rules
+
+These rules apply from Phase 11 onward. They are non-negotiable.
+
+1. **Server-only.** The decrypted API key exists only in server memory, for the
+   duration of one request. It is never serialised, never returned from a
+   function as part of a public value, and never sent to the client.
+2. **Never logged.** No `console.log`, `console.error`, or structured logger may
+   receive a key or a value that contains one. Log the provider name and model
+   only.
+3. **Never sent to Sentry.** The Sentry `beforeSend` hook must strip any event
+   field named `apiKey`, `encryptedApiKey`, `decryptedKey`, or similar. This
+   extends the existing `code`/`input` stripping already in place.
+4. **Encrypted at rest.** Only AES-256-GCM ciphertext is stored in the DB. The
+   `ENCRYPTION_KEY` env var (VPS-only, never committed) is the sole secret.
+   See ADR-011.
+5. **Never returned to the browser.** The settings Server Action that saves a
+   key must not echo it back; the UI may only confirm success or failure.
+6. **Isolated per user.** All `UserProviderConfig` queries filter by `userId`.
+   No code path allows one user to read or use another user's key. See ADR-012.
 
 ## Authentication & data
 
