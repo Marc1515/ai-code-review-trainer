@@ -24,6 +24,7 @@
     ]
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.102.0",
     "@auth/prisma-adapter": "^2.11.2",
     "@base-ui/react": "^1.5.0",
     "@prisma/adapter-pg": "^7.8.0",
