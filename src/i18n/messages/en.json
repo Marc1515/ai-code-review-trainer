@@ -22,6 +22,33 @@
     "signInPrompt": "Sign in to view your review history.",
     "signInLink": "Sign in"
   },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your AI provider for code reviews.",
+    "navLink": "Settings",
+    "statusTitle": "Current status",
+    "currentProvider": "Provider: {name}",
+    "modelLabel": "Anthropic model",
+    "apiKeyLabel": "Anthropic API key",
+    "apiKeyPlaceholder": "sk-ant-...",
+    "addKey": "Set up API key",
+    "updateKey": "Update API key",
+    "saveKey": "Save",
+    "saving": "Saving...",
+    "deleteKey": "Delete key",
+    "deleting": "Deleting...",
+    "saved": "Key saved successfully.",
+    "fallback": "No key configured. Reviews will use the free mock provider.",
+    "status": {
+      "configured": "API key configured"
+    },
+    "error": {
+      "unauthorized": "You must be signed in.",
+      "validation": "Please check your form inputs.",
+      "encryptionKeyMissing": "The server is not configured for BYOK. Contact the administrator.",
+      "server": "Server error. Please try again."
+    }
+  },
   "review": {
     "page": {
       "title": "Code Review",
