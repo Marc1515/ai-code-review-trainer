@@ -3,8 +3,8 @@
 import { useActionState } from "react";
 import { useTranslations } from "next-intl";
 
+import { ANTHROPIC_MODELS } from "@/modules/settings/domain/anthropic-provider-options";
 import {
-  ANTHROPIC_MODELS,
   deleteApiKeyAction,
   saveApiKeyAction,
   type SettingsActionState,

@@ -4,14 +4,12 @@ import * as Sentry from "@sentry/nextjs";
 import { z } from "zod";
 
 import { auth } from "@/auth";
+import { ANTHROPIC_MODELS } from "@/modules/settings/domain/anthropic-provider-options";
 import {
   deleteUserProviderConfig,
   upsertUserProviderConfig,
 } from "@/modules/reviews/infrastructure/db/user-provider-config-repository";
 import { encrypt } from "@/shared/security/crypto";
-
-export const ANTHROPIC_MODELS = ["claude-haiku-4-5-20251001", "claude-sonnet-4-6"] as const;
-export type AnthropicModel = (typeof ANTHROPIC_MODELS)[number];
 
 const saveApiKeySchema = z.object({
   providerModel: z.enum(ANTHROPIC_MODELS),

@@ -13,6 +13,10 @@ export async function getAiReviewProvider(userId?: string): Promise<AiReviewProv
   const config = await getUserProviderConfig(userId);
   if (!config) return new MockAiReviewProvider();
 
+  // Only "anthropic" is supported in Phase 11. Unknown provider names fall back
+  // to mock rather than throwing, so a stale DB row never breaks reviews.
+  if (config.providerName !== "anthropic") return new MockAiReviewProvider();
+
   // decrypt throws if ENCRYPTION_KEY is absent — propagate so the error is
   // captured by Sentry rather than silently falling back.
   const apiKey = decrypt(config.encryptedApiKey);
