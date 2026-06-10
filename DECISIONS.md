@@ -113,15 +113,24 @@ Runner host must be maintained.
 
 ---
 
-## ADR-009 — Sentry documented now, implemented after the MVP flow
+## ADR-009 — Sentry: minimal error capture; source map upload deferred *(implemented — Phase 9)*
 
-**Context.** Observability matters but should not block the core MVP.
+**Context.** Observability matters but should not block the core MVP. Phase 9
+wires up the SDK with the minimum viable footprint.
 
-**Decision.** Document Sentry env vars and intent now; wire it up after the
-review flow is working.
+**Decision.** Install `@sentry/nextjs`. Initialize via `sentry.{client,server,edge}.config.ts`
+and `src/instrumentation.ts`. Capture unhandled exceptions and explicit
+`captureException` calls. Apply `beforeSend` to strip request bodies and any
+`code`/`input` fields so user-submitted code never reaches Sentry.
 
-**Consequences.** Env templates reserve `SENTRY_DSN` / `NEXT_PUBLIC_SENTRY_DSN`;
-no Sentry SDK in the MVP.
+Source map upload (`SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT`) is
+intentionally deferred: stack traces will show minified identifiers until that
+phase. Enable by adding those three vars to the build environment and removing
+`disableSourceMapUpload: true` from `next.config.ts`.
+
+**Consequences.** Errors are captured in production with correct environment
+tags. No user-submitted code or request bodies leave the server. Traces are
+sampled at 5% in production and 0% in development to minimise noise and cost.
 
 ---
 

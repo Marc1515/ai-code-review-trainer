@@ -1,5 +1,6 @@
 "use server";
 
+import * as Sentry from "@sentry/nextjs";
 import { headers } from "next/headers";
 
 import { auth } from "@/auth";
@@ -49,7 +50,8 @@ export async function reviewAction(
   try {
     const result = await createCodeReview(parsed.data, userId);
     return { status: "success", result };
-  } catch {
+  } catch (err) {
+    Sentry.captureException(err);
     console.error("[provider] review failed");
     return { status: "error", code: "provider" };
   }

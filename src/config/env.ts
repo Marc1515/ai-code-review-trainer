@@ -19,6 +19,10 @@ const serverEnvSchema = z.object({
   RATE_LIMIT_AUTH_MAX: z.coerce.number().int().positive().default(15),
   /** Rate limit window in milliseconds. */
   RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(60_000),
+  /** Sentry DSN — optional. When absent, Sentry is disabled (no events sent). */
+  SENTRY_DSN: z.string().url().optional(),
+  /** Sentry environment tag. Defaults to NODE_ENV when unset. */
+  SENTRY_ENVIRONMENT: z.string().optional(),
 });
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;

@@ -1,6 +1,7 @@
 allowBuilds:
   "@parcel/watcher": true
   "@prisma/engines": true
+  "@sentry/cli": false
   "@swc/core": true
   msw: false
   prisma: true
