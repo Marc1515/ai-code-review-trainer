@@ -96,30 +96,8 @@ To add a new AI provider: implement the `AiReviewProvider` port and wire it in `
 
 ## Phasing
 
-Completed: scaffold → next-intl i18n → mock review flow → auth → authenticated persistence → dashboard (list) → review detail page → security hardening & rate limiting → infra/deploy preparation → Sentry observability → BYOK provider design.  
+Completed: scaffold → next-intl i18n → mock review flow → auth → authenticated persistence → dashboard (list) → review detail page → security hardening & rate limiting → infra/deploy preparation → Sentry observability → BYOK provider design → BYOK implementation.  
 **Current phase:** complete.  
-Next: Phase 11 — BYOK implementation (Anthropic Claude only, one provider to start).
+Next: post-MVP (simulated pull requests, second BYOK provider, pagination).
 
-Don't pull later-phase work forward. Off-limits until explicitly planned: edit/delete reviews, pagination, real AI providers, BYOK implementation, Docker/CI changes.
-
-### Phase 11 implementation scope (do not start until planned)
-
-When Phase 11 is approved, implement in this order:
-
-1. Add `ENCRYPTION_KEY` to `config/env.ts` (required `string`, base64, 32-byte).
-2. Add `shared/security/crypto.ts` — `encrypt`/`decrypt` via Node `crypto` AES-256-GCM. Start with `import "server-only"`.
-3. Add `UserProviderConfig` table in Prisma schema; run `pnpm prisma migrate dev --name add-user-provider-config`.
-4. Add `modules/reviews/infrastructure/db/user-provider-config-repository.ts` — `getUserProviderConfig(userId)`, filters by `userId`.
-5. Add `modules/reviews/infrastructure/ai/byok-ai-review-provider.ts` — implements `AiReviewProvider`, takes key as constructor arg (Anthropic SDK only).
-6. Change `provider-factory.ts` to `async getAiReviewProvider(userId?)`, select mock vs BYOK.
-7. Update `create-review.ts` use-case to `await getAiReviewProvider(userId)`.
-8. Add settings Server Action + UI for authenticated users to save/delete their key.
-9. Extend Sentry `beforeSend` to strip `apiKey` / `encryptedApiKey` fields.
-10. Update `.env.example` stubs to active (uncomment `ENCRYPTION_KEY=`).
-
-Key constraints for Phase 11:
-- All BYOK files start with `import "server-only"`.
-- Decrypted key never leaves a function return value or appears in any log.
-- Anonymous users always get `MockAiReviewProvider` — no DB call made.
-- `AI_PROVIDER` env var remains `"mock"`; BYOK selection is per-user in the factory.
-- Install `@anthropic-ai/sdk` via `pnpm add` only when Phase 11 begins.
+Don't pull later-phase work forward. Off-limits until explicitly planned: edit/delete reviews, pagination, second AI provider (OpenAI), Docker/CI changes.
