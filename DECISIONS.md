@@ -138,3 +138,73 @@ sampled at 5% in production and 0% in development to minimise noise and cost.
 
 **Decision.** pnpm is the only supported package manager. Do not use npm, yarn,
 or bun. `pnpm-workspace.yaml` pins which dependency build scripts are allowed.
+
+---
+
+## ADR-011 — BYOK key storage: encrypted at rest, server-only *(design — Phase 10)*
+
+**Context.** BYOK (ADR-002) requires persisting each user's API key between
+sessions. The key must never appear in plaintext in the database, in logs, in
+Sentry events, or in any value returned to the client.
+
+**Decision.** Store the key as AES-256-GCM ciphertext in a dedicated
+`UserProviderConfig` table (see ADR-012). A single `ENCRYPTION_KEY` env var
+(32-byte, base64; generated with `openssl rand -base64 32`) is the only secret
+needed to decrypt it. The plaintext key exists only in server memory during the
+single request that uses it; it is never returned from any function, never
+logged, and never attached to Sentry context.
+
+A future `shared/security/crypto.ts` module (starting with `import "server-only"`)
+provides `encrypt(plaintext, key)` and `decrypt(ciphertext, key)` backed by
+Node.js `crypto` (AES-256-GCM). No third-party crypto dependency is needed.
+
+`ENCRYPTION_KEY` is a **Phase 11 requirement**. It is not active in the MVP and
+is not validated in `config/env.ts` today; it will be added when the BYOK
+implementation phase begins.
+
+**Consequences.** A DB breach exposes only ciphertext. The `ENCRYPTION_KEY` on
+the VPS is the sole sensitive secret; rotate it by re-encrypting stored keys.
+Plain-text key storage is permanently off the table.
+
+---
+
+## ADR-012 — BYOK provider selection is per-user, not a global env flag *(design — Phase 10)*
+
+**Context.** A global `AI_PROVIDER` env var that switches all users to a real
+model would expose the owner to cost and abuse. BYOK must be opt-in per
+authenticated user.
+
+**Decision.** Provider selection is user-scoped:
+
+```
+getAiReviewProvider(userId?)
+  ├── !userId  →  MockAiReviewProvider          (anonymous; no DB call)
+  ├── userId, no config  →  MockAiReviewProvider (authenticated, not enrolled)
+  └── userId, config present  →  BYOKAiReviewProvider(decryptedKey, model)
+```
+
+The factory becomes `async getAiReviewProvider(userId?: string)`. The use-case
+passes `userId` in; no other layer changes. `AI_PROVIDER` in `env.ts` remains
+locked to `"mock"` — it is not the BYOK switch.
+
+Phase 11 starts with **one** real provider (Anthropic Claude) to reduce scope.
+A second provider (OpenAI) may be added later without architecture changes.
+
+The `UserProviderConfig` table (separate from the `User` model) stores:
+
+| Column            | Type      | Notes                                  |
+|-------------------|-----------|----------------------------------------|
+| `id`              | `String`  | cuid primary key                       |
+| `userId`          | `String`  | FK → `User.id`, unique                 |
+| `providerName`    | `String`  | `"anthropic"` (Phase 11); extensible   |
+| `providerModel`   | `String`  | e.g. `"claude-sonnet-4-6"`             |
+| `encryptedApiKey` | `String`  | AES-256-GCM ciphertext, base64         |
+| `createdAt`       | `DateTime`|                                        |
+| `updatedAt`       | `DateTime`|                                        |
+
+All repository queries on this table **must filter by `userId`** (same rule as
+`listReviewsByUser`). The Prisma migration and the settings UI are Phase 11 work.
+
+**Consequences.** Zero risk of one user seeing another's key. The owner never
+pays for any review. Anonymous users and authenticated users without a key
+always use the mock provider.

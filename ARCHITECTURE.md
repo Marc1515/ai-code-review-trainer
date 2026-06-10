@@ -79,8 +79,36 @@ prisma/                          # schema.prisma + migrations (Phase 3)
 `AiReviewProvider` is the single seam for AI behaviour:
 
 - **MVP:** `MockAiReviewProvider` — deterministic, cost-free.
-- **Future:** a BYOK provider selected per authenticated user inside
-  `infrastructure/ai/provider-factory.ts`, with **no change** to use-cases or UI.
+- **Phase 11:** `BYOKAiReviewProvider` — calls a real model using the
+  authenticated user's own API key. Selected inside `provider-factory.ts`;
+  **no change to use-cases or UI**.
+
+### Provider selection (Phase 11 design)
+
+The factory signature will change to:
+
+```ts
+export async function getAiReviewProvider(userId?: string): Promise<AiReviewProvider>
+```
+
+Selection logic:
+
+```
+getAiReviewProvider(userId?)
+  ├── !userId            →  MockAiReviewProvider  (anonymous — no DB call)
+  ├── userId, no config  →  MockAiReviewProvider  (authenticated, not enrolled)
+  └── userId + config    →  BYOKAiReviewProvider(decryptedKey, model)
+```
+
+The use-case will call `await getAiReviewProvider(userId)`. The action and all
+other layers are unchanged. See ADR-012.
+
+### UserProviderConfig (Phase 11 DB table)
+
+A dedicated `UserProviderConfig` table (not columns on `User`) holds each
+enrolled user's provider name, model, and AES-256-GCM encrypted API key. All
+queries filter by `userId`. The `ENCRYPTION_KEY` env var (server-only, Phase 11)
+is the sole decryption secret. See ADR-011 and ADR-012.
 
 ## Conventions
 
