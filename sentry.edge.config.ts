@@ -15,16 +15,19 @@ Sentry.init({
     if (event.request) {
       delete event.request.data;
     }
-    // Remove any extra context fields that could carry submitted code.
+    // Remove any extra context fields that could carry submitted code or API keys.
     if (event.extra) {
       const extra = event.extra as Record<string, unknown>;
       delete extra.code;
       delete extra.input;
+      delete extra.apiKey;
+      delete extra.encryptedApiKey;
     }
-    // Drop breadcrumbs that reference submitted code.
+    // Drop breadcrumbs that reference submitted code or API keys.
     if (event.breadcrumbs) {
       event.breadcrumbs = event.breadcrumbs.filter(
-        (b: { data?: Record<string, unknown> }) => !b.data?.code && !b.data?.input,
+        (b: { data?: Record<string, unknown> }) =>
+          !b.data?.code && !b.data?.input && !b.data?.apiKey && !b.data?.encryptedApiKey,
       );
     }
     return event;

@@ -8,6 +8,7 @@ import { Link } from "@/i18n/navigation";
 export async function AuthHeader() {
   const t = await getTranslations("auth");
   const tDash = await getTranslations("dashboard");
+  const tSettings = await getTranslations("settings");
 
   let session = null;
   try {
@@ -31,6 +32,12 @@ export async function AuthHeader() {
                 className="text-sm text-zinc-500 underline-offset-2 hover:text-zinc-900 hover:underline"
               >
                 {tDash("navLink")}
+              </Link>
+              <Link
+                href="/settings"
+                className="text-sm text-zinc-500 underline-offset-2 hover:text-zinc-900 hover:underline"
+              >
+                {tSettings("navLink")}
               </Link>
               <span className="text-sm text-zinc-600">
                 {t("greeting", { name: session.user.name ?? session.user.email ?? "" })}

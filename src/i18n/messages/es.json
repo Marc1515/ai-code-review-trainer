@@ -22,6 +22,33 @@
     "signInPrompt": "Inicia sesión para ver tu historial de revisiones.",
     "signInLink": "Iniciar sesión"
   },
+  "settings": {
+    "title": "Configuración",
+    "subtitle": "Gestiona tu proveedor de IA para revisiones de código.",
+    "navLink": "Configuración",
+    "statusTitle": "Estado actual",
+    "currentProvider": "Proveedor: {name}",
+    "modelLabel": "Modelo de Anthropic",
+    "apiKeyLabel": "Clave de API de Anthropic",
+    "apiKeyPlaceholder": "sk-ant-...",
+    "addKey": "Configurar clave de API",
+    "updateKey": "Actualizar clave de API",
+    "saveKey": "Guardar",
+    "saving": "Guardando...",
+    "deleteKey": "Eliminar clave",
+    "deleting": "Eliminando...",
+    "saved": "Clave guardada correctamente.",
+    "fallback": "Sin clave configurada. Las revisiones usarán el proveedor de prueba gratuito.",
+    "status": {
+      "configured": "Clave de API configurada"
+    },
+    "error": {
+      "unauthorized": "Debes iniciar sesión.",
+      "validation": "Por favor, revisa los campos del formulario.",
+      "encryptionKeyMissing": "El servidor no está configurado para BYOK. Contacta al administrador.",
+      "server": "Error del servidor. Inténtalo de nuevo."
+    }
+  },
   "review": {
     "page": {
       "title": "Revisión de código",
