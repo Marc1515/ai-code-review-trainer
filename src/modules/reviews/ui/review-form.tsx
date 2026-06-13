@@ -104,7 +104,13 @@ export function ReviewForm({ isAuthenticated = false }: Props) {
               ? t("error.validation")
               : state.code === "rate-limit"
                 ? t("error.rateLimit")
-                : t("error.generic")}
+                : state.code === "provider-busy"
+                  ? t("error.providerBusy")
+                  : state.code === "provider-timeout"
+                    ? t("error.providerTimeout")
+                    : state.code === "provider-unavailable"
+                      ? t("error.providerUnavailable")
+                      : t("error.generic")}
           </p>
         )}
 

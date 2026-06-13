@@ -4,7 +4,7 @@ import { saveReview } from "@/modules/reviews/infrastructure/db/review-repositor
 import { reviewResultSchema } from "@/modules/reviews/schemas/review.schema";
 
 export async function createCodeReview(input: ReviewInput, userId?: string): Promise<ReviewResult> {
-  const provider = await getAiReviewProvider(userId);
+  const provider = getAiReviewProvider();
   const raw = await provider.review(input);
   const result = reviewResultSchema.parse(raw);
 

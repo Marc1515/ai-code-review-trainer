@@ -9,8 +9,14 @@ import { z } from "zod";
  */
 const serverEnvSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
-  /** Active AI provider. MVP is locked to the cost-free mock. */
-  AI_PROVIDER: z.enum(["mock"]).default("mock"),
+  /** Active AI provider. "ollama" is the default (free, server-side). "mock" for local dev/testing. */
+  AI_PROVIDER: z.enum(["mock", "ollama"]).default("ollama"),
+  /** Ollama base URL — only used when AI_PROVIDER=ollama. */
+  OLLAMA_BASE_URL: z.string().url().default("http://ollama:11434"),
+  /** Ollama model name. */
+  OLLAMA_MODEL: z.string().min(1).default("qwen2.5-coder:3b"),
+  /** Ollama request timeout in milliseconds. */
+  OLLAMA_TIMEOUT_MS: z.coerce.number().int().positive().default(90_000),
   /** Auth.js signing secret — required. Generate with: openssl rand -base64 32 */
   AUTH_SECRET: z.string().min(1),
   /** Rate limiting — anonymous users: max requests per window. */

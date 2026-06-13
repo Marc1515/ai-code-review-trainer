@@ -11,7 +11,16 @@ import { checkRateLimit } from "@/shared/security/rate-limiter";
 
 export type ReviewActionState =
   | { status: "idle" }
-  | { status: "error"; code: "validation" | "provider" | "rate-limit" }
+  | {
+      status: "error";
+      code:
+        | "validation"
+        | "provider"
+        | "rate-limit"
+        | "provider-busy"
+        | "provider-timeout"
+        | "provider-unavailable";
+    }
   | { status: "success"; result: ReviewResult };
 
 export async function reviewAction(
@@ -53,6 +62,14 @@ export async function reviewAction(
   } catch (err) {
     Sentry.captureException(err);
     console.error("[provider] review failed");
+
+    if (err instanceof Error && "code" in err) {
+      const code = (err as { code: string }).code;
+      if (code === "OLLAMA_BUSY") return { status: "error", code: "provider-busy" };
+      if (code === "OLLAMA_TIMEOUT") return { status: "error", code: "provider-timeout" };
+      if (code === "OLLAMA_UNAVAILABLE") return { status: "error", code: "provider-unavailable" };
+    }
+
     return { status: "error", code: "provider" };
   }
 }
