@@ -92,7 +92,10 @@
     "error": {
       "validation": "Por favor, revisa los campos del formulario.",
       "rateLimit": "Has enviado demasiadas solicitudes. Por favor, espera un momento e inténtalo de nuevo.",
-      "generic": "No se pudo procesar la revisión. Inténtalo de nuevo."
+      "generic": "No se pudo procesar la revisión. Inténtalo de nuevo.",
+      "providerBusy": "El sistema está procesando otra revisión. Por favor, espera unos segundos e inténtalo de nuevo.",
+      "providerTimeout": "La revisión tardó demasiado. Por favor, inténtalo de nuevo.",
+      "providerUnavailable": "El servicio de revisión no está disponible en este momento. Inténtalo de nuevo pronto."
     }
   }
 }

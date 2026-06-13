@@ -92,7 +92,10 @@
     "error": {
       "validation": "Please check your form inputs.",
       "rateLimit": "Too many requests. Please wait a moment and try again.",
-      "generic": "Review failed. Please try again."
+      "generic": "Review failed. Please try again.",
+      "providerBusy": "The system is processing another review. Please wait a few seconds and try again.",
+      "providerTimeout": "The review took too long. Please try again.",
+      "providerUnavailable": "The review service is currently unavailable. Please try again shortly."
     }
   }
 }
