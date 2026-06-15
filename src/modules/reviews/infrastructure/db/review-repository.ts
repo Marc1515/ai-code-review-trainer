@@ -72,3 +72,18 @@ export async function getReviewByIdAndUser(
     findings: row.findings as unknown as Finding[],
   };
 }
+
+export async function countByUserId(userId: string): Promise<number> {
+  return prisma.review.count({ where: { userId } });
+}
+
+export async function deleteByIdForUser(reviewId: string, userId: string): Promise<void> {
+  await prisma.review.deleteMany({ where: { id: reviewId, userId } });
+}
+
+export async function deleteManyForUser(reviewIds: string[], userId: string): Promise<number> {
+  const { count } = await prisma.review.deleteMany({
+    where: { id: { in: reviewIds }, userId },
+  });
+  return count;
+}

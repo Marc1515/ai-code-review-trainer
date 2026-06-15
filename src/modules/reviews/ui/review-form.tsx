@@ -1,7 +1,8 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { REVIEW_TYPES, type ReviewType } from "@/modules/reviews/domain/types";
 import { MAX_CODE_LENGTH } from "@/modules/reviews/schemas/review.schema";
 import { reviewAction } from "@/server/actions/review.action";
@@ -12,13 +13,25 @@ const initialState: ReviewActionState = { status: "idle" };
 
 interface Props {
   isAuthenticated?: boolean;
+  savedCount?: number;
+  maxSavedReviews?: number;
 }
 
-export function ReviewForm({ isAuthenticated = false }: Props) {
+export function ReviewForm({
+  isAuthenticated = false,
+  savedCount = 0,
+  maxSavedReviews = 10,
+}: Props) {
   const t = useTranslations("review");
-  const [state, formAction, isPending] = useActionState(reviewAction, initialState);
+  const [state, setState] = useState<ReviewActionState>(initialState);
+  const [isPending, startTransition] = useTransition();
   const [codeLength, setCodeLength] = useState(0);
+  const [showLimitModal, setShowLimitModal] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
+  const skipSaveRef = useRef(false);
+
+  const isAtLimit = isAuthenticated && savedCount >= maxSavedReviews;
 
   useEffect(() => {
     if (state.status === "success") {
@@ -43,9 +56,43 @@ export function ReviewForm({ isAuthenticated = false }: Props) {
         ? "text-yellow-500"
         : "text-zinc-400";
 
+  function submitFormData(fd: FormData) {
+    startTransition(async () => {
+      const result = await reviewAction(initialState, fd);
+      setState(result);
+    });
+  }
+
+  function handleFormSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!formRef.current) return;
+
+    if (isAtLimit && !skipSaveRef.current) {
+      setShowLimitModal(true);
+      return;
+    }
+
+    const fd = new FormData(formRef.current);
+    if (skipSaveRef.current) {
+      fd.set("skipSave", "true");
+      skipSaveRef.current = false;
+    }
+    submitFormData(fd);
+  }
+
+  function handleContinueWithoutSaving() {
+    setShowLimitModal(false);
+    if (!formRef.current) return;
+    skipSaveRef.current = true;
+    const fd = new FormData(formRef.current);
+    fd.set("skipSave", "true");
+    skipSaveRef.current = false;
+    submitFormData(fd);
+  }
+
   return (
     <div>
-      <form action={formAction} className="space-y-6">
+      <form ref={formRef} onSubmit={handleFormSubmit} className="space-y-6">
         <div>
           <label htmlFor="code" className="mb-1.5 block text-sm font-medium text-zinc-700">
             {t("form.codeLabel")}
@@ -151,8 +198,59 @@ export function ReviewForm({ isAuthenticated = false }: Props) {
 
       {state.status === "success" && (
         <div ref={resultRef} className="scroll-mt-8">
+          {isAuthenticated && !state.saved && (
+            <p
+              role="status"
+              className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
+            >
+              {t("notSaved", { max: maxSavedReviews })}
+            </p>
+          )}
           <ReviewResult result={state.result} />
           {!isAuthenticated && <p className="mt-6 text-sm text-zinc-500">{t("form.saveHint")}</p>}
+        </div>
+      )}
+
+      {showLimitModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        >
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => setShowLimitModal(false)}
+            aria-hidden="true"
+          />
+          <div className="relative w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+            <h2 className="text-lg font-semibold text-zinc-900">{t("limitModal.title")}</h2>
+            <p className="mt-2 text-sm text-zinc-600">
+              {t("limitModal.description", { current: savedCount, max: maxSavedReviews })}
+            </p>
+            <div className="mt-6 flex flex-col gap-3">
+              <Link
+                href="/dashboard"
+                className="flex w-full items-center justify-center rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700"
+                onClick={() => setShowLimitModal(false)}
+              >
+                {t("limitModal.goToDashboard")}
+              </Link>
+              <button
+                type="button"
+                onClick={handleContinueWithoutSaving}
+                className="w-full rounded-lg border border-zinc-300 px-4 py-2.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50"
+              >
+                {t("limitModal.continueWithoutSaving")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowLimitModal(false)}
+                className="w-full rounded-lg px-4 py-2.5 text-sm text-zinc-500 transition-colors hover:bg-zinc-50"
+              >
+                {t("limitModal.cancel")}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

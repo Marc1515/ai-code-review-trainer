@@ -21,7 +21,7 @@ export type ReviewActionState =
         | "provider-timeout"
         | "provider-unavailable";
     }
-  | { status: "success"; result: ReviewResult };
+  | { status: "success"; result: ReviewResult; saved: boolean };
 
 export async function reviewAction(
   _prev: ReviewActionState,
@@ -44,6 +44,7 @@ export async function reviewAction(
   }
 
   const languageRaw = formData.get("language");
+  const skipSave = formData.get("skipSave") === "true";
 
   const parsed = reviewInputSchema.safeParse({
     code: formData.get("code"),
@@ -57,8 +58,8 @@ export async function reviewAction(
   }
 
   try {
-    const result = await createCodeReview(parsed.data, userId);
-    return { status: "success", result };
+    const { result, saved } = await createCodeReview(parsed.data, userId, skipSave);
+    return { status: "success", result, saved };
   } catch (err) {
     if (err instanceof Error && "code" in err) {
       const code = (err as { code: string }).code;
