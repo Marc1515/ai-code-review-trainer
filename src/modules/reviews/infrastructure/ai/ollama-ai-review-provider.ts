@@ -52,6 +52,9 @@ const REVIEW_FOCUS: Record<string, string> = {
   testing: "testing gaps: missing coverage, brittle assertions, happy-path-only tests",
 };
 
+// Caps token output to keep responses concise and fast on small models.
+const NUM_PREDICT = 800;
+
 // NOTE: user-submitted code is passed to Ollama as data to be reviewed — it is
 // never executed, compiled, or evaluated. See SECURITY.md and PROMPTS.md.
 function buildPrompt(input: ReviewInput): string {
@@ -61,14 +64,17 @@ function buildPrompt(input: ReviewInput): string {
   return `You are a senior software engineer performing a code review focused on: ${focus}.
 
 Return ONLY a JSON object. No markdown, no code fences, no extra text. Use this exact shape:
-{"reviewType":"${input.reviewType}","summary":"one or two sentence summary of the overall quality","findings":[{"title":"short issue title","severity":"info|minor|major|critical","explanation":"why this matters","suggestion":"optional concrete improvement"}]}
+{"reviewType":"${input.reviewType}","summary":"one or two sentence summary of the overall quality","findings":[{"title":"short issue title","severity":"info|minor|major|critical","explanation":"why this matters","suggestion":"concrete improvement"}]}
 
 Rules:
-- findings must contain 2 to 5 specific, actionable items based on the actual code
+- Return 3 to 5 findings maximum.
+- Prioritise: security vulnerabilities, bugs, data validation issues, type safety problems, error handling gaps, architecture boundary violations, maintainability concerns.
+- Do NOT report missing documentation unless it is clearly critical.
+- Do NOT report low-value style preferences (formatting, naming conventions).
+- Every finding must be specific and actionable based on what the code actually contains.
 - severity must be exactly one of: info, minor, major, critical
 - reviewType must be exactly "${input.reviewType}"
-- omit the "line" field unless you are certain of the line number
-- base findings on what the code actually contains, not hypothetical issues
+- Omit the "line" field unless you are certain of the line number.
 
 Code to review${langHint}:
 ${input.code}`;
@@ -94,7 +100,7 @@ export class OllamaAiReviewProvider implements AiReviewProvider {
             prompt: buildPrompt(input),
             stream: false,
             format: "json",
-            options: { temperature: 0.1 },
+            options: { temperature: 0.1, num_predict: NUM_PREDICT },
           }),
           signal: controller.signal,
         });

@@ -60,16 +60,29 @@ export async function reviewAction(
     const result = await createCodeReview(parsed.data, userId);
     return { status: "success", result };
   } catch (err) {
-    Sentry.captureException(err);
-    console.error("[provider] review failed");
-
     if (err instanceof Error && "code" in err) {
       const code = (err as { code: string }).code;
+      // Expected controlled states — no Sentry, minimal log.
       if (code === "OLLAMA_BUSY") return { status: "error", code: "provider-busy" };
-      if (code === "OLLAMA_TIMEOUT") return { status: "error", code: "provider-timeout" };
-      if (code === "OLLAMA_UNAVAILABLE") return { status: "error", code: "provider-unavailable" };
+      if (code === "OLLAMA_TIMEOUT") {
+        console.error("[provider] timeout");
+        Sentry.captureException(err);
+        return { status: "error", code: "provider-timeout" };
+      }
+      if (code === "OLLAMA_UNAVAILABLE") {
+        console.error("[provider] unavailable");
+        Sentry.captureException(err);
+        return { status: "error", code: "provider-unavailable" };
+      }
+      if (code === "OLLAMA_INVALID_RESPONSE") {
+        console.error("[provider] invalid response");
+        Sentry.captureException(err);
+        return { status: "error", code: "provider" };
+      }
     }
 
+    Sentry.captureException(err);
+    console.error("[provider] unexpected error");
     return { status: "error", code: "provider" };
   }
 }
