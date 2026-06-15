@@ -19,7 +19,8 @@ export type ReviewActionState =
         | "rate-limit"
         | "provider-busy"
         | "provider-timeout"
-        | "provider-unavailable";
+        | "provider-unavailable"
+        | "review-limit";
     }
   | { status: "success"; result: ReviewResult };
 
@@ -62,6 +63,7 @@ export async function reviewAction(
   } catch (err) {
     if (err instanceof Error && "code" in err) {
       const code = (err as { code: string }).code;
+      if (code === "REVIEW_LIMIT_REACHED") return { status: "error", code: "review-limit" };
       // Expected controlled states — no Sentry, minimal log.
       if (code === "OLLAMA_BUSY") return { status: "error", code: "provider-busy" };
       if (code === "OLLAMA_TIMEOUT") {

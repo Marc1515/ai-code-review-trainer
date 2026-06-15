@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { REVIEW_TYPES, type ReviewType } from "@/modules/reviews/domain/types";
+import { MAX_SAVED_REVIEWS } from "@/modules/reviews/domain/constants";
 import { MAX_CODE_LENGTH } from "@/modules/reviews/schemas/review.schema";
 import { reviewAction } from "@/server/actions/review.action";
 import type { ReviewActionState } from "@/server/actions/review.action";
@@ -110,7 +111,9 @@ export function ReviewForm({ isAuthenticated = false }: Props) {
                     ? t("error.providerTimeout")
                     : state.code === "provider-unavailable"
                       ? t("error.providerUnavailable")
-                      : t("error.generic")}
+                      : state.code === "review-limit"
+                        ? t("error.reviewLimit", { max: MAX_SAVED_REVIEWS })
+                        : t("error.generic")}
           </p>
         )}
 

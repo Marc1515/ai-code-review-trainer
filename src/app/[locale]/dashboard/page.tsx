@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import NextLink from "next/link";
 import { auth } from "@/auth";
+import { MAX_SAVED_REVIEWS } from "@/modules/reviews/domain/constants";
 import { listReviewsByUser } from "@/modules/reviews/infrastructure/db/review-repository";
 import { DashboardReviewList } from "@/modules/reviews/ui/dashboard-review-list";
 
@@ -39,7 +40,7 @@ export default async function DashboardPage() {
           <h1 className="text-3xl font-semibold tracking-tight text-zinc-900">{t("title")}</h1>
           <p className="mt-2 text-zinc-600">{t("subtitle")}</p>
         </header>
-        <DashboardReviewList reviews={reviews} />
+        <DashboardReviewList reviews={reviews} maxReviews={MAX_SAVED_REVIEWS} />
       </main>
     </div>
   );

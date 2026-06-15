@@ -20,7 +20,14 @@
     "subtitle": "Historial de revisiones de código que has realizado.",
     "empty": "Todavía no tienes ninguna revisión guardada.",
     "signInPrompt": "Inicia sesión para ver tu historial de revisiones.",
-    "signInLink": "Iniciar sesión"
+    "signInLink": "Iniciar sesión",
+    "count": "{current}/{max} revisiones guardadas",
+    "delete": "Eliminar",
+    "deleteSelected": "Eliminar seleccionados ({count})",
+    "selectAll": "Seleccionar todo",
+    "deselectAll": "Deseleccionar todo",
+    "confirmDelete": "¿Estás seguro de que deseas eliminar esta revisión?",
+    "confirmDeleteMany": "¿Estás seguro de que deseas eliminar {count} revisiones?"
   },
   "settings": {
     "title": "Configuración",
@@ -95,7 +102,8 @@
       "generic": "No se pudo procesar la revisión. Inténtalo de nuevo.",
       "providerBusy": "El sistema está procesando otra revisión. Por favor, espera unos segundos e inténtalo de nuevo.",
       "providerTimeout": "La revisión tardó demasiado. Por favor, inténtalo de nuevo.",
-      "providerUnavailable": "El servicio de revisión no está disponible en este momento. Inténtalo de nuevo pronto."
+      "providerUnavailable": "El servicio de revisión no está disponible en este momento. Inténtalo de nuevo pronto.",
+      "reviewLimit": "Has alcanzado el límite de {max} revisiones guardadas. Elimina una revisión para guardar una nueva."
     }
   }
 }

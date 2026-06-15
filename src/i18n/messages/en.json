@@ -20,7 +20,14 @@
     "subtitle": "Code reviews you have submitted.",
     "empty": "You have no saved reviews yet.",
     "signInPrompt": "Sign in to view your review history.",
-    "signInLink": "Sign in"
+    "signInLink": "Sign in",
+    "count": "{current}/{max} saved reviews",
+    "delete": "Delete",
+    "deleteSelected": "Delete selected ({count})",
+    "selectAll": "Select all",
+    "deselectAll": "Deselect all",
+    "confirmDelete": "Are you sure you want to delete this review?",
+    "confirmDeleteMany": "Are you sure you want to delete {count} reviews?"
   },
   "settings": {
     "title": "Settings",
@@ -95,7 +102,8 @@
       "generic": "Review failed. Please try again.",
       "providerBusy": "The system is processing another review. Please wait a few seconds and try again.",
       "providerTimeout": "The review took too long. Please try again.",
-      "providerUnavailable": "The review service is currently unavailable. Please try again shortly."
+      "providerUnavailable": "The review service is currently unavailable. Please try again shortly.",
+      "reviewLimit": "You have reached the limit of {max} saved reviews. Delete a review to save a new one."
     }
   }
 }
