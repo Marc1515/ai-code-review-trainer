@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { auth } from "@/auth";
 import { getProviderConfigStatus } from "@/modules/reviews/infrastructure/db/user-provider-config-repository";
 import { ApiKeySettings } from "@/modules/settings/ui/api-key-settings";
+import { EditorThemeSettings } from "@/modules/settings/ui/editor-theme-settings";
 
 export default async function SettingsPage() {
   const t = await getTranslations("settings");
@@ -30,7 +31,10 @@ export default async function SettingsPage() {
           <h1 className="text-3xl font-semibold tracking-tight text-zinc-900">{t("title")}</h1>
           <p className="mt-2 text-zinc-600">{t("subtitle")}</p>
         </header>
-        <ApiKeySettings currentConfig={config} />
+        <div className="space-y-6">
+          <ApiKeySettings currentConfig={config} />
+          <EditorThemeSettings />
+        </div>
       </main>
     </div>
   );

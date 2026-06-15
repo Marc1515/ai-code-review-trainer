@@ -54,6 +54,15 @@
       "validation": "Please check your form inputs.",
       "encryptionKeyMissing": "The server is not configured for BYOK. Contact the administrator.",
       "server": "Server error. Please try again."
+    },
+    "editorTheme": {
+      "title": "Code editor theme",
+      "label": "Theme",
+      "themes": {
+        "githubLight": "GitHub Light",
+        "githubDark": "GitHub Dark",
+        "dracula": "Dracula"
+      }
     }
   },
   "review": {

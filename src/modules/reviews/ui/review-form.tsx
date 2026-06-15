@@ -1,13 +1,26 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { REVIEW_TYPES, type ReviewType } from "@/modules/reviews/domain/types";
 import { MAX_CODE_LENGTH } from "@/modules/reviews/schemas/review.schema";
+import { useEditorTheme } from "@/shared/hooks/use-editor-theme";
 import { reviewAction } from "@/server/actions/review.action";
 import type { ReviewActionState } from "@/server/actions/review.action";
 import { ReviewResult } from "@/modules/reviews/ui/review-result";
+
+// Load CodeMirror client-side only to avoid server-side browser API errors.
+const CodeEditor = dynamic(
+  () => import("@/modules/reviews/ui/code-editor").then((m) => ({ default: m.CodeEditor })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[280px] w-full animate-pulse rounded-lg border border-zinc-300 bg-zinc-100" />
+    ),
+  },
+);
 
 const initialState: ReviewActionState = { status: "idle" };
 
@@ -25,13 +38,15 @@ export function ReviewForm({
   const t = useTranslations("review");
   const [state, setState] = useState<ReviewActionState>(initialState);
   const [isPending, startTransition] = useTransition();
-  const [codeLength, setCodeLength] = useState(0);
+  const [code, setCode] = useState("");
   const [showLimitModal, setShowLimitModal] = useState(false);
+  const { theme } = useEditorTheme();
   const formRef = useRef<HTMLFormElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
   const skipSaveRef = useRef(false);
 
   const isAtLimit = isAuthenticated && savedCount >= maxSavedReviews;
+  const codeLength = code.length;
 
   useEffect(() => {
     if (state.status === "success") {
@@ -56,6 +71,14 @@ export function ReviewForm({
         ? "text-yellow-500"
         : "text-zinc-400";
 
+  function buildFormData(skipSave = false): FormData | null {
+    if (!formRef.current) return null;
+    const fd = new FormData(formRef.current);
+    fd.set("code", code);
+    if (skipSave) fd.set("skipSave", "true");
+    return fd;
+  }
+
   function submitFormData(fd: FormData) {
     startTransition(async () => {
       const result = await reviewAction(initialState, fd);
@@ -65,47 +88,37 @@ export function ReviewForm({
 
   function handleFormSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!formRef.current) return;
+    if (!code.trim()) return;
 
     if (isAtLimit && !skipSaveRef.current) {
       setShowLimitModal(true);
       return;
     }
 
-    const fd = new FormData(formRef.current);
-    if (skipSaveRef.current) {
-      fd.set("skipSave", "true");
-      skipSaveRef.current = false;
-    }
-    submitFormData(fd);
+    const fd = buildFormData(skipSaveRef.current);
+    skipSaveRef.current = false;
+    if (fd) submitFormData(fd);
   }
 
   function handleContinueWithoutSaving() {
     setShowLimitModal(false);
-    if (!formRef.current) return;
-    skipSaveRef.current = true;
-    const fd = new FormData(formRef.current);
-    fd.set("skipSave", "true");
-    skipSaveRef.current = false;
-    submitFormData(fd);
+    const fd = buildFormData(true);
+    if (fd) submitFormData(fd);
   }
 
   return (
     <div>
       <form ref={formRef} onSubmit={handleFormSubmit} className="space-y-6">
         <div>
-          <label htmlFor="code" className="mb-1.5 block text-sm font-medium text-zinc-700">
+          <label htmlFor="cm-code" className="mb-1.5 block text-sm font-medium text-zinc-700">
             {t("form.codeLabel")}
           </label>
-          <textarea
-            id="code"
-            name="code"
-            rows={14}
-            required
-            maxLength={MAX_CODE_LENGTH}
+          <CodeEditor
+            value={code}
+            onChange={setCode}
+            theme={theme}
             placeholder={t("form.codePlaceholder")}
-            className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 font-mono text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:ring-2 focus:ring-zinc-500/20 focus:outline-none"
-            onChange={(e) => setCodeLength(e.target.value.length)}
+            maxLength={MAX_CODE_LENGTH}
           />
           <p className={`mt-1.5 text-xs ${charCountColor}`}>
             {t("form.charCount", { current: codeLength, max: MAX_CODE_LENGTH })}

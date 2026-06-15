@@ -54,6 +54,15 @@
       "validation": "Por favor, revisa los campos del formulario.",
       "encryptionKeyMissing": "El servidor no está configurado para BYOK. Contacta al administrador.",
       "server": "Error del servidor. Inténtalo de nuevo."
+    },
+    "editorTheme": {
+      "title": "Tema del editor de código",
+      "label": "Tema",
+      "themes": {
+        "githubLight": "GitHub Claro",
+        "githubDark": "GitHub Oscuro",
+        "dracula": "Drácula"
+      }
     }
   },
   "review": {
