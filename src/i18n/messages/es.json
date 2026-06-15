@@ -102,8 +102,15 @@
       "generic": "No se pudo procesar la revisión. Inténtalo de nuevo.",
       "providerBusy": "El sistema está procesando otra revisión. Por favor, espera unos segundos e inténtalo de nuevo.",
       "providerTimeout": "La revisión tardó demasiado. Por favor, inténtalo de nuevo.",
-      "providerUnavailable": "El servicio de revisión no está disponible en este momento. Inténtalo de nuevo pronto.",
-      "reviewLimit": "Has alcanzado el límite de {max} revisiones guardadas. Elimina una revisión para guardar una nueva."
-    }
+      "providerUnavailable": "El servicio de revisión no está disponible en este momento. Inténtalo de nuevo pronto."
+    },
+    "limitModal": {
+      "title": "Límite de revisiones guardadas alcanzado",
+      "description": "Tienes {current}/{max} revisiones guardadas. Esta revisión no se guardará a menos que elimines una existente primero.",
+      "goToDashboard": "Ir a revisiones guardadas",
+      "continueWithoutSaving": "Continuar sin guardar",
+      "cancel": "Cancelar"
+    },
+    "notSaved": "Esta revisión no fue guardada — has alcanzado tu límite de {max} revisiones. Ve al panel para eliminar una revisión y liberar espacio."
   }
 }

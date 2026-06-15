@@ -1,14 +1,20 @@
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/auth";
+import { MAX_SAVED_REVIEWS } from "@/modules/reviews/domain/constants";
+import { countByUserId } from "@/modules/reviews/infrastructure/db/review-repository";
 import { ReviewForm } from "@/modules/reviews/ui/review-form";
 
 export default async function ReviewPage() {
   const t = await getTranslations("review.page");
 
   let isAuthenticated = false;
+  let savedCount = 0;
   try {
     const session = await auth();
-    isAuthenticated = !!session?.user?.id;
+    if (session?.user?.id) {
+      isAuthenticated = true;
+      savedCount = await countByUserId(session.user.id);
+    }
   } catch {
     // AUTH_SECRET or DATABASE_URL not configured; treat as anonymous.
   }
@@ -20,7 +26,11 @@ export default async function ReviewPage() {
           <h1 className="text-3xl font-semibold tracking-tight text-zinc-900">{t("title")}</h1>
           <p className="mt-2 text-zinc-600">{t("subtitle")}</p>
         </header>
-        <ReviewForm isAuthenticated={isAuthenticated} />
+        <ReviewForm
+          isAuthenticated={isAuthenticated}
+          savedCount={savedCount}
+          maxSavedReviews={MAX_SAVED_REVIEWS}
+        />
       </main>
     </div>
   );

@@ -102,8 +102,15 @@
       "generic": "Review failed. Please try again.",
       "providerBusy": "The system is processing another review. Please wait a few seconds and try again.",
       "providerTimeout": "The review took too long. Please try again.",
-      "providerUnavailable": "The review service is currently unavailable. Please try again shortly.",
-      "reviewLimit": "You have reached the limit of {max} saved reviews. Delete a review to save a new one."
-    }
+      "providerUnavailable": "The review service is currently unavailable. Please try again shortly."
+    },
+    "limitModal": {
+      "title": "Saved reviews limit reached",
+      "description": "You have {current}/{max} saved reviews. This review will not be saved unless you delete an existing one first.",
+      "goToDashboard": "Go to saved reviews",
+      "continueWithoutSaving": "Continue without saving",
+      "cancel": "Cancel"
+    },
+    "notSaved": "This review was not saved — you have reached your {max}-review limit. Go to your dashboard to delete a review and free up space."
   }
 }
