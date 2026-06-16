@@ -20,6 +20,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "AI Code Review Trainer",
   description: "Practice real code review with AI-powered feedback.",
+  icons: {
+    icon: "/ai-code-review-trainer-icon.svg",
+    apple: "/ai-code-review-trainer-icon.svg",
+  },
 };
 
 export default async function LocaleLayout({

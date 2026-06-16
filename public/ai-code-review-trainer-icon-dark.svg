@@ -1,0 +1,95 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">AI Code Review Trainer dark mode icon</title>
+  <desc id="desc">Neon blue and teal chat bubble with code brackets, AI circuit nodes, and a magnifying glass with a teal checkmark, optimized for dark mode.</desc>
+
+  <defs>
+    <linearGradient id="blueGradient" x1="110" y1="92" x2="420" y2="420" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#38BDF8"/>
+      <stop offset="0.52" stop-color="#3B82F6"/>
+      <stop offset="1" stop-color="#1D4ED8"/>
+    </linearGradient>
+
+    <linearGradient id="tealGradient" x1="78" y1="74" x2="220" y2="192" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5EEAD4"/>
+      <stop offset="1" stop-color="#22D3EE"/>
+    </linearGradient>
+
+    <linearGradient id="checkGradient" x1="305" y1="318" x2="381" y2="380" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5EEAD4"/>
+      <stop offset="1" stop-color="#14B8A6"/>
+    </linearGradient>
+
+    <linearGradient id="dotsGradient" x1="256" y1="203" x2="256" y2="300" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#E0F2FE"/>
+      <stop offset="1" stop-color="#BFDBFE"/>
+    </linearGradient>
+
+    <filter id="softGlowBlue" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="6" result="blur1"/>
+      <feColorMatrix in="blur1" type="matrix" values="0 0 0 0 0.16  0 0 0 0 0.55  0 0 0 0 1  0 0 0 0.85 0" result="glow1"/>
+      <feGaussianBlur stdDeviation="14" result="blur2"/>
+      <feColorMatrix in="blur2" type="matrix" values="0 0 0 0 0.05  0 0 0 0 0.40  0 0 0 0 1  0 0 0 0.35 0" result="glow2"/>
+      <feMerge>
+        <feMergeNode in="glow2"/>
+        <feMergeNode in="glow1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="softGlowTeal" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="5" result="blur1"/>
+      <feColorMatrix in="blur1" type="matrix" values="0 0 0 0 0.18  0 0 0 0 0.92  0 0 0 0 0.86  0 0 0 0.85 0" result="glow1"/>
+      <feGaussianBlur stdDeviation="12" result="blur2"/>
+      <feColorMatrix in="blur2" type="matrix" values="0 0 0 0 0.13  0 0 0 0 0.85  0 0 0 0 0.82  0 0 0 0.30 0" result="glow2"/>
+      <feMerge>
+        <feMergeNode in="glow2"/>
+        <feMergeNode in="glow1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <g filter="url(#softGlowTeal)">
+    <!-- AI circuit nodes -->
+    <path d="M129 158H93" stroke="url(#tealGradient)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M129 158V123L96 90" stroke="url(#tealGradient)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M154 158V76" stroke="url(#tealGradient)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <circle cx="80" cy="158" r="16" stroke="url(#tealGradient)" stroke-width="14"/>
+    <circle cx="83" cy="77" r="16" stroke="url(#tealGradient)" stroke-width="14"/>
+    <circle cx="154" cy="54" r="16" stroke="url(#tealGradient)" stroke-width="14"/>
+    <circle cx="129" cy="158" r="8" fill="#22D3EE"/>
+    <circle cx="154" cy="158" r="8" fill="#38BDF8"/>
+  </g>
+
+  <g filter="url(#softGlowBlue)">
+    <!-- Chat bubble / review container -->
+    <path
+      d="M153 132H347C383.451 132 413 161.549 413 198V285
+         M341 398H230L154 454V398H148C111.549 398 82 368.451 82 332V207
+         L126 163H153V132Z"
+      stroke="url(#blueGradient)"
+      stroke-width="24"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+
+    <!-- Code brackets -->
+    <path d="M215 218L174 257L215 296" stroke="url(#blueGradient)" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M297 218L338 257L297 296" stroke="url(#blueGradient)" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Center code dots -->
+    <circle cx="256" cy="217" r="10" fill="url(#dotsGradient)"/>
+    <circle cx="256" cy="257" r="10" fill="url(#dotsGradient)"/>
+    <circle cx="256" cy="297" r="10" fill="url(#dotsGradient)"/>
+
+    <!-- Magnifying glass -->
+    <circle cx="346" cy="344" r="67" stroke="url(#blueGradient)" stroke-width="24"/>
+    <path d="M393 391L435 433" stroke="url(#blueGradient)" stroke-width="24" stroke-linecap="round"/>
+  </g>
+
+  <g filter="url(#softGlowTeal)">
+    <!-- Check mark -->
+    <path d="M316 344L339 367L382 323" stroke="url(#checkGradient)" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
