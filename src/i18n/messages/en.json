@@ -6,7 +6,9 @@
   "auth": {
     "signIn": "Sign in",
     "signOut": "Sign out",
-    "greeting": "Hello, {name}"
+    "greeting": "Hello, {name}",
+    "myReviews": "My reviews",
+    "reviewerAi": "Reviewer AI"
   },
   "reviewDetail": {
     "back": "Back to dashboard",

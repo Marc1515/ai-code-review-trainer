@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { auth } from "@/auth";
@@ -17,12 +16,8 @@ export default async function SettingsPage() {
     // Auth not configured; treat as unauthenticated.
   }
 
-  if (!userId) {
-    redirect("/api/auth/signin");
-  }
-
   // getProviderConfigStatus never returns the encrypted key — safe to pass to client.
-  const config = await getProviderConfigStatus(userId);
+  const config = userId ? await getProviderConfigStatus(userId) : null;
 
   return (
     <div className="flex flex-1 flex-col bg-zinc-50">
@@ -32,7 +27,7 @@ export default async function SettingsPage() {
           <p className="mt-2 text-zinc-600">{t("subtitle")}</p>
         </header>
         <div className="space-y-6">
-          <ApiKeySettings currentConfig={config} />
+          {userId && <ApiKeySettings currentConfig={config} />}
           <EditorThemeSettings />
         </div>
       </main>

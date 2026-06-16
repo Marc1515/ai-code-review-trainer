@@ -6,7 +6,9 @@
   "auth": {
     "signIn": "Iniciar sesión",
     "signOut": "Cerrar sesión",
-    "greeting": "Hola, {name}"
+    "greeting": "Hola, {name}",
+    "myReviews": "Mis revisiones",
+    "reviewerAi": "Revisor IA"
   },
   "reviewDetail": {
     "back": "Volver al panel",
