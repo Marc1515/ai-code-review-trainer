@@ -13,7 +13,10 @@ export default function HomePage() {
           aria-hidden
           className="size-20 shrink-0"
         />
-        <h1 className="text-4xl font-semibold tracking-tight text-zinc-900">{t("title")}</h1>
+        <h1 className="text-4xl font-semibold tracking-tight">
+          <span className="text-brand-navy">AI Code Review </span>
+          <span className="text-brand-accent">Trainer</span>
+        </h1>
         <p className="max-w-xl text-lg leading-8 text-zinc-600">{t("subtitle")}</p>
         <Link
           href="/review"
