@@ -1,13 +1,14 @@
 {
   "home": {
-    "title": "Entrenador de revisión de código con IA",
     "subtitle": "Practica la revisión de código real. Aprende a identificar errores, mejoras de rendimiento y problemas de estilo.",
     "cta": "Comenzar"
   },
   "auth": {
     "signIn": "Iniciar sesión",
     "signOut": "Cerrar sesión",
-    "greeting": "Hola, {name}"
+    "greeting": "Hola, {name}",
+    "myReviews": "Mis revisiones",
+    "reviewerAi": "Revisor IA"
   },
   "reviewDetail": {
     "back": "Volver al panel",
@@ -20,7 +21,50 @@
     "subtitle": "Historial de revisiones de código que has realizado.",
     "empty": "Todavía no tienes ninguna revisión guardada.",
     "signInPrompt": "Inicia sesión para ver tu historial de revisiones.",
-    "signInLink": "Iniciar sesión"
+    "signInLink": "Iniciar sesión",
+    "count": "{current}/{max} revisiones guardadas",
+    "delete": "Eliminar",
+    "deleteSelected": "Eliminar seleccionados ({count})",
+    "selectAll": "Seleccionar todo",
+    "deselectAll": "Deseleccionar todo",
+    "confirmDelete": "¿Estás seguro de que deseas eliminar esta revisión?",
+    "confirmDeleteMany": "¿Estás seguro de que deseas eliminar {count} revisiones?"
+  },
+  "settings": {
+    "title": "Configuración",
+    "subtitle": "Gestiona tu proveedor de IA para revisiones de código.",
+    "navLink": "Configuración",
+    "statusTitle": "Estado actual",
+    "currentProvider": "Proveedor: {name}",
+    "modelLabel": "Modelo de Anthropic",
+    "apiKeyLabel": "Clave de API de Anthropic",
+    "apiKeyPlaceholder": "sk-ant-...",
+    "addKey": "Configurar clave de API",
+    "updateKey": "Actualizar clave de API",
+    "saveKey": "Guardar",
+    "saving": "Guardando...",
+    "deleteKey": "Eliminar clave",
+    "deleting": "Eliminando...",
+    "saved": "Clave guardada correctamente.",
+    "fallback": "Sin clave configurada. Las revisiones usarán el proveedor de prueba gratuito.",
+    "status": {
+      "configured": "Clave de API configurada"
+    },
+    "error": {
+      "unauthorized": "Debes iniciar sesión.",
+      "validation": "Por favor, revisa los campos del formulario.",
+      "encryptionKeyMissing": "El servidor no está configurado para BYOK. Contacta al administrador.",
+      "server": "Error del servidor. Inténtalo de nuevo."
+    },
+    "editorTheme": {
+      "title": "Tema del editor de código",
+      "label": "Tema",
+      "themes": {
+        "githubLight": "GitHub Claro",
+        "githubDark": "GitHub Oscuro",
+        "dracula": "Drácula"
+      }
+    }
   },
   "review": {
     "page": {
@@ -33,9 +77,11 @@
       "languageLabel": "Lenguaje (opcional)",
       "languagePlaceholder": "p. ej. TypeScript, Python, Go...",
       "reviewTypeLabel": "Tipo de revisión",
-      "codeHint": "Máximo 10 000 caracteres.",
+      "charCount": "{current} / {max} caracteres",
       "submit": "Revisar código",
-      "submitting": "Revisando..."
+      "submitting": "Revisando...",
+      "trustNotice": "Tu código es analizado como dato, nunca ejecutado ni almacenado si no has iniciado sesión.",
+      "saveHint": "¿Quieres guardar esta revisión? Inicia sesión para conservar tu historial."
     },
     "types": {
       "general": "General",
@@ -47,6 +93,7 @@
       "testing": "Pruebas"
     },
     "result": {
+      "reviewedAs": "Revisión: {type}",
       "summary": "Resumen",
       "findings": "Hallazgos",
       "noFindings": "No se encontraron hallazgos.",
@@ -61,7 +108,19 @@
     },
     "error": {
       "validation": "Por favor, revisa los campos del formulario.",
-      "generic": "No se pudo procesar la revisión. Inténtalo de nuevo."
-    }
+      "rateLimit": "Has enviado demasiadas solicitudes. Por favor, espera un momento e inténtalo de nuevo.",
+      "generic": "No se pudo procesar la revisión. Inténtalo de nuevo.",
+      "providerBusy": "El sistema está procesando otra revisión. Por favor, espera unos segundos e inténtalo de nuevo.",
+      "providerTimeout": "La revisión tardó demasiado. Por favor, inténtalo de nuevo.",
+      "providerUnavailable": "El servicio de revisión no está disponible en este momento. Inténtalo de nuevo pronto."
+    },
+    "limitModal": {
+      "title": "Límite de revisiones guardadas alcanzado",
+      "description": "Tienes {current}/{max} revisiones guardadas. Esta revisión no se guardará a menos que elimines una existente primero.",
+      "goToDashboard": "Ir a revisiones guardadas",
+      "continueWithoutSaving": "Continuar sin guardar",
+      "cancel": "Cancelar"
+    },
+    "notSaved": "Esta revisión no fue guardada — has alcanzado tu límite de {max} revisiones. Ve al panel para eliminar una revisión y liberar espacio."
   }
 }

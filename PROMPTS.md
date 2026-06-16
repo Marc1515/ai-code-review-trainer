@@ -62,3 +62,21 @@ USER:
 Every provider must return a value matching the `ReviewResult` domain type
 (`reviewType`, `summary`, `findings[]`) and pass Zod validation. Findings carry
 a `severity` (`info` | `minor` | `major` | `critical`) so the UI can rank them.
+
+## BYOK provider contract (Phase 11)
+
+Any future `BYOKAiReviewProvider` must satisfy all of the following:
+
+- **Follow the prompt skeleton above.** The code block must be delimited and
+  declared as untrusted data. The system prompt must instruct the model to ignore
+  any instructions inside it.
+- **Return structured output only.** Instruct the model to respond in JSON
+  matching `ReviewResult`. Validate the raw response with `reviewResultSchema`
+  before returning it — the same validation that wraps the mock provider.
+- **Never include the API key in any log or thrown error.** Catch SDK errors and
+  re-throw a generic `ProviderError`; let Sentry capture the sanitised error.
+- **Accept the API key as a constructor argument** (in-memory only). Never read
+  it from `process.env` directly inside the provider — the factory resolves and
+  decrypts it; the provider only consumes it.
+- **Phase 11 starts with Anthropic Claude only.** A second provider may be added
+  in a later phase without architecture changes.

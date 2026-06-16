@@ -24,10 +24,16 @@
     ]
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.102.0",
     "@auth/prisma-adapter": "^2.11.2",
     "@base-ui/react": "^1.5.0",
+    "@codemirror/lang-javascript": "^6.2.5",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
+    "@sentry/nextjs": "^10.56.0",
+    "@uiw/codemirror-theme-dracula": "^4.25.10",
+    "@uiw/codemirror-theme-github": "^4.25.10",
+    "@uiw/react-codemirror": "^4.25.10",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.17.0",

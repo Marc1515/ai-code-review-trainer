@@ -1,13 +1,11 @@
-import type { AiReviewProvider } from "@/modules/reviews/domain/ports/ai-review-provider";
+import "server-only";
 import { MockAiReviewProvider } from "@/modules/reviews/infrastructure/ai/mock-ai-review-provider";
+import { OllamaAiReviewProvider } from "@/modules/reviews/infrastructure/ai/ollama-ai-review-provider";
+import type { AiReviewProvider } from "@/modules/reviews/domain/ports/ai-review-provider";
+import { getServerEnv } from "@/config/env";
 
-/**
- * Selects the active AI review provider.
- *
- * The MVP always returns the MockAiReviewProvider (cost policy: the owner
- * never pays for public users). A future BYOK provider will be selected here
- * based on the authenticated user's configuration — without any caller change.
- */
 export function getAiReviewProvider(): AiReviewProvider {
-  return new MockAiReviewProvider();
+  const { AI_PROVIDER } = getServerEnv();
+  if (AI_PROVIDER === "mock") return new MockAiReviewProvider();
+  return new OllamaAiReviewProvider();
 }

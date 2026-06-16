@@ -52,16 +52,19 @@ Layer rules:
 - `server/actions` — thin Server Actions; validate FormData with Zod, call use-cases, return typed state. No business logic.
 - `modules/*/ui`, `components/ui` — presentation only; no persistence or AI calls.
 - `shared/*`, `config/*` — cross-module utilities and config. Do **not** add a generic `core` directory.
+- `shared/security/` — server-only utilities (rate limiter). Files here must begin with `import "server-only"`.
 - Import alias: `@/*` → `src/*`.
 
 ## Review flow (end-to-end)
 
-1. UI form submits → `server/actions/review.action.ts` validates with `reviewInputSchema` (Zod).
+1. UI form submits → `server/actions/review.action.ts`.
 2. Action calls `auth()` server-side to resolve `userId` (anonymous if absent).
-3. Action calls `createCodeReview(input, userId?)` use-case.
-4. Use-case calls `getAiReviewProvider()` and validates provider output with `reviewResultSchema`.
-5. If `userId` is present, use-case calls `saveReview()` in the repository — **anonymous reviews are never persisted**.
-6. Structured `ReviewResult` is returned to the UI.
+3. Action calls `checkRateLimit(userId, headers)` from `shared/security/rate-limiter.ts` — stricter limit for anonymous, higher for authenticated.
+4. Action validates FormData with `reviewInputSchema` (Zod).
+5. Action calls `createCodeReview(input, userId?)` use-case.
+6. Use-case calls `getAiReviewProvider()` and validates provider output with `reviewResultSchema`.
+7. If `userId` is present, use-case calls `saveReview()` in the repository — **anonymous reviews are never persisted**.
+8. Structured `ReviewResult` is returned to the UI.
 
 To add a new AI provider: implement the `AiReviewProvider` port and wire it in `provider-factory.ts` — no other layer changes needed.
 
@@ -93,8 +96,8 @@ To add a new AI provider: implement the `AiReviewProvider` port and wire it in `
 
 ## Phasing
 
-Completed: scaffold → next-intl i18n → mock review flow → auth → authenticated persistence → dashboard (list).  
-**Current phase:** review detail page.  
-Next: infra/deploy → post-MVP (Sentry, BYOK, simulated pull requests).
+Completed: scaffold → next-intl i18n → mock review flow → auth → authenticated persistence → dashboard (list) → review detail page → security hardening & rate limiting → infra/deploy preparation → Sentry observability → BYOK provider design → BYOK implementation.  
+**Current phase:** complete.  
+Next: post-MVP (simulated pull requests, second BYOK provider, pagination).
 
-Don't pull later-phase work forward. Off-limits until explicitly planned: edit/delete reviews, pagination, real AI providers, BYOK, Sentry, Docker/CI changes.
+Don't pull later-phase work forward. Off-limits until explicitly planned: edit/delete reviews, pagination, second AI provider (OpenAI), Docker/CI changes.

@@ -22,16 +22,30 @@ model Review {
 // Do not rename fields without updating the adapter configuration.
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  reviews       Review[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id             String              @id @default(cuid())
+  name           String?
+  email          String              @unique
+  emailVerified  DateTime?
+  image          String?
+  accounts       Account[]
+  sessions       Session[]
+  reviews        Review[]
+  providerConfig UserProviderConfig?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+}
+
+// Stores a single BYOK AI provider config per authenticated user.
+// The API key is stored encrypted (AES-256-GCM). Never store plaintext here.
+model UserProviderConfig {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  providerName    String
+  providerModel   String
+  encryptedApiKey String   @db.Text
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Account {

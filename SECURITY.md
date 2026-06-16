@@ -30,7 +30,28 @@ threat model and the non-negotiable rules.
   public users (see [DECISIONS.md](./DECISIONS.md), ADR-001).
 - Future real AI is **BYOK**: authenticated users supply their own key and bear
   their own cost (ADR-002). BYOK keys, when implemented, are handled server-side
-  only and never logged or returned to the client.
+  only and never logged or returned to the client. See [BYOK key rules](#byok-api-key-rules) below.
+
+## BYOK API key rules
+
+These rules apply from Phase 11 onward. They are non-negotiable.
+
+1. **Server-only.** The decrypted API key exists only in server memory, for the
+   duration of one request. It is never serialised, never returned from a
+   function as part of a public value, and never sent to the client.
+2. **Never logged.** No `console.log`, `console.error`, or structured logger may
+   receive a key or a value that contains one. Log the provider name and model
+   only.
+3. **Never sent to Sentry.** The Sentry `beforeSend` hook must strip any event
+   field named `apiKey`, `encryptedApiKey`, `decryptedKey`, or similar. This
+   extends the existing `code`/`input` stripping already in place.
+4. **Encrypted at rest.** Only AES-256-GCM ciphertext is stored in the DB. The
+   `ENCRYPTION_KEY` env var (VPS-only, never committed) is the sole secret.
+   See ADR-011.
+5. **Never returned to the browser.** The settings Server Action that saves a
+   key must not echo it back; the UI may only confirm success or failure.
+6. **Isolated per user.** All `UserProviderConfig` queries filter by `userId`.
+   No code path allows one user to read or use another user's key. See ADR-012.
 
 ## Authentication & data
 
@@ -49,9 +70,46 @@ threat model and the non-negotiable rules.
 
 ## Observability
 
-- **Sentry** is documented now and implemented after the MVP flow (ADR-009).
-  When enabled, ensure no secrets or full user code payloads are sent in error
-  reports.
+- **Sentry** is active (`@sentry/nextjs`). Three guarantees are enforced by `beforeSend` in all three Sentry config files (client, server, edge):
+  1. `event.request.data` is always deleted — no FormData or request bodies leave the server.
+  2. `event.extra.code` and `event.extra.input` are deleted — use-case inputs cannot leak via manually attached context.
+  3. Breadcrumbs carrying a `code` or `input` data key are dropped.
+- Sentry is **disabled when `SENTRY_DSN` is blank** — local dev without a DSN configured produces no traffic.
+- Source map upload is intentionally deferred (see ADR-009). Stack traces show minified identifiers until enabled.
+- The test error route (`GET /api/test-error`) returns 404 in production and throws intentionally in other environments.
+
+## Rate Limiting
+
+Requests to the review Server Action are rate-limited using an in-memory
+fixed-window counter (`src/shared/security/rate-limiter.ts`).
+
+**Limits (configurable via env vars; container restart/recreate is required after env changes):**
+
+| User type     | Default limit | Env var               |
+|---------------|---------------|-----------------------|
+| Anonymous     | 5 req / 60 s  | `RATE_LIMIT_ANON_MAX` |
+| Authenticated | 15 req / 60 s | `RATE_LIMIT_AUTH_MAX` |
+| Window        | 60 000 ms     | `RATE_LIMIT_WINDOW_MS`|
+
+**Key strategy:**
+- Authenticated users are keyed by their stable `userId` — not spoofable.
+- Anonymous users are keyed by `X-Forwarded-For` (first IP, set by Traefik) or
+  `X-Real-IP`; falls back to `"unknown"` in local dev without a proxy.
+
+**Known limitations of in-memory rate limiting (acceptable for MVP):**
+
+1. **Per-process state.** Each Node.js worker tracks its own counters. On this
+   single-container VPS deployment this is not a concern; a clustered or
+   multi-replica setup would allow users to exceed limits across processes.
+2. **Resets on restart.** Counters clear on every container restart or deploy.
+3. **IP spoofing.** `X-Forwarded-For` can be manipulated if traffic bypasses
+   Traefik and reaches the container directly. Ensure the VPS firewall blocks
+   direct access to the container port.
+4. **No persistence.** Limits are not stored to disk or a shared store.
+
+**Upgrade path:** When scaling horizontally, replace the `Map`-based store in
+`rate-limiter.ts` with a Redis or Upstash adapter. The `checkRateLimit`
+interface and all callers remain unchanged.
 
 ## Transport
 
