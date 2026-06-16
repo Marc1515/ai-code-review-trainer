@@ -7,6 +7,12 @@ export default function HomePage() {
   return (
     <div className="flex flex-1 flex-col items-center justify-center bg-zinc-50">
       <main className="flex w-full max-w-3xl flex-1 flex-col items-center justify-center gap-8 px-8 py-24 text-center">
+        <img
+          src="/ai-code-review-trainer-icon.svg"
+          alt=""
+          aria-hidden
+          className="size-20 shrink-0"
+        />
         <h1 className="text-4xl font-semibold tracking-tight text-zinc-900">{t("title")}</h1>
         <p className="max-w-xl text-lg leading-8 text-zinc-600">{t("subtitle")}</p>
         <Link

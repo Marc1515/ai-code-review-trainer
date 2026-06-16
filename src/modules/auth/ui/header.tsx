@@ -20,7 +20,13 @@ export async function AuthHeader() {
   return (
     <header className="border-b border-zinc-200 bg-white">
       <div className="mx-auto flex h-12 max-w-3xl items-center justify-between px-8">
-        <Link href="/" className="text-sm font-semibold text-zinc-900">
+        <Link href="/" className="flex items-center gap-2 text-sm font-semibold text-zinc-900">
+          <img
+            src="/ai-code-review-trainer-icon.svg"
+            alt=""
+            aria-hidden
+            className="size-7 shrink-0"
+          />
           AI Code Review Trainer
         </Link>
 
