@@ -5,6 +5,8 @@ import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { AuthHeader } from "@/modules/auth/ui/header";
+import { ThemeScript } from "@/shared/theme/theme-script";
+import { ThemeSync } from "@/shared/theme/theme-sync";
 import "../globals.css";
 
 const geistSans = Geist({
@@ -46,8 +48,12 @@ export default async function LocaleLayout({
       lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <ThemeScript />
+      </head>
       <body className="flex min-h-full flex-col">
         <NextIntlClientProvider messages={messages}>
+          <ThemeSync />
           <AuthHeader />
           {children}
         </NextIntlClientProvider>

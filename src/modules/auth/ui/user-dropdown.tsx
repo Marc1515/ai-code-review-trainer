@@ -39,7 +39,7 @@ export function UserDropdown(props: Props) {
     return (
       <NextLink
         href="/api/auth/signin"
-        className="text-sm text-zinc-500 underline-offset-2 hover:text-zinc-900 hover:underline"
+        className="text-sm text-zinc-500 underline-offset-2 hover:text-zinc-900 hover:underline dark:text-zinc-400 dark:hover:text-zinc-100"
       >
         {props.signInLabel}
       </NextLink>
@@ -51,7 +51,7 @@ export function UserDropdown(props: Props) {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1 text-sm text-zinc-600 hover:text-zinc-900"
+        className="flex items-center gap-1 text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
         aria-haspopup="menu"
         aria-expanded={open}
       >
@@ -74,22 +74,22 @@ export function UserDropdown(props: Props) {
       {open && (
         <div
           role="menu"
-          className="absolute top-full right-0 z-50 mt-1 min-w-40 rounded-md border border-zinc-200 bg-white py-1 shadow-md"
+          className="absolute top-full right-0 z-50 mt-1 min-w-40 rounded-md border border-zinc-200 bg-white py-1 shadow-md dark:border-zinc-700 dark:bg-zinc-800"
         >
           <Link
             href="/dashboard"
             role="menuitem"
             onClick={() => setOpen(false)}
-            className="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50"
+            className="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-700"
           >
             {props.myReviewsLabel}
           </Link>
-          <div className="my-1 border-t border-zinc-100" />
+          <div className="my-1 border-t border-zinc-100 dark:border-zinc-700" />
           <form action={handleSignOut}>
             <button
               type="submit"
               role="menuitem"
-              className="block w-full px-4 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50"
+              className="block w-full px-4 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-700"
             >
               {props.signOutLabel}
             </button>

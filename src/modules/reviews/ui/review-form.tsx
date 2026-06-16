@@ -17,7 +17,7 @@ const CodeEditor = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-[280px] w-full animate-pulse rounded-lg border border-zinc-300 bg-zinc-100" />
+      <div className="h-[280px] w-full animate-pulse rounded-lg border border-zinc-300 bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-800" />
     ),
   },
 );
@@ -69,7 +69,7 @@ export function ReviewForm({
       ? "text-red-500"
       : codeLength >= 9_500
         ? "text-yellow-500"
-        : "text-zinc-400";
+        : "text-zinc-400 dark:text-zinc-500";
 
   function buildFormData(skipSave = false): FormData | null {
     if (!formRef.current) return null;
@@ -110,7 +110,10 @@ export function ReviewForm({
     <div>
       <form ref={formRef} onSubmit={handleFormSubmit} className="space-y-6">
         <div>
-          <label htmlFor="cm-code" className="mb-1.5 block text-sm font-medium text-zinc-700">
+          <label
+            htmlFor="cm-code"
+            className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+          >
             {t("form.codeLabel")}
           </label>
           <CodeEditor
@@ -127,7 +130,10 @@ export function ReviewForm({
 
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
-            <label htmlFor="language" className="mb-1.5 block text-sm font-medium text-zinc-700">
+            <label
+              htmlFor="language"
+              className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+            >
               {t("form.languageLabel")}
             </label>
             <input
@@ -135,19 +141,22 @@ export function ReviewForm({
               name="language"
               type="text"
               placeholder={t("form.languagePlaceholder")}
-              className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:ring-2 focus:ring-zinc-500/20 focus:outline-none"
+              className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:ring-2 focus:ring-zinc-500/20 focus:outline-none dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-100 dark:placeholder:text-zinc-500"
             />
           </div>
 
           <div>
-            <label htmlFor="reviewType" className="mb-1.5 block text-sm font-medium text-zinc-700">
+            <label
+              htmlFor="reviewType"
+              className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+            >
               {t("form.reviewTypeLabel")}
             </label>
             <select
               id="reviewType"
               name="reviewType"
               defaultValue="general"
-              className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 focus:border-zinc-500 focus:ring-2 focus:ring-zinc-500/20 focus:outline-none"
+              className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 focus:border-zinc-500 focus:ring-2 focus:ring-zinc-500/20 focus:outline-none dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-100"
             >
               {REVIEW_TYPES.map((type) => (
                 <option key={type} value={type}>
@@ -159,7 +168,7 @@ export function ReviewForm({
         </div>
 
         {state.status === "error" && (
-          <p role="alert" className="text-sm text-red-600">
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
             {state.code === "validation"
               ? t("error.validation")
               : state.code === "rate-limit"
@@ -178,7 +187,7 @@ export function ReviewForm({
           <button
             type="submit"
             disabled={isPending}
-            className="flex w-fit items-center gap-2 rounded-lg bg-zinc-900 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex w-fit items-center gap-2 rounded-lg bg-zinc-900 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
           >
             {isPending && (
               <svg
@@ -205,7 +214,7 @@ export function ReviewForm({
             )}
             {isPending ? t("form.submitting") : t("form.submit")}
           </button>
-          <p className="text-xs text-zinc-400">{t("form.trustNotice")}</p>
+          <p className="text-xs text-zinc-400 dark:text-zinc-500">{t("form.trustNotice")}</p>
         </div>
       </form>
 
@@ -214,13 +223,15 @@ export function ReviewForm({
           {isAuthenticated && !state.saved && (
             <p
               role="status"
-              className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
+              className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200"
             >
               {t("notSaved", { max: maxSavedReviews })}
             </p>
           )}
           <ReviewResult result={state.result} />
-          {!isAuthenticated && <p className="mt-6 text-sm text-zinc-500">{t("form.saveHint")}</p>}
+          {!isAuthenticated && (
+            <p className="mt-6 text-sm text-zinc-500 dark:text-zinc-400">{t("form.saveHint")}</p>
+          )}
         </div>
       )}
 
@@ -231,19 +242,21 @@ export function ReviewForm({
           className="fixed inset-0 z-50 flex items-center justify-center p-4"
         >
           <div
-            className="absolute inset-0 bg-black/40"
+            className="absolute inset-0 bg-black/40 dark:bg-black/60"
             onClick={() => setShowLimitModal(false)}
             aria-hidden="true"
           />
-          <div className="relative w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
-            <h2 className="text-lg font-semibold text-zinc-900">{t("limitModal.title")}</h2>
-            <p className="mt-2 text-sm text-zinc-600">
+          <div className="relative w-full max-w-md rounded-xl bg-white p-6 shadow-xl dark:bg-zinc-800">
+            <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+              {t("limitModal.title")}
+            </h2>
+            <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
               {t("limitModal.description", { current: savedCount, max: maxSavedReviews })}
             </p>
             <div className="mt-6 flex flex-col gap-3">
               <Link
                 href="/dashboard"
-                className="flex w-full items-center justify-center rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700"
+                className="flex w-full items-center justify-center rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
                 onClick={() => setShowLimitModal(false)}
               >
                 {t("limitModal.goToDashboard")}
@@ -251,14 +264,14 @@ export function ReviewForm({
               <button
                 type="button"
                 onClick={handleContinueWithoutSaving}
-                className="w-full rounded-lg border border-zinc-300 px-4 py-2.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50"
+                className="w-full rounded-lg border border-zinc-300 px-4 py-2.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-700"
               >
                 {t("limitModal.continueWithoutSaving")}
               </button>
               <button
                 type="button"
                 onClick={() => setShowLimitModal(false)}
-                className="w-full rounded-lg px-4 py-2.5 text-sm text-zinc-500 transition-colors hover:bg-zinc-50"
+                className="w-full rounded-lg px-4 py-2.5 text-sm text-zinc-500 transition-colors hover:bg-zinc-50 dark:text-zinc-400 dark:hover:bg-zinc-700"
               >
                 {t("limitModal.cancel")}
               </button>
