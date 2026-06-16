@@ -56,6 +56,26 @@
       "encryptionKeyMissing": "El servidor no está configurado para BYOK. Contacta al administrador.",
       "server": "Error del servidor. Inténtalo de nuevo."
     },
+    "language": {
+      "title": "Idioma",
+      "label": "Idioma",
+      "description": "Elige el idioma de la aplicación.",
+      "options": {
+        "system": "Sistema",
+        "es": "Español",
+        "en": "Inglés"
+      }
+    },
+    "appTheme": {
+      "title": "Tema de la aplicación",
+      "label": "Tema",
+      "description": "Elige cómo quieres ver la aplicación.",
+      "options": {
+        "system": "Sistema",
+        "light": "Claro",
+        "dark": "Oscuro"
+      }
+    },
     "editorTheme": {
       "title": "Tema del editor de código",
       "label": "Tema",

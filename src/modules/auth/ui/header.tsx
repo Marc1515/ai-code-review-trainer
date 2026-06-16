@@ -20,27 +20,33 @@ export async function AuthHeader() {
     session?.user?.name?.split(" ")[0] ?? session?.user?.email?.split("@")[0] ?? "—";
 
   return (
-    <header className="border-b border-zinc-200 bg-white">
+    <header className="border-b border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900">
       <div className="mx-auto flex h-12 max-w-3xl items-center justify-between px-8">
         <Link href="/" className="flex items-center gap-2 text-sm font-semibold text-zinc-900">
           <img
             src="/ai-code-review-trainer-icon.svg"
             alt=""
             aria-hidden
-            className="size-7 shrink-0"
+            className="size-7 shrink-0 dark:hidden"
+          />
+          <img
+            src="/ai-code-review-trainer-icon-dark.svg"
+            alt=""
+            aria-hidden
+            className="hidden size-7 shrink-0 dark:block"
           />
         </Link>
 
         <div className="flex items-center gap-4">
           <Link
             href="/review"
-            className="text-sm text-zinc-500 underline-offset-2 hover:text-zinc-900 hover:underline"
+            className="text-sm text-zinc-500 underline-offset-2 hover:text-zinc-900 hover:underline dark:text-zinc-400 dark:hover:text-zinc-100"
           >
             {t("reviewerAi")}
           </Link>
           <Link
             href="/settings"
-            className="text-sm text-zinc-500 underline-offset-2 hover:text-zinc-900 hover:underline"
+            className="text-sm text-zinc-500 underline-offset-2 hover:text-zinc-900 hover:underline dark:text-zinc-400 dark:hover:text-zinc-100"
           >
             {tSettings("navLink")}
           </Link>
