@@ -93,7 +93,7 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
   return (
     <div>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <span className="text-sm text-zinc-500">
+        <span className="text-sm text-zinc-500 dark:text-zinc-400">
           {t("count", { current: reviews.length, max: maxReviews })}
         </span>
         {reviews.length > 0 && (
@@ -102,7 +102,7 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
               type="button"
               onClick={toggleSelectAll}
               disabled={isDeleting}
-              className="text-sm text-zinc-600 underline underline-offset-2 hover:text-zinc-900 disabled:cursor-not-allowed disabled:opacity-50"
+              className="text-sm text-zinc-600 underline underline-offset-2 hover:text-zinc-900 disabled:cursor-not-allowed disabled:opacity-50 dark:text-zinc-400 dark:hover:text-zinc-100"
             >
               {allSelected ? t("deselectAll") : t("selectAll")}
             </button>
@@ -111,7 +111,7 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
                 type="button"
                 onClick={handleDeleteMany}
                 disabled={isDeleting}
-                className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-sm font-medium text-red-700 transition-colors hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-sm font-medium text-red-700 transition-colors hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-red-800 dark:bg-red-950 dark:text-red-400 dark:hover:bg-red-900"
               >
                 {t("deleteSelected", { count: selectedIds.size })}
               </button>
@@ -121,16 +121,16 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
       </div>
 
       {reviews.length === 0 ? (
-        <p className="text-sm text-zinc-500">{t("empty")}</p>
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">{t("empty")}</p>
       ) : (
         <ul
-          className="divide-y divide-zinc-200 rounded-lg border border-zinc-200 bg-white"
+          className="divide-y divide-zinc-200 rounded-lg border border-zinc-200 bg-white dark:divide-zinc-700 dark:border-zinc-700 dark:bg-zinc-800"
           aria-busy={isDeleting}
         >
           {reviews.map((review) => (
             <li
               key={review.id}
-              className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-zinc-50"
+              className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-700/50"
             >
               <input
                 type="checkbox"
@@ -138,31 +138,35 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
                 onChange={() => toggleSelect(review.id)}
                 disabled={isDeleting}
                 aria-label={t("delete")}
-                className="h-4 w-4 flex-shrink-0 cursor-pointer rounded border-zinc-300 accent-zinc-900 disabled:cursor-not-allowed"
+                className="h-4 w-4 flex-shrink-0 cursor-pointer rounded border-zinc-300 accent-zinc-900 disabled:cursor-not-allowed dark:border-zinc-600 dark:accent-zinc-100"
               />
               <Link
                 href={`/dashboard/reviews/${review.id}`}
                 className="flex flex-1 flex-col gap-1 py-1"
               >
                 <div className="flex items-center gap-3">
-                  <span className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-700">
+                  <span className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-700 dark:bg-zinc-700 dark:text-zinc-300">
                     {localizedType(review.reviewType)}
                   </span>
                   {review.language && (
-                    <span className="text-xs text-zinc-500">{review.language}</span>
+                    <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                      {review.language}
+                    </span>
                   )}
-                  <span className="ml-auto text-xs text-zinc-400">
+                  <span className="ml-auto text-xs text-zinc-400 dark:text-zinc-500">
                     {new Date(review.createdAt).toLocaleDateString()}
                   </span>
                 </div>
-                <p className="line-clamp-2 text-sm text-zinc-700">{review.summary}</p>
+                <p className="line-clamp-2 text-sm text-zinc-700 dark:text-zinc-300">
+                  {review.summary}
+                </p>
               </Link>
               <button
                 type="button"
                 onClick={() => handleDeleteOne(review.id)}
                 disabled={isDeleting}
                 aria-label={t("delete")}
-                className="flex-shrink-0 rounded p-1.5 text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex-shrink-0 rounded p-1.5 text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50 dark:text-zinc-500 dark:hover:bg-red-950 dark:hover:text-red-400"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -184,7 +188,7 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
       )}
 
       {error && (
-        <p role="alert" className="mt-3 text-sm text-red-600">
+        <p role="alert" className="mt-3 text-sm text-red-600 dark:text-red-400">
           {error === "unauthorized" ? tReview("error.validation") : tReview("error.generic")}
         </p>
       )}
