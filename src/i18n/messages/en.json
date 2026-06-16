@@ -56,6 +56,16 @@
       "encryptionKeyMissing": "The server is not configured for BYOK. Contact the administrator.",
       "server": "Server error. Please try again."
     },
+    "language": {
+      "title": "Language",
+      "label": "Language",
+      "description": "Choose the application language.",
+      "options": {
+        "system": "System",
+        "es": "Spanish",
+        "en": "English"
+      }
+    },
     "appTheme": {
       "title": "Application theme",
       "label": "Theme",

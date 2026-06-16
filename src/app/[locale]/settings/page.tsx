@@ -5,6 +5,7 @@ import { getProviderConfigStatus } from "@/modules/reviews/infrastructure/db/use
 import { ApiKeySettings } from "@/modules/settings/ui/api-key-settings";
 import { AppThemeSettings } from "@/modules/settings/ui/app-theme-settings";
 import { EditorThemeSettings } from "@/modules/settings/ui/editor-theme-settings";
+import { LanguageSettings } from "@/modules/settings/ui/language-settings";
 
 export default async function SettingsPage() {
   const t = await getTranslations("settings");
@@ -30,6 +31,7 @@ export default async function SettingsPage() {
           <p className="mt-2 text-zinc-600 dark:text-zinc-400">{t("subtitle")}</p>
         </header>
         <div className="space-y-6">
+          <LanguageSettings />
           <AppThemeSettings />
           <EditorThemeSettings />
           {userId && <ApiKeySettings currentConfig={config} />}
