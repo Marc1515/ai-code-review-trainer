@@ -27,7 +27,6 @@ export async function AuthHeader() {
             aria-hidden
             className="size-7 shrink-0"
           />
-          AI Code Review Trainer
         </Link>
 
         <div className="flex items-center gap-4">
