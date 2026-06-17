@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
@@ -7,17 +8,21 @@ export default function HomePage() {
   return (
     <div className="flex flex-1 flex-col items-center justify-center bg-zinc-50 dark:bg-zinc-950">
       <main className="flex w-full max-w-3xl flex-1 flex-col items-center justify-center gap-8 px-8 py-24 text-center">
-        <img
+        <Image
           src="/ai-code-review-trainer-icon.svg"
           alt=""
           aria-hidden
-          className="size-20 shrink-0 dark:hidden"
+          width={80}
+          height={80}
+          className="shrink-0 dark:hidden"
         />
-        <img
+        <Image
           src="/ai-code-review-trainer-icon-dark.svg"
           alt=""
           aria-hidden
-          className="hidden size-20 shrink-0 dark:block"
+          width={80}
+          height={80}
+          className="hidden shrink-0 dark:block"
         />
         <h1 className="text-4xl font-semibold tracking-tight">
           <span className="text-brand-navy dark:text-blue-300">AI Code Review </span>
