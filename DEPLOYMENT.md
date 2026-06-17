@@ -35,6 +35,21 @@ starting `node server.js`.
   survives app redeploys (ADR-007). These are started once and managed
   independently of app deploys. Each DB compose file creates its backend network.
 
+### Ollama service
+
+The app uses a **local Ollama instance** as the default AI provider
+(`AI_PROVIDER=ollama`). Ollama must be running on the VPS and reachable by the
+app container. It must **never** be publicly exposed.
+
+- The app container reaches Ollama via `OLLAMA_BASE_URL=http://ollama:11434`
+  (Docker internal networking).
+- From the VPS host, Ollama can be tested at `http://127.0.0.1:11434` (ensure
+  the VPS firewall blocks external access to port 11434).
+- Recommended model: `ollama pull qwen2.5-coder:3b`
+- Lightweight alternative: `ollama pull qwen2.5-coder:1.5b`
+- Additional env vars: `OLLAMA_MODEL` (default `qwen2.5-coder:3b`) and
+  `OLLAMA_TIMEOUT_MS` (default `90000`).
+
 ### Networks
 - `traefik-proxy` — external, managed by Traefik. Both app services attach to it.
 - `ai-code-review-trainer-dev-backend` — created by `docker-compose.db.dev.yml`;

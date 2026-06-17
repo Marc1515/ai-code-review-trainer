@@ -32,7 +32,7 @@
   },
   "settings": {
     "title": "Settings",
-    "subtitle": "Manage your AI provider for code reviews.",
+    "subtitle": "Customize your app experience.",
     "navLink": "Settings",
     "statusTitle": "Current status",
     "currentProvider": "Provider: {name}",
@@ -55,6 +55,12 @@
       "validation": "Please check your form inputs.",
       "encryptionKeyMissing": "The server is not configured for BYOK. Contact the administrator.",
       "server": "Server error. Please try again."
+    },
+    "aiProvider": {
+      "title": "External AI provider",
+      "comingSoon": "Coming soon",
+      "description": "The app uses a free local AI server. No API key is needed to use the code reviewer.",
+      "note": "Integration with external providers (such as OpenAI or Anthropic) is planned for a future phase."
     },
     "language": {
       "title": "Language",

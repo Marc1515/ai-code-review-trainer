@@ -4,10 +4,10 @@ An educational web app where you paste code and receive a structured,
 mentor-style code review from an AI. The reviewer explains _why_ each issue
 matters and suggests concrete improvements across several review lenses.
 
-> **MVP status:** manual code paste only, powered by a cost-free **mock** AI
-> provider. The platform owner never pays AI usage costs for public users; real
-> models arrive later as **BYOK** (bring your own key). See
-> [DECISIONS.md](./DECISIONS.md).
+> **Current status:** manual code paste only, powered by a **local Ollama**
+> server-side AI (zero cost for owner and users). No API key needed. The
+> `mock` provider is available as a local/demo/testing fallback. BYOK is
+> postponed — see [DECISIONS.md](./DECISIONS.md).
 
 ## Review types
 
@@ -30,7 +30,7 @@ matters and suggests concrete improvements across several review lenses.
 
 ```bash
 pnpm install
-cp .env.example .env        # fill in values (placeholders are fine for the mock MVP)
+cp .env.example .env        # fill in values; AI_PROVIDER=ollama by default
 pnpm dev                    # http://localhost:3000
 ```
 
