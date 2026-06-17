@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 
 import { auth } from "@/auth";
@@ -23,17 +24,21 @@ export async function AuthHeader() {
     <header className="border-b border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900">
       <div className="mx-auto flex h-12 max-w-3xl items-center justify-between px-8">
         <Link href="/" className="flex items-center gap-2 text-sm font-semibold text-zinc-900">
-          <img
+          <Image
             src="/ai-code-review-trainer-icon.svg"
             alt=""
             aria-hidden
-            className="size-7 shrink-0 dark:hidden"
+            width={28}
+            height={28}
+            className="shrink-0 dark:hidden"
           />
-          <img
+          <Image
             src="/ai-code-review-trainer-icon-dark.svg"
             alt=""
             aria-hidden
-            className="hidden size-7 shrink-0 dark:block"
+            width={28}
+            height={28}
+            className="hidden shrink-0 dark:block"
           />
         </Link>
 
