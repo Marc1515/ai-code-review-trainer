@@ -32,29 +32,13 @@
   },
   "settings": {
     "title": "Settings",
-    "subtitle": "Manage your AI provider for code reviews.",
+    "subtitle": "Customize your app experience.",
     "navLink": "Settings",
-    "statusTitle": "Current status",
-    "currentProvider": "Provider: {name}",
-    "modelLabel": "Anthropic model",
-    "apiKeyLabel": "Anthropic API key",
-    "apiKeyPlaceholder": "sk-ant-...",
-    "addKey": "Set up API key",
-    "updateKey": "Update API key",
-    "saveKey": "Save",
-    "saving": "Saving...",
-    "deleteKey": "Delete key",
-    "deleting": "Deleting...",
-    "saved": "Key saved successfully.",
-    "fallback": "No key configured. Reviews will use the free mock provider.",
-    "status": {
-      "configured": "API key configured"
-    },
-    "error": {
-      "unauthorized": "You must be signed in.",
-      "validation": "Please check your form inputs.",
-      "encryptionKeyMissing": "The server is not configured for BYOK. Contact the administrator.",
-      "server": "Server error. Please try again."
+    "aiProvider": {
+      "title": "External AI provider",
+      "comingSoon": "Coming soon",
+      "description": "The app uses a free local AI server. No API key is needed to use the code reviewer.",
+      "note": "Integration with external providers (such as OpenAI or Anthropic) is planned for a future phase."
     },
     "language": {
       "title": "Language",

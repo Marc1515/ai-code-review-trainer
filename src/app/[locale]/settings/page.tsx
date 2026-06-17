@@ -1,25 +1,12 @@
 import { getTranslations } from "next-intl/server";
 
-import { auth } from "@/auth";
-import { getProviderConfigStatus } from "@/modules/reviews/infrastructure/db/user-provider-config-repository";
-import { ApiKeySettings } from "@/modules/settings/ui/api-key-settings";
+import { AiProviderComingSoonSettings } from "@/modules/settings/ui/ai-provider-coming-soon-settings";
 import { AppThemeSettings } from "@/modules/settings/ui/app-theme-settings";
 import { EditorThemeSettings } from "@/modules/settings/ui/editor-theme-settings";
 import { LanguageSettings } from "@/modules/settings/ui/language-settings";
 
 export default async function SettingsPage() {
   const t = await getTranslations("settings");
-
-  let userId: string | undefined;
-  try {
-    const session = await auth();
-    userId = session?.user?.id ?? undefined;
-  } catch {
-    // Auth not configured; treat as unauthenticated.
-  }
-
-  // getProviderConfigStatus never returns the encrypted key — safe to pass to client.
-  const config = userId ? await getProviderConfigStatus(userId) : null;
 
   return (
     <div className="flex flex-1 flex-col bg-zinc-50 dark:bg-zinc-950">
@@ -34,7 +21,7 @@ export default async function SettingsPage() {
           <LanguageSettings />
           <AppThemeSettings />
           <EditorThemeSettings />
-          {userId && <ApiKeySettings currentConfig={config} />}
+          <AiProviderComingSoonSettings />
         </div>
       </main>
     </div>

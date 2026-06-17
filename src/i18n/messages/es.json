@@ -32,29 +32,13 @@
   },
   "settings": {
     "title": "Configuración",
-    "subtitle": "Gestiona tu proveedor de IA para revisiones de código.",
+    "subtitle": "Personaliza la experiencia de la aplicación.",
     "navLink": "Configuración",
-    "statusTitle": "Estado actual",
-    "currentProvider": "Proveedor: {name}",
-    "modelLabel": "Modelo de Anthropic",
-    "apiKeyLabel": "Clave de API de Anthropic",
-    "apiKeyPlaceholder": "sk-ant-...",
-    "addKey": "Configurar clave de API",
-    "updateKey": "Actualizar clave de API",
-    "saveKey": "Guardar",
-    "saving": "Guardando...",
-    "deleteKey": "Eliminar clave",
-    "deleting": "Eliminando...",
-    "saved": "Clave guardada correctamente.",
-    "fallback": "Sin clave configurada. Las revisiones usarán el proveedor de prueba gratuito.",
-    "status": {
-      "configured": "Clave de API configurada"
-    },
-    "error": {
-      "unauthorized": "Debes iniciar sesión.",
-      "validation": "Por favor, revisa los campos del formulario.",
-      "encryptionKeyMissing": "El servidor no está configurado para BYOK. Contacta al administrador.",
-      "server": "Error del servidor. Inténtalo de nuevo."
+    "aiProvider": {
+      "title": "Proveedor de IA externo",
+      "comingSoon": "Próximamente",
+      "description": "La aplicación usa un servidor de IA local gratuito. No necesitas ninguna clave de API para usar el revisor de código.",
+      "note": "La integración con proveedores externos (como OpenAI o Anthropic) está planificada para una fase futura."
     },
     "language": {
       "title": "Idioma",
