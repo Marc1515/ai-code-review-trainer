@@ -76,9 +76,8 @@ logic-free; business rules live in use-cases.
 **Decision.** Use **next-intl** with locale-prefixed routes and message
 catalogs. Default locale `es`, secondary `en`. Code/docs remain English.
 
-**Consequences.** Standard, scalable i18n. next-intl setup is the **next step,
-before the review feature is implemented** — it adds a `[locale]` routing
-segment and middleware.
+**Consequences.** Standard, scalable i18n. next-intl adds a `[locale]` routing
+segment and middleware; both are fully implemented.
 
 ---
 
@@ -90,8 +89,8 @@ for signed-in users.
 **Decision.** Anyone can run a review (stateless). History is persisted **only**
 for users authenticated via GitHub/Google.
 
-**Consequences.** Simple anonymous path; persistence and auth are additive
-(Phase 3). No PII stored for anonymous users.
+**Consequences.** Simple anonymous path. Persistence and auth are implemented
+and active. No PII stored for anonymous users.
 
 ---
 

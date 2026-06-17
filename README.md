@@ -22,7 +22,7 @@ matters and suggests concrete improvements across several review lenses.
 - **Auth.js / NextAuth** (GitHub + Google)
 - **ESLint** · **Prettier** · **Husky** · **lint-staged**
 - **Docker** / **Docker Compose** · **Traefik** · **GitHub Actions** (self-hosted runner)
-- **Sentry** (documented now, implemented after the MVP flow)
+- **Sentry** (error monitoring, active)
 
 > This project uses **pnpm only**. Do not use npm, yarn, or bun.
 

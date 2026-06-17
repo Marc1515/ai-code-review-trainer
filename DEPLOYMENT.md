@@ -1,10 +1,8 @@
 # Deployment
 
 Deployment targets a single VPS using **Docker Compose** behind **Traefik**,
-driven by **GitHub Actions** on a **self-hosted runner**.
-
-> Some artifacts below (Dockerfile, compose files, workflows) are authored in
-> the infrastructure phase (Phase 4). This document is the agreed target design.
+driven by **GitHub Actions** on a **self-hosted runner**. This document
+describes the current, implemented architecture.
 
 ## Environments
 

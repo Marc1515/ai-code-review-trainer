@@ -29,7 +29,7 @@ pnpm prisma generate                    # regenerate client after schema changes
 pnpm prisma studio                      # GUI browser for the DB
 ```
 
-Env setup: copy `.env.example` → `.env` and fill in `DATABASE_URL`, `AUTH_SECRET`, `GITHUB_ID`, `GITHUB_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`.
+Env setup: copy `.env.example` → `.env` and fill in `DATABASE_URL`, `AUTH_SECRET`, `AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET`, `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`.
 
 The Husky `pre-commit` hook runs `lint-staged` automatically. Before committing manually, run `pnpm lint && pnpm typecheck && pnpm format:check`.
 
@@ -100,4 +100,4 @@ Completed: scaffold → next-intl i18n → mock review flow → auth → authent
 **Current phase:** complete.  
 Next: post-MVP (simulated pull requests, pagination, second AI provider if planned).
 
-Don't pull later-phase work forward. Off-limits until explicitly planned: edit/delete reviews, pagination, BYOK, second AI provider, Docker/CI changes.
+Don't pull later-phase work forward. Off-limits until explicitly planned: BYOK, second AI provider, simulated pull requests, pagination, Docker/CI/deploy changes.
