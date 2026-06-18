@@ -1,7 +1,30 @@
 {
   "home": {
-    "subtitle": "Practica la revisión de código real. Aprende a identificar errores, mejoras de rendimiento y problemas de estilo.",
-    "cta": "Comenzar"
+    "eyebrow": "// mentor de código · IA local",
+    "headlineMain": "Tu mentor de código,",
+    "headlineAccent": "con IA.",
+    "subtitle": "Pega tu código y recibe una revisión técnica detallada: errores, rendimiento y estilo. Sin API key. Tu código nunca se ejecuta.",
+    "cta": "Comenzar",
+    "ctaSecondary": "Ver mis revisiones",
+    "trust": {
+      "noKey": "Sin API key",
+      "noExec": "Código nunca ejecutado",
+      "local": "IA en servidor local"
+    },
+    "features": {
+      "noKey": {
+        "title": "Sin API key",
+        "description": "La IA corre en un servidor local. No necesitas ninguna cuenta ni clave de API."
+      },
+      "private": {
+        "title": "Privado por diseño",
+        "description": "Tu código se analiza como dato, nunca se ejecuta. Solo se guarda si inicias sesión."
+      },
+      "local": {
+        "title": "IA local",
+        "description": "Ollama corre en el servidor. Sin costes de API. Sin dependencia de terceros."
+      }
+    }
   },
   "auth": {
     "signIn": "Iniciar sesión",
