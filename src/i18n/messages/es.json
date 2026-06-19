@@ -1,7 +1,30 @@
 {
   "home": {
-    "subtitle": "Practica la revisión de código real. Aprende a identificar errores, mejoras de rendimiento y problemas de estilo.",
-    "cta": "Comenzar"
+    "eyebrow": "// mentor de código · IA local",
+    "headlineMain": "Tu mentor de código,",
+    "headlineAccent": "con IA.",
+    "subtitle": "Pega tu código y recibe una revisión técnica detallada: errores, rendimiento y estilo. Sin API key. Tu código nunca se ejecuta.",
+    "cta": "Comenzar",
+    "ctaSecondary": "Ver mis revisiones",
+    "trust": {
+      "noKey": "Sin API key",
+      "noExec": "Código nunca ejecutado",
+      "local": "IA en servidor local"
+    },
+    "features": {
+      "noKey": {
+        "title": "Sin API key",
+        "description": "La IA corre en un servidor local. No necesitas ninguna cuenta ni clave de API."
+      },
+      "private": {
+        "title": "Privado por diseño",
+        "description": "Tu código se analiza como dato, nunca se ejecuta. Solo se guarda si inicias sesión."
+      },
+      "local": {
+        "title": "IA local",
+        "description": "Ollama corre en el servidor. Sin costes de API. Sin dependencia de terceros."
+      }
+    }
   },
   "auth": {
     "signIn": "Iniciar sesión",
@@ -32,29 +55,33 @@
   },
   "settings": {
     "title": "Configuración",
-    "subtitle": "Gestiona tu proveedor de IA para revisiones de código.",
+    "subtitle": "Personaliza la experiencia de la aplicación.",
     "navLink": "Configuración",
-    "statusTitle": "Estado actual",
-    "currentProvider": "Proveedor: {name}",
-    "modelLabel": "Modelo de Anthropic",
-    "apiKeyLabel": "Clave de API de Anthropic",
-    "apiKeyPlaceholder": "sk-ant-...",
-    "addKey": "Configurar clave de API",
-    "updateKey": "Actualizar clave de API",
-    "saveKey": "Guardar",
-    "saving": "Guardando...",
-    "deleteKey": "Eliminar clave",
-    "deleting": "Eliminando...",
-    "saved": "Clave guardada correctamente.",
-    "fallback": "Sin clave configurada. Las revisiones usarán el proveedor de prueba gratuito.",
-    "status": {
-      "configured": "Clave de API configurada"
+    "aiProvider": {
+      "title": "Proveedor de IA externo",
+      "comingSoon": "Próximamente",
+      "description": "La aplicación usa un servidor de IA local gratuito. No necesitas ninguna clave de API para usar el revisor de código.",
+      "note": "La integración con proveedores externos está planificada para una fase futura."
     },
-    "error": {
-      "unauthorized": "Debes iniciar sesión.",
-      "validation": "Por favor, revisa los campos del formulario.",
-      "encryptionKeyMissing": "El servidor no está configurado para BYOK. Contacta al administrador.",
-      "server": "Error del servidor. Inténtalo de nuevo."
+    "language": {
+      "title": "Idioma",
+      "label": "Idioma",
+      "description": "Elige el idioma de la aplicación.",
+      "options": {
+        "system": "Sistema",
+        "es": "Español",
+        "en": "Inglés"
+      }
+    },
+    "appTheme": {
+      "title": "Tema de la aplicación",
+      "label": "Tema",
+      "description": "Elige cómo quieres ver la aplicación.",
+      "options": {
+        "system": "Sistema",
+        "light": "Claro",
+        "dark": "Oscuro"
+      }
     },
     "language": {
       "title": "Idioma",
@@ -89,7 +116,12 @@
   "review": {
     "page": {
       "title": "Revisión de código",
-      "subtitle": "Pega tu código, elige el tipo de revisión y recibe retroalimentación educativa."
+      "subtitle": "Pega tu código, elige el tipo de revisión y recibe retroalimentación educativa.",
+      "trust": {
+        "local": "IA en servidor local",
+        "noKey": "Sin API key",
+        "noExec": "Código nunca ejecutado"
+      }
     },
     "form": {
       "codeLabel": "Código",

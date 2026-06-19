@@ -24,17 +24,29 @@ threat model and the non-negotiable rules.
   provider cannot inject arbitrary structure into the UI.
 - Submitted code is rendered as inert text, never as executable HTML/markup.
 
-## Cost / abuse policy
+## AI provider and cost policy
 
-- The MVP uses the **mock provider only** — the owner incurs **no AI cost** for
-  public users (see [DECISIONS.md](./DECISIONS.md), ADR-001).
-- Future real AI is **BYOK**: authenticated users supply their own key and bear
-  their own cost (ADR-002). BYOK keys, when implemented, are handled server-side
-  only and never logged or returned to the client. See [BYOK key rules](#byok-api-key-rules) below.
+- The app uses a **local Ollama instance** server-side as the default AI provider
+  (`AI_PROVIDER=ollama`). The owner incurs **no AI cost**; users incur **no AI
+  cost** (see [DECISIONS.md](./DECISIONS.md), ADR-001).
+- **No API key is required** to use the app. Users must never be asked to provide
+  one in the current product.
+- `AI_PROVIDER=mock` is available as a fallback for local development, demos, and
+  testing only. No paid cloud provider (OpenAI, Anthropic, Gemini, etc.) is wired
+  as the default or fallback.
+- **Ollama is server-side only.** The Ollama endpoint must never be publicly
+  exposed. In Docker networking, the app reaches Ollama via
+  `OLLAMA_BASE_URL=http://ollama:11434`. From the VPS host, it may be tested at
+  `http://127.0.0.1:11434` (blocked externally by the firewall).
+- If Ollama is busy, the app returns a clear busy state to the user.
+- If Ollama is unavailable, the app returns a demo-safe unavailable result.
+- **BYOK is postponed** (ADR-002). No BYOK UI, no API-key storage, and no paid
+  provider are active. If BYOK resumes, the key-handling rules below apply.
 
-## BYOK API key rules
+## BYOK API key rules *(deferred — BYOK is postponed; see ADR-002)*
 
-These rules apply from Phase 11 onward. They are non-negotiable.
+These rules are non-negotiable **if and when BYOK is re-activated**. They are
+kept here for reference.
 
 1. **Server-only.** The decrypted API key exists only in server memory, for the
    duration of one request. It is never serialised, never returned from a

@@ -5,29 +5,39 @@ Status: `accepted` unless noted.
 
 ---
 
-## ADR-001 — Mock AI provider by default; owner never pays for public users
+## ADR-001 — Local Ollama as default AI provider; owner and users pay zero
 
 **Context.** This is a public educational app. Real model usage costs money and
 is trivially abusable by anonymous traffic.
 
-**Decision.** The MVP ships with a deterministic `MockAiReviewProvider` selected
-by default. No paid AI usage exists in the MVP.
+**Decision.** The app uses a **local Ollama instance** (server-side, never
+publicly exposed) as the default AI provider. Default model: `qwen2.5-coder:3b`;
+lightweight alternative: `qwen2.5-coder:1.5b`. The `MockAiReviewProvider` is
+retained as a fallback for local development, demos, and testing
+(`AI_PROVIDER=mock`). No paid cloud provider (OpenAI, Anthropic, Gemini, etc.)
+is used as the default or fallback.
 
-**Consequences.** Zero AI cost exposure for the owner. Reviews are canned but
-demonstrate the full flow and UI. Real intelligence is deferred (see ADR-002).
+**Consequences.** Zero AI cost for the owner and for users. No API key is
+required to use the app. Ollama must be running server-side and must not be
+exposed publicly. If Ollama is busy, the app returns a clear busy state; if
+unavailable, it returns a demo-safe unavailable result.
 
 ---
 
-## ADR-002 — Future real AI is BYOK (bring your own key)
+## ADR-002 — BYOK (bring your own key) is postponed / out of scope
 
-**Context.** Users may want real reviews, but the owner must not absorb the cost.
+**Context.** Users may want real reviews via a paid cloud provider of their
+choice, but the current product decision is to keep costs at zero for both
+owner and users by using local Ollama (ADR-001).
 
-**Decision.** Real AI usage will be opt-in for **authenticated** users who
-supply their own API key; they are responsible for any cost. Selection happens
-in `provider-factory.ts` behind the `AiReviewProvider` port.
+**Decision.** BYOK is **postponed and out of scope** for the current product.
+It may return in a future phase, but no BYOK UI, no API-key storage, and no
+paid provider are active or wired in the app today.
 
-**Consequences.** No caller changes when adding BYOK. Key storage/secret
-handling must be designed carefully (server-only) when implemented.
+**Consequences.** Users never need to provide an API key. The `AiReviewProvider`
+port is already designed for swappable providers, so BYOK can be added later
+without architecture changes. The `UserProviderConfig` Prisma table exists from
+prior design work but is dormant; no migrations are needed to defer BYOK.
 
 ---
 
@@ -66,9 +76,8 @@ logic-free; business rules live in use-cases.
 **Decision.** Use **next-intl** with locale-prefixed routes and message
 catalogs. Default locale `es`, secondary `en`. Code/docs remain English.
 
-**Consequences.** Standard, scalable i18n. next-intl setup is the **next step,
-before the review feature is implemented** — it adds a `[locale]` routing
-segment and middleware.
+**Consequences.** Standard, scalable i18n. next-intl adds a `[locale]` routing
+segment and middleware; both are fully implemented.
 
 ---
 
@@ -80,8 +89,8 @@ for signed-in users.
 **Decision.** Anyone can run a review (stateless). History is persisted **only**
 for users authenticated via GitHub/Google.
 
-**Consequences.** Simple anonymous path; persistence and auth are additive
-(Phase 3). No PII stored for anonymous users.
+**Consequences.** Simple anonymous path. Persistence and auth are implemented
+and active. No PII stored for anonymous users.
 
 ---
 
@@ -141,70 +150,39 @@ or bun. `pnpm-workspace.yaml` pins which dependency build scripts are allowed.
 
 ---
 
-## ADR-011 — BYOK key storage: encrypted at rest, server-only *(design — Phase 10)*
+## ADR-011 — BYOK key storage: encrypted at rest, server-only *(postponed — see ADR-002)*
 
-**Context.** BYOK (ADR-002) requires persisting each user's API key between
-sessions. The key must never appear in plaintext in the database, in logs, in
-Sentry events, or in any value returned to the client.
+**Context.** This ADR was designed alongside BYOK (ADR-002), which is now
+postponed.
 
-**Decision.** Store the key as AES-256-GCM ciphertext in a dedicated
-`UserProviderConfig` table (see ADR-012). A single `ENCRYPTION_KEY` env var
-(32-byte, base64; generated with `openssl rand -base64 32`) is the only secret
-needed to decrypt it. The plaintext key exists only in server memory during the
-single request that uses it; it is never returned from any function, never
-logged, and never attached to Sentry context.
+**Decision.** No action. The design (AES-256-GCM, `ENCRYPTION_KEY` env var,
+server-only plaintext lifetime) is documented here for reference when BYOK
+resumes. `ENCRYPTION_KEY` is **not validated** in `config/env.ts` and is
+**not required** in the current product.
 
-A future `shared/security/crypto.ts` module (starting with `import "server-only"`)
-provides `encrypt(plaintext, key)` and `decrypt(ciphertext, key)` backed by
-Node.js `crypto` (AES-256-GCM). No third-party crypto dependency is needed.
-
-`ENCRYPTION_KEY` is a **Phase 11 requirement**. It is not active in the MVP and
-is not validated in `config/env.ts` today; it will be added when the BYOK
-implementation phase begins.
-
-**Consequences.** A DB breach exposes only ciphertext. The `ENCRYPTION_KEY` on
-the VPS is the sole sensitive secret; rotate it by re-encrypting stored keys.
-Plain-text key storage is permanently off the table.
+**Consequences.** No change to current deployment. When BYOK resumes, this
+ADR provides the implementation contract.
 
 ---
 
-## ADR-012 — BYOK provider selection is per-user, not a global env flag *(design — Phase 10)*
+## ADR-012 — BYOK provider selection is per-user, not a global env flag *(postponed — see ADR-002)*
 
-**Context.** A global `AI_PROVIDER` env var that switches all users to a real
-model would expose the owner to cost and abuse. BYOK must be opt-in per
-authenticated user.
+**Context.** This ADR was designed alongside BYOK (ADR-002), which is now
+postponed.
 
-**Decision.** Provider selection is user-scoped:
+**Decision.** No action. The design (per-user factory lookup, `UserProviderConfig`
+table, `userId`-scoped queries) is documented here for reference when BYOK
+resumes. The `UserProviderConfig` Prisma table exists from prior design work
+but is dormant — it is not queried by the active review flow.
+
+The current active provider selection is simpler:
 
 ```
-getAiReviewProvider(userId?)
-  ├── !userId  →  MockAiReviewProvider          (anonymous; no DB call)
-  ├── userId, no config  →  MockAiReviewProvider (authenticated, not enrolled)
-  └── userId, config present  →  BYOKAiReviewProvider(decryptedKey, model)
+getAiReviewProvider()
+  ├── AI_PROVIDER=ollama  →  OllamaAiReviewProvider   (default)
+  └── AI_PROVIDER=mock    →  MockAiReviewProvider     (local/demo/testing)
 ```
 
-The factory becomes `async getAiReviewProvider(userId?: string)`. The use-case
-passes `userId` in; no other layer changes. `AI_PROVIDER` in `env.ts` remains
-locked to `"mock"` — it is not the BYOK switch.
-
-Phase 11 starts with **one** real provider (Anthropic Claude) to reduce scope.
-A second provider (OpenAI) may be added later without architecture changes.
-
-The `UserProviderConfig` table (separate from the `User` model) stores:
-
-| Column            | Type      | Notes                                  |
-|-------------------|-----------|----------------------------------------|
-| `id`              | `String`  | cuid primary key                       |
-| `userId`          | `String`  | FK → `User.id`, unique                 |
-| `providerName`    | `String`  | `"anthropic"` (Phase 11); extensible   |
-| `providerModel`   | `String`  | e.g. `"claude-sonnet-4-6"`             |
-| `encryptedApiKey` | `String`  | AES-256-GCM ciphertext, base64         |
-| `createdAt`       | `DateTime`|                                        |
-| `updatedAt`       | `DateTime`|                                        |
-
-All repository queries on this table **must filter by `userId`** (same rule as
-`listReviewsByUser`). The Prisma migration and the settings UI are Phase 11 work.
-
-**Consequences.** Zero risk of one user seeing another's key. The owner never
-pays for any review. Anonymous users and authenticated users without a key
-always use the mock provider.
+**Consequences.** All users (anonymous and authenticated) use the same
+server-side Ollama provider. No user sees another's data. When BYOK resumes,
+the per-user factory design can be layered on top without changing callers.

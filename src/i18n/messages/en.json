@@ -1,7 +1,30 @@
 {
   "home": {
-    "subtitle": "Practice real code review. Learn to identify bugs, performance improvements, and style issues.",
-    "cta": "Get Started"
+    "eyebrow": "// code mentor · local AI",
+    "headlineMain": "Your code mentor,",
+    "headlineAccent": "powered by AI.",
+    "subtitle": "Paste your code and get detailed technical feedback: bugs, performance, and style. No API key. Your code is never executed.",
+    "cta": "Get Started",
+    "ctaSecondary": "My reviews",
+    "trust": {
+      "noKey": "No API key",
+      "noExec": "Code never executed",
+      "local": "Local server AI"
+    },
+    "features": {
+      "noKey": {
+        "title": "No API key",
+        "description": "The AI runs on a local server. No account or API key required."
+      },
+      "private": {
+        "title": "Private by design",
+        "description": "Your code is analyzed as data, never executed. Saved only if you sign in."
+      },
+      "local": {
+        "title": "Local AI",
+        "description": "Ollama runs on the server. No API costs. No third-party dependencies."
+      }
+    }
   },
   "auth": {
     "signIn": "Sign in",
@@ -32,29 +55,33 @@
   },
   "settings": {
     "title": "Settings",
-    "subtitle": "Manage your AI provider for code reviews.",
+    "subtitle": "Customize your app experience.",
     "navLink": "Settings",
-    "statusTitle": "Current status",
-    "currentProvider": "Provider: {name}",
-    "modelLabel": "Anthropic model",
-    "apiKeyLabel": "Anthropic API key",
-    "apiKeyPlaceholder": "sk-ant-...",
-    "addKey": "Set up API key",
-    "updateKey": "Update API key",
-    "saveKey": "Save",
-    "saving": "Saving...",
-    "deleteKey": "Delete key",
-    "deleting": "Deleting...",
-    "saved": "Key saved successfully.",
-    "fallback": "No key configured. Reviews will use the free mock provider.",
-    "status": {
-      "configured": "API key configured"
+    "aiProvider": {
+      "title": "External AI provider",
+      "comingSoon": "Coming soon",
+      "description": "The app uses a free local AI server. No API key is needed to use the code reviewer.",
+      "note": "Integration with external providers is planned for a future phase."
     },
-    "error": {
-      "unauthorized": "You must be signed in.",
-      "validation": "Please check your form inputs.",
-      "encryptionKeyMissing": "The server is not configured for BYOK. Contact the administrator.",
-      "server": "Server error. Please try again."
+    "language": {
+      "title": "Language",
+      "label": "Language",
+      "description": "Choose the application language.",
+      "options": {
+        "system": "System",
+        "es": "Spanish",
+        "en": "English"
+      }
+    },
+    "appTheme": {
+      "title": "Application theme",
+      "label": "Theme",
+      "description": "Choose how you want to view the application.",
+      "options": {
+        "system": "System",
+        "light": "Light",
+        "dark": "Dark"
+      }
     },
     "language": {
       "title": "Language",
@@ -89,7 +116,12 @@
   "review": {
     "page": {
       "title": "Code Review",
-      "subtitle": "Paste your code, choose a review type, and get educational feedback."
+      "subtitle": "Paste your code, choose a review type, and get educational feedback.",
+      "trust": {
+        "local": "Local server AI",
+        "noKey": "No API key",
+        "noExec": "Code never executed"
+      }
     },
     "form": {
       "codeLabel": "Code",

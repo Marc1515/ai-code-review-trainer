@@ -6,7 +6,7 @@ import { githubLight, githubDark } from "@uiw/codemirror-theme-github";
 import { dracula } from "@uiw/codemirror-theme-dracula";
 import type { EditorTheme } from "@/shared/hooks/use-editor-theme";
 
-const THEME_MAP = {
+export const THEME_MAP = {
   "github-light": githubLight,
   "github-dark": githubDark,
   dracula: dracula,
@@ -17,11 +17,13 @@ const JS_EXTENSIONS = [javascript({ jsx: true, typescript: true })];
 
 interface Props {
   value: string;
-  onChange: (value: string) => void;
+  onChange?: (value: string) => void;
   theme: EditorTheme;
   placeholder?: string;
   maxLength?: number;
   minHeight?: string;
+  readOnly?: boolean;
+  ariaLabel?: string;
 }
 
 export function CodeEditor({
@@ -31,8 +33,11 @@ export function CodeEditor({
   placeholder,
   maxLength,
   minHeight = "280px",
+  readOnly = false,
+  ariaLabel,
 }: Props) {
   function handleChange(v: string) {
+    if (!onChange) return;
     if (maxLength !== undefined && v.length > maxLength) return;
     onChange(v);
   }
@@ -40,12 +45,19 @@ export function CodeEditor({
   return (
     <CodeMirror
       value={value}
-      onChange={handleChange}
+      onChange={readOnly ? undefined : handleChange}
       extensions={JS_EXTENSIONS}
       theme={THEME_MAP[theme]}
       placeholder={placeholder}
       minHeight={minHeight}
-      className="overflow-hidden rounded-lg border border-zinc-300 text-sm focus-within:border-zinc-500 focus-within:ring-2 focus-within:ring-zinc-500/20"
+      readOnly={readOnly}
+      editable={!readOnly}
+      aria-label={ariaLabel}
+      className={
+        readOnly
+          ? "overflow-hidden rounded-lg border border-zinc-200 text-sm dark:border-zinc-700"
+          : "overflow-hidden rounded-lg border border-zinc-300 text-sm focus-within:border-zinc-500 focus-within:ring-2 focus-within:ring-zinc-500/20"
+      }
     />
   );
 }

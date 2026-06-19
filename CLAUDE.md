@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - **pnpm only.** Never use npm, yarn, or bun. Install with `pnpm add`, scripts via `pnpm <script>`.
 - **Never execute user-submitted code**, and never add `eval`/`Function`/shell execution of user input. Code is **data**, not instructions. See [SECURITY.md](./SECURITY.md) and [PROMPTS.md](./PROMPTS.md).
-- **No paid AI in the MVP.** Default provider is `MockAiReviewProvider`. Real AI is future **BYOK** only (see [DECISIONS.md](./DECISIONS.md)).
+- **No paid AI, ever by default.** Default provider is `OllamaAiReviewProvider` (local, server-side). `MockAiReviewProvider` is for local/demo/testing only (`AI_PROVIDER=mock`). BYOK is postponed — do not introduce any paid provider (see [DECISIONS.md](./DECISIONS.md)).
 - **Never commit secrets** or real env files. Only `*.example` templates are committed.
 - Keep secrets server-side; only `NEXT_PUBLIC_*` may reach the client.
 
@@ -29,7 +29,7 @@ pnpm prisma generate                    # regenerate client after schema changes
 pnpm prisma studio                      # GUI browser for the DB
 ```
 
-Env setup: copy `.env.example` → `.env` and fill in `DATABASE_URL`, `AUTH_SECRET`, `GITHUB_ID`, `GITHUB_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`.
+Env setup: copy `.env.example` → `.env` and fill in `DATABASE_URL`, `AUTH_SECRET`, `AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET`, `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`.
 
 The Husky `pre-commit` hook runs `lint-staged` automatically. Before committing manually, run `pnpm lint && pnpm typecheck && pnpm format:check`.
 
@@ -41,7 +41,7 @@ Modular, Clean/Hexagonal-inspired. Dependencies point inward — framework detai
 UI (React)  ──▶  Server Action  ──▶  Use-case  ──▶  Port (interface)
                                                        ▲
                                           Adapter implements port
-                                  (MockAiReviewProvider, Prisma repo)
+                                  (OllamaAiReviewProvider, MockAiReviewProvider, Prisma repo)
 ```
 
 Layer rules:
@@ -96,8 +96,8 @@ To add a new AI provider: implement the `AiReviewProvider` port and wire it in `
 
 ## Phasing
 
-Completed: scaffold → next-intl i18n → mock review flow → auth → authenticated persistence → dashboard (list) → review detail page → security hardening & rate limiting → infra/deploy preparation → Sentry observability → BYOK provider design → BYOK implementation.  
+Completed: scaffold → next-intl i18n → mock review flow → auth → authenticated persistence → dashboard (list) → review detail page → security hardening & rate limiting → infra/deploy preparation → Sentry observability → Ollama provider → product & docs alignment.  
 **Current phase:** complete.  
-Next: post-MVP (simulated pull requests, second BYOK provider, pagination).
+Next: post-MVP (simulated pull requests, pagination, second AI provider if planned).
 
-Don't pull later-phase work forward. Off-limits until explicitly planned: edit/delete reviews, pagination, second AI provider (OpenAI), Docker/CI changes.
+Don't pull later-phase work forward. Off-limits until explicitly planned: BYOK, second AI provider, simulated pull requests, pagination, Docker/CI/deploy changes.
