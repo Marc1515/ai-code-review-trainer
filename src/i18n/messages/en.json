@@ -83,6 +83,26 @@
         "dark": "Dark"
       }
     },
+    "language": {
+      "title": "Language",
+      "label": "Language",
+      "description": "Choose the application language.",
+      "options": {
+        "system": "System",
+        "es": "Spanish",
+        "en": "English"
+      }
+    },
+    "appTheme": {
+      "title": "Application theme",
+      "label": "Theme",
+      "description": "Choose how you want to view the application.",
+      "options": {
+        "system": "System",
+        "light": "Light",
+        "dark": "Dark"
+      }
+    },
     "editorTheme": {
       "title": "Code editor theme",
       "label": "Theme",
