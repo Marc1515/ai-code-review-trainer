@@ -43,6 +43,7 @@ export async function AuthHeader() {
             height={28}
             className="hidden shrink-0 dark:block"
           />
+          <span className="text-brand-accent hidden sm:inline">AI Code Review Trainer</span>
         </Link>
 
         <div className="flex items-center gap-5">

@@ -1,10 +1,11 @@
 import { getTranslations } from "next-intl/server";
-import { KeyRound, Server, ShieldCheck } from "lucide-react";
+import { KeyRound, Server } from "lucide-react";
 
 import { auth } from "@/auth";
 import { MAX_SAVED_REVIEWS } from "@/modules/reviews/domain/constants";
 import { countByUserId } from "@/modules/reviews/infrastructure/db/review-repository";
 import { ReviewForm } from "@/modules/reviews/ui/review-form";
+import { EditorThemeBadge } from "@/shared/ui/editor-theme-badge";
 import { PageShell } from "@/shared/ui/page-shell";
 
 export default async function ReviewPage() {
@@ -38,10 +39,7 @@ export default async function ReviewPage() {
             <KeyRound className="h-3 w-3" aria-hidden />
             {t("trust.noKey")}
           </span>
-          <span className="inline-flex items-center gap-1.5 rounded border border-teal-200 bg-teal-50 px-2 py-0.5 font-mono text-xs text-teal-700 dark:border-teal-800 dark:bg-teal-950/60 dark:text-teal-300">
-            <ShieldCheck className="h-3 w-3" aria-hidden />
-            {t("trust.noExec")}
-          </span>
+          <EditorThemeBadge />
         </div>
       </header>
       <ReviewForm

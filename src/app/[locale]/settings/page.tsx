@@ -17,7 +17,7 @@ export default async function SettingsPage() {
         </h1>
         <p className="mt-2 text-zinc-600 dark:text-zinc-400">{t("subtitle")}</p>
       </header>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="space-y-4">
         <LanguageSettings />
         <AppThemeSettings />
         <EditorThemeSettings />
