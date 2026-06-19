@@ -61,7 +61,7 @@
       "title": "Proveedor de IA externo",
       "comingSoon": "Próximamente",
       "description": "La aplicación usa un servidor de IA local gratuito. No necesitas ninguna clave de API para usar el revisor de código.",
-      "note": "La integración con proveedores externos (como OpenAI o Anthropic) está planificada para una fase futura."
+      "note": "La integración con proveedores externos está planificada para una fase futura."
     },
     "language": {
       "title": "Idioma",
@@ -96,7 +96,12 @@
   "review": {
     "page": {
       "title": "Revisión de código",
-      "subtitle": "Pega tu código, elige el tipo de revisión y recibe retroalimentación educativa."
+      "subtitle": "Pega tu código, elige el tipo de revisión y recibe retroalimentación educativa.",
+      "trust": {
+        "local": "IA en servidor local",
+        "noKey": "Sin API key",
+        "noExec": "Código nunca ejecutado"
+      }
     },
     "form": {
       "codeLabel": "Código",

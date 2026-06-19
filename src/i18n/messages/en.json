@@ -61,7 +61,7 @@
       "title": "External AI provider",
       "comingSoon": "Coming soon",
       "description": "The app uses a free local AI server. No API key is needed to use the code reviewer.",
-      "note": "Integration with external providers (such as OpenAI or Anthropic) is planned for a future phase."
+      "note": "Integration with external providers is planned for a future phase."
     },
     "language": {
       "title": "Language",
@@ -96,7 +96,12 @@
   "review": {
     "page": {
       "title": "Code Review",
-      "subtitle": "Paste your code, choose a review type, and get educational feedback."
+      "subtitle": "Paste your code, choose a review type, and get educational feedback.",
+      "trust": {
+        "local": "Local server AI",
+        "noKey": "No API key",
+        "noExec": "Code never executed"
+      }
     },
     "form": {
       "codeLabel": "Code",
