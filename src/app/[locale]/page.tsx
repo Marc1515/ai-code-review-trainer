@@ -56,7 +56,7 @@ export default async function HomePage() {
 
         {/* Right: product preview */}
         <div className="w-full md:flex-1">
-          <ReviewPreview />
+          <ReviewPreview localAiLabel={t("features.local.title")} />
         </div>
       </section>
 

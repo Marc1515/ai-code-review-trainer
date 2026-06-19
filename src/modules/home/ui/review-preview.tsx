@@ -1,12 +1,12 @@
-const CODE_LINES: { n: number; text: string; bug?: true }[] = [
-  { n: 1, text: "function getTotal(items) {" },
-  { n: 2, text: "  let sum = 0;" },
-  { n: 3, text: "  for (let i = 0; i <= items.length; i++) {", bug: true },
-  { n: 4, text: "    sum += items[i].price;" },
-  { n: 5, text: "  }" },
-  { n: 6, text: "  return sum;" },
-  { n: 7, text: "}" },
-];
+import { CodePreview } from "@/shared/ui/code-preview";
+
+const CODE_SAMPLE = `function getTotal(items) {
+  let sum = 0;
+  for (let i = 0; i <= items.length; i++) {
+    sum += items[i].price;
+  }
+  return sum;
+}`;
 
 const FINDINGS: {
   severity: "critical" | "major" | "info";
@@ -47,7 +47,7 @@ const SEVERITY_LABEL: Record<"critical" | "major" | "info", string> = {
   info: "Info",
 };
 
-export function ReviewPreview() {
+export function ReviewPreview({ localAiLabel }: { localAiLabel: string }) {
   return (
     <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-800 dark:bg-zinc-900">
       {/* Toolbar */}
@@ -65,22 +65,13 @@ export function ReviewPreview() {
             aria-hidden
             className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-teal-500"
           />
-          IA local
+          {localAiLabel}
         </span>
       </div>
 
-      {/* Code block */}
-      <div className="overflow-x-auto bg-zinc-950 py-3">
-        {CODE_LINES.map(({ n, text, bug }) => (
-          <div key={n} className={`flex gap-4 px-4 py-0.5${bug ? "bg-red-500/10" : ""}`}>
-            <span className="w-3.5 shrink-0 text-right font-mono text-[11px] leading-5 text-zinc-600 select-none">
-              {n}
-            </span>
-            <code className="font-mono text-[11px] leading-5 whitespace-pre text-zinc-300">
-              {text}
-            </code>
-          </div>
-        ))}
+      {/* Syntax-highlighted code */}
+      <div className="px-3 py-3">
+        <CodePreview value={CODE_SAMPLE} minHeight="160px" ariaLabel="Sample code" />
       </div>
 
       {/* Summary */}

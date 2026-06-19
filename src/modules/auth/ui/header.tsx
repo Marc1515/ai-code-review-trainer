@@ -21,9 +21,12 @@ export async function AuthHeader() {
     session?.user?.name?.split(" ")[0] ?? session?.user?.email?.split("@")[0] ?? "—";
 
   return (
-    <header className="border-b border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900">
-      <div className="mx-auto flex h-12 max-w-3xl items-center justify-between px-8">
-        <Link href="/" className="flex items-center gap-2 text-sm font-semibold text-zinc-900">
+    <header className="border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6 lg:px-8">
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100"
+        >
           <Image
             src="/ai-code-review-trainer-icon.svg"
             alt=""
@@ -40,12 +43,13 @@ export async function AuthHeader() {
             height={28}
             className="hidden shrink-0 dark:block"
           />
+          <span className="text-brand-accent hidden sm:inline">AI Code Review Trainer</span>
         </Link>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-5">
           <Link
             href="/review"
-            className="text-sm text-zinc-500 underline-offset-2 hover:text-zinc-900 hover:underline dark:text-zinc-400 dark:hover:text-zinc-100"
+            className="inline-flex items-center rounded border border-teal-200 bg-teal-50 px-2.5 py-1 text-xs font-medium text-teal-700 transition-colors hover:bg-teal-100 dark:border-teal-800 dark:bg-teal-950/60 dark:text-teal-300 dark:hover:bg-teal-950"
           >
             {t("reviewerAi")}
           </Link>
