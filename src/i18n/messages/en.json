@@ -1,4 +1,7 @@
 {
+  "navigation": {
+    "loading": "Loading page..."
+  },
   "home": {
     "eyebrow": "// code mentor · local AI",
     "headlineMain": "Your code mentor,",
