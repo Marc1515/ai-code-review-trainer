@@ -10,57 +10,59 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-1 flex-col bg-zinc-50 dark:bg-zinc-950">
-      {/* Hero */}
-      <section className="relative mx-auto flex w-full max-w-5xl flex-1 flex-col items-center gap-12 px-6 py-16 md:flex-row md:items-center md:gap-16 md:py-24 lg:px-8">
+      {/* Hero — full-viewport-width wrapper so background bleeds edge-to-edge */}
+      <div className="relative flex flex-1 flex-col overflow-hidden">
         <AnimatedDotBackground />
-        {/* Left: copy */}
-        <div className="relative flex flex-col items-start gap-6 md:flex-1">
-          {/* Eyebrow */}
-          <span className="inline-flex items-center rounded border border-teal-200 bg-teal-50 px-2 py-0.5 font-mono text-xs text-teal-700 dark:border-teal-800 dark:bg-teal-950/60 dark:text-teal-300">
-            {t("eyebrow")}
-          </span>
+        <section className="relative mx-auto flex w-full max-w-5xl flex-1 flex-col items-center gap-12 px-6 py-16 md:flex-row md:items-center md:gap-16 md:py-24 lg:px-8">
+          {/* Left: copy */}
+          <div className="relative flex flex-col items-start gap-6 md:flex-1">
+            {/* Eyebrow */}
+            <span className="inline-flex items-center rounded border border-teal-200 bg-teal-50 px-2 py-0.5 font-mono text-xs text-teal-700 dark:border-teal-800 dark:bg-teal-950/60 dark:text-teal-300">
+              {t("eyebrow")}
+            </span>
 
-          {/* Headline */}
-          <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
-            <span className="block text-zinc-900 dark:text-zinc-50">{t("headlineMain")}</span>
-            <span className="text-brand-accent">{t("headlineAccent")}</span>
-          </h1>
+            {/* Headline */}
+            <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
+              <span className="block text-zinc-900 dark:text-zinc-50">{t("headlineMain")}</span>
+              <span className="text-brand-accent">{t("headlineAccent")}</span>
+            </h1>
 
-          {/* Subtitle */}
-          <p className="max-w-sm text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            {t("subtitle")}
-          </p>
+            {/* Subtitle */}
+            <p className="max-w-sm text-lg leading-8 text-zinc-600 dark:text-zinc-400">
+              {t("subtitle")}
+            </p>
 
-          {/* CTAs */}
-          <div className="flex flex-wrap items-center gap-4">
-            <Link
-              href="/review"
-              className="rounded-full bg-zinc-900 px-7 py-3 text-sm font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
-            >
-              {t("cta")}
-            </Link>
-            <Link
-              href="/dashboard"
-              className="flex items-center gap-1 text-sm font-medium text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-            >
-              {t("ctaSecondary")}
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
+            {/* CTAs */}
+            <div className="flex flex-wrap items-center gap-4">
+              <Link
+                href="/review"
+                className="rounded-full bg-zinc-900 px-7 py-3 text-sm font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+              >
+                {t("cta")}
+              </Link>
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-1 text-sm font-medium text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+              >
+                {t("ctaSecondary")}
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+
+            {/* Trust micro-copy */}
+            <div className="flex flex-wrap gap-x-5 gap-y-1 text-xs text-zinc-400 dark:text-zinc-500">
+              <span>✓ {t("trust.noKey")}</span>
+              <span>✓ {t("trust.noExec")}</span>
+              <span>✓ {t("trust.local")}</span>
+            </div>
           </div>
 
-          {/* Trust micro-copy */}
-          <div className="flex flex-wrap gap-x-5 gap-y-1 text-xs text-zinc-400 dark:text-zinc-500">
-            <span>✓ {t("trust.noKey")}</span>
-            <span>✓ {t("trust.noExec")}</span>
-            <span>✓ {t("trust.local")}</span>
+          {/* Right: product preview */}
+          <div className="relative w-full md:flex-1">
+            <ReviewPreview localAiLabel={t("features.local.title")} />
           </div>
-        </div>
-
-        {/* Right: product preview */}
-        <div className="relative w-full md:flex-1">
-          <ReviewPreview localAiLabel={t("features.local.title")} />
-        </div>
-      </section>
+        </section>
+      </div>
 
       {/* Features strip */}
       <section className="border-t border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900">
