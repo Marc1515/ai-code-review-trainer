@@ -51,7 +51,21 @@
     "selectAll": "Select all",
     "deselectAll": "Deselect all",
     "confirmDelete": "Are you sure you want to delete this review?",
-    "confirmDeleteMany": "Are you sure you want to delete {count} reviews?"
+    "confirmDeleteMany": "Are you sure you want to delete {count} reviews?",
+    "filterLabel": "Filter by type",
+    "filterAll": "All reviews",
+    "multiselect": "Multi-select",
+    "checkboxLabel": "Select review",
+    "emptyFilter": "No reviews match this filter.",
+    "deleteModal": {
+      "cancelLabel": "Cancel",
+      "titleOne": "Delete review",
+      "bodyOne": "This will delete this saved review. This action cannot be undone.",
+      "confirmOne": "Delete review",
+      "titleMany": "Delete selected reviews",
+      "bodyMany": "This will delete {count} saved reviews. This action cannot be undone.",
+      "confirmMany": "Delete reviews"
+    }
   },
   "settings": {
     "title": "Settings",
