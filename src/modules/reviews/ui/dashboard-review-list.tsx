@@ -7,11 +7,14 @@ import { Link } from "@/i18n/navigation";
 import { REVIEW_TYPES, type ReviewType } from "@/modules/reviews/domain/types";
 import type { ReviewSummary } from "@/modules/reviews/infrastructure/db/review-repository";
 import { deleteReviewAction, deleteManyReviewsAction } from "@/server/actions/dashboard.action";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 
 interface Props {
   reviews: ReviewSummary[];
   maxReviews: number;
 }
+
+type ConfirmState = { kind: "none" } | { kind: "one"; id: string } | { kind: "many" };
 
 export function DashboardReviewList({ reviews, maxReviews }: Props) {
   const t = useTranslations("dashboard");
@@ -23,6 +26,7 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [isMultiSelectMode, setIsMultiSelectMode] = useState(false);
   const [activeFilter, setActiveFilter] = useState<ReviewType | "all">("all");
+  const [confirmState, setConfirmState] = useState<ConfirmState>({ kind: "none" });
 
   const typeLabels: Record<ReviewType, string> = {
     general: tReview("types.general"),
@@ -80,12 +84,28 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
     }
   }
 
-  async function handleDeleteOne(id: string) {
-    if (!window.confirm(t("confirmDelete"))) return;
+  // Opens the confirmation modal for a single review deletion
+  function requestDeleteOne(id: string) {
+    setConfirmState({ kind: "one", id });
+  }
+
+  // Opens the confirmation modal for bulk deletion
+  function requestDeleteMany() {
+    setConfirmState({ kind: "many" });
+  }
+
+  function cancelConfirm() {
+    setConfirmState({ kind: "none" });
+  }
+
+  async function executeDeleteOne() {
+    if (confirmState.kind !== "one") return;
+    const { id } = confirmState;
     setIsDeleting(true);
     setError(null);
     const result = await deleteReviewAction(id);
     setIsDeleting(false);
+    setConfirmState({ kind: "none" });
     if (result.status === "error") {
       setError(result.code);
       return;
@@ -98,13 +118,13 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
     router.refresh();
   }
 
-  async function handleDeleteMany() {
+  async function executeDeleteMany() {
     const ids = Array.from(selectedIds);
-    if (!window.confirm(t("confirmDeleteMany", { count: ids.length }))) return;
     setIsDeleting(true);
     setError(null);
     const result = await deleteManyReviewsAction(ids);
     setIsDeleting(false);
+    setConfirmState({ kind: "none" });
     if (result.status === "error") {
       setError(result.code);
       return;
@@ -112,6 +132,9 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
     setSelectedIds(new Set());
     router.refresh();
   }
+
+  const isModalOpen = confirmState.kind !== "none";
+  const isMany = confirmState.kind === "many";
 
   return (
     <div>
@@ -171,7 +194,6 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
              * Animated group: Select all + Delete selected.
              * CSS grid 0fr→1fr animates to the natural content width
              * without requiring a hardcoded max-width guess.
-             * The inner overflow-hidden clips during the collapse.
              */}
             <div
               className={[
@@ -203,7 +225,7 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
                     <div className="overflow-hidden">
                       <button
                         type="button"
-                        onClick={handleDeleteMany}
+                        onClick={requestDeleteMany}
                         disabled={isDeleting}
                         tabIndex={isMultiSelectMode && selectedIds.size > 0 ? 0 : -1}
                         className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-sm font-medium whitespace-nowrap text-red-700 transition-colors hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-red-800 dark:bg-red-950 dark:text-red-400 dark:hover:bg-red-900"
@@ -238,7 +260,6 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
                * Checkbox slot — always in the DOM.
                * Animates width (0→1rem) and margin-right (0→0.75rem) together
                * with opacity, so the row content shifts smoothly without a pop.
-               * overflow-hidden clips the 16px checkbox as the wrapper narrows.
                */}
               <div
                 className={[
@@ -260,11 +281,7 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
                 />
               </div>
 
-              {/*
-               * Clickable content area — tag, language, summary.
-               * Date has been moved to the right-side action area
-               * so it aligns with the trash button consistently.
-               */}
+              {/* Clickable content area — navigates to review detail */}
               <Link
                 href={`/dashboard/reviews/${review.id}`}
                 className="flex min-w-0 flex-1 flex-col gap-0.5 py-0.5"
@@ -284,18 +301,14 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
                 </p>
               </Link>
 
-              {/*
-               * Right-side action area — date and trash button share a single
-               * flex items-center container, so they are always vertically
-               * centered together regardless of summary line count.
-               */}
+              {/* Right-side action area — date and trash always together */}
               <div className="ml-3 flex flex-shrink-0 items-center gap-1.5">
                 <span className="text-xs text-zinc-400 tabular-nums dark:text-zinc-500">
                   {new Date(review.createdAt).toLocaleDateString()}
                 </span>
                 <button
                   type="button"
-                  onClick={() => handleDeleteOne(review.id)}
+                  onClick={() => requestDeleteOne(review.id)}
                   disabled={isDeleting}
                   aria-label={t("delete")}
                   className="flex-shrink-0 rounded-lg p-1.5 text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50 dark:text-zinc-500 dark:hover:bg-red-950/60 dark:hover:text-red-400"
@@ -325,6 +338,20 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
           {error === "unauthorized" ? tReview("error.validation") : tReview("error.generic")}
         </p>
       )}
+
+      {/* Confirmation modal — shared for single and bulk deletion */}
+      <ConfirmDialog
+        open={isModalOpen}
+        title={isMany ? t("deleteModal.titleMany") : t("deleteModal.titleOne")}
+        description={
+          isMany ? t("deleteModal.bodyMany", { count: selectedIds.size }) : t("deleteModal.bodyOne")
+        }
+        confirmLabel={isMany ? t("deleteModal.confirmMany") : t("deleteModal.confirmOne")}
+        cancelLabel={t("deleteModal.cancelLabel")}
+        onConfirm={isMany ? executeDeleteMany : executeDeleteOne}
+        onCancel={cancelConfirm}
+        isPending={isDeleting}
+      />
     </div>
   );
 }

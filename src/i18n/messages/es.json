@@ -56,7 +56,16 @@
     "filterAll": "Todas las revisiones",
     "multiselect": "Selección múltiple",
     "checkboxLabel": "Seleccionar revisión",
-    "emptyFilter": "No hay revisiones con este filtro."
+    "emptyFilter": "No hay revisiones con este filtro.",
+    "deleteModal": {
+      "cancelLabel": "Cancelar",
+      "titleOne": "Eliminar revisión",
+      "bodyOne": "Esta acción eliminará esta revisión guardada. No se puede deshacer.",
+      "confirmOne": "Eliminar revisión",
+      "titleMany": "Eliminar revisiones seleccionadas",
+      "bodyMany": "Esta acción eliminará {count} revisiones guardadas. No se puede deshacer.",
+      "confirmMany": "Eliminar revisiones"
+    }
   },
   "settings": {
     "title": "Configuración",
