@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 
 // Applies dark class before first paint to avoid theme flash.
 // Kept self-contained — no imports, no React state.
-const THEME_INIT_SCRIPT = `(function(){try{var k='ai-code-review-trainer-theme',s=localStorage.getItem(k);if(s==='dark'||(s==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})()`;
+const THEME_INIT_SCRIPT = `(function(){try{var k='ai-code-review-trainer-theme',s=localStorage.getItem(k);if(!s||s==='dark'||(s==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})()`;
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const headersList = await headers();

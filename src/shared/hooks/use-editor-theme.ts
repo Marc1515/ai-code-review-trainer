@@ -5,7 +5,7 @@ import { useSyncExternalStore } from "react";
 export type EditorTheme = "github-light" | "github-dark" | "dracula";
 
 export const EDITOR_THEMES: readonly EditorTheme[] = ["github-light", "github-dark", "dracula"];
-export const DEFAULT_THEME: EditorTheme = "github-light";
+export const DEFAULT_THEME: EditorTheme = "github-dark";
 
 const STORAGE_KEY = "editorTheme";
 
