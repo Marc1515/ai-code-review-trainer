@@ -3,6 +3,7 @@ import { KeyRound, ShieldCheck, Server, ArrowRight } from "lucide-react";
 
 import { Link } from "@/i18n/navigation";
 import { ReviewPreview } from "@/modules/home/ui/review-preview";
+import { AnimatedDotBackground } from "@/shared/ui/animated-dot-background";
 
 export default async function HomePage() {
   const t = await getTranslations("home");
@@ -10,9 +11,10 @@ export default async function HomePage() {
   return (
     <div className="flex flex-1 flex-col bg-zinc-50 dark:bg-zinc-950">
       {/* Hero */}
-      <section className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center gap-12 px-6 py-16 md:flex-row md:items-center md:gap-16 md:py-24 lg:px-8">
+      <section className="relative mx-auto flex w-full max-w-5xl flex-1 flex-col items-center gap-12 px-6 py-16 md:flex-row md:items-center md:gap-16 md:py-24 lg:px-8">
+        <AnimatedDotBackground />
         {/* Left: copy */}
-        <div className="flex flex-col items-start gap-6 md:flex-1">
+        <div className="relative flex flex-col items-start gap-6 md:flex-1">
           {/* Eyebrow */}
           <span className="inline-flex items-center rounded border border-teal-200 bg-teal-50 px-2 py-0.5 font-mono text-xs text-teal-700 dark:border-teal-800 dark:bg-teal-950/60 dark:text-teal-300">
             {t("eyebrow")}
@@ -55,7 +57,7 @@ export default async function HomePage() {
         </div>
 
         {/* Right: product preview */}
-        <div className="w-full md:flex-1">
+        <div className="relative w-full md:flex-1">
           <ReviewPreview localAiLabel={t("features.local.title")} />
         </div>
       </section>
