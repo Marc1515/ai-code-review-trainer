@@ -1,4 +1,7 @@
 {
+  "navigation": {
+    "loading": "Cargando página..."
+  },
   "home": {
     "eyebrow": "// mentor de código · IA local",
     "headlineMain": "Tu mentor de código,",
