@@ -21,6 +21,8 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isMultiSelectMode, setIsMultiSelectMode] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<ReviewType | "all">("all");
 
   const typeLabels: Record<ReviewType, string> = {
     general: tReview("types.general"),
@@ -35,6 +37,21 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
   const localizedType = (raw: string): string =>
     REVIEW_TYPES.includes(raw as ReviewType) ? typeLabels[raw as ReviewType] : raw;
 
+  const filteredReviews =
+    activeFilter === "all" ? reviews : reviews.filter((r) => r.reviewType === activeFilter);
+
+  const allSelected =
+    filteredReviews.length > 0 && filteredReviews.every((r) => selectedIds.has(r.id));
+
+  const availableTypes = REVIEW_TYPES.filter((type) => reviews.some((r) => r.reviewType === type));
+
+  function toggleMultiSelectMode() {
+    if (isMultiSelectMode) {
+      setSelectedIds(new Set());
+    }
+    setIsMultiSelectMode((prev) => !prev);
+  }
+
   function toggleSelect(id: string) {
     setSelectedIds((prev) => {
       const next = new Set(prev);
@@ -48,10 +65,18 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
   }
 
   function toggleSelectAll() {
-    if (selectedIds.size === reviews.length) {
-      setSelectedIds(new Set());
+    if (allSelected) {
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        filteredReviews.forEach((r) => next.delete(r.id));
+        return next;
+      });
     } else {
-      setSelectedIds(new Set(reviews.map((r) => r.id)));
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        filteredReviews.forEach((r) => next.add(r.id));
+        return next;
+      });
     }
   }
 
@@ -88,100 +113,208 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
     router.refresh();
   }
 
-  const allSelected = reviews.length > 0 && selectedIds.size === reviews.length;
-
   return (
     <div>
+      {/* Controls bar */}
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <span className="text-sm text-zinc-500 dark:text-zinc-400">
           {t("count", { current: reviews.length, max: maxReviews })}
         </span>
+
         {reviews.length > 0 && (
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Filter by review type */}
+            <select
+              value={activeFilter}
+              onChange={(e) => setActiveFilter(e.target.value as ReviewType | "all")}
+              aria-label={t("filterLabel")}
+              className="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/50 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:focus:border-teal-500"
+            >
+              <option value="all">{t("filterAll")}</option>
+              {availableTypes.map((type) => (
+                <option key={type} value={type}>
+                  {localizedType(type)}
+                </option>
+              ))}
+            </select>
+
+            {/* Multi-select mode toggle — always visible */}
             <button
               type="button"
-              onClick={toggleSelectAll}
+              onClick={toggleMultiSelectMode}
               disabled={isDeleting}
-              className="text-sm text-zinc-600 underline underline-offset-2 hover:text-zinc-900 disabled:cursor-not-allowed disabled:opacity-50 dark:text-zinc-400 dark:hover:text-zinc-100"
+              aria-pressed={isMultiSelectMode}
+              className={[
+                "flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50",
+                isMultiSelectMode
+                  ? "border-teal-400 bg-teal-50 text-teal-700 hover:bg-teal-100 dark:border-teal-500/50 dark:bg-teal-500/10 dark:text-teal-400 dark:hover:bg-teal-500/20"
+                  : "border-zinc-300 bg-zinc-50 text-zinc-600 hover:border-zinc-400 hover:text-zinc-800 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-200",
+              ].join(" ")}
             >
-              {allSelected ? t("deselectAll") : t("selectAll")}
-            </button>
-            {selectedIds.size > 0 && (
-              <button
-                type="button"
-                onClick={handleDeleteMany}
-                disabled={isDeleting}
-                className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-sm font-medium text-red-700 transition-colors hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-red-800 dark:bg-red-950 dark:text-red-400 dark:hover:bg-red-900"
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+                className="h-3.5 w-3.5"
+                aria-hidden="true"
               >
-                {t("deleteSelected", { count: selectedIds.size })}
-              </button>
-            )}
+                <path
+                  fillRule="evenodd"
+                  d="M2 4.75A2.75 2.75 0 0 1 4.75 2h6.5A2.75 2.75 0 0 1 14 4.75v6.5A2.75 2.75 0 0 1 11.25 14h-6.5A2.75 2.75 0 0 1 2 11.25v-6.5Zm8.03 2.97a.75.75 0 0 0-1.06 0L7.5 9.44l-.72-.72a.75.75 0 0 0-1.06 1.06l1.25 1.25a.75.75 0 0 0 1.06 0l2-2a.75.75 0 0 0 0-1.06Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              {t("multiselect")}
+            </button>
+
+            {/*
+             * Animated group: Select all + Delete selected.
+             * CSS grid 0fr→1fr animates to the natural content width
+             * without requiring a hardcoded max-width guess.
+             * The inner overflow-hidden clips during the collapse.
+             */}
+            <div
+              className={[
+                "grid overflow-hidden transition-all duration-200 ease-out",
+                isMultiSelectMode ? "grid-cols-[1fr] opacity-100" : "grid-cols-[0fr] opacity-0",
+              ].join(" ")}
+            >
+              <div className="overflow-hidden">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={toggleSelectAll}
+                    disabled={isDeleting || filteredReviews.length === 0}
+                    tabIndex={isMultiSelectMode ? 0 : -1}
+                    className="rounded-lg border border-zinc-300 bg-zinc-50 px-3 py-1.5 text-sm whitespace-nowrap text-zinc-600 transition-colors hover:border-zinc-400 hover:text-zinc-800 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+                  >
+                    {allSelected ? t("deselectAll") : t("selectAll")}
+                  </button>
+
+                  {/* Delete selected — second-level animation within the group */}
+                  <div
+                    className={[
+                      "grid overflow-hidden transition-all duration-150 ease-out",
+                      isMultiSelectMode && selectedIds.size > 0
+                        ? "grid-cols-[1fr] opacity-100"
+                        : "grid-cols-[0fr] opacity-0",
+                    ].join(" ")}
+                  >
+                    <div className="overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={handleDeleteMany}
+                        disabled={isDeleting}
+                        tabIndex={isMultiSelectMode && selectedIds.size > 0 ? 0 : -1}
+                        className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-sm font-medium whitespace-nowrap text-red-700 transition-colors hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-red-800 dark:bg-red-950 dark:text-red-400 dark:hover:bg-red-900"
+                      >
+                        {t("deleteSelected", { count: selectedIds.size })}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>
 
+      {/* List / empty states */}
       {reviews.length === 0 ? (
         <p className="text-sm text-zinc-500 dark:text-zinc-400">{t("empty")}</p>
+      ) : filteredReviews.length === 0 ? (
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">{t("emptyFilter")}</p>
       ) : (
         <ul
-          className="divide-y divide-zinc-200 rounded-lg border border-zinc-200 bg-white dark:divide-zinc-700 dark:border-zinc-700 dark:bg-zinc-800"
+          className="divide-y divide-zinc-200 rounded-xl border border-zinc-200 bg-white dark:divide-zinc-700/60 dark:border-zinc-700/60 dark:bg-zinc-800/60"
           aria-busy={isDeleting}
         >
-          {reviews.map((review) => (
+          {filteredReviews.map((review) => (
             <li
               key={review.id}
-              className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-700/50"
+              className="flex items-center px-4 py-3 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-700/40"
             >
-              <input
-                type="checkbox"
-                checked={selectedIds.has(review.id)}
-                onChange={() => toggleSelect(review.id)}
-                disabled={isDeleting}
-                aria-label={t("delete")}
-                className="h-4 w-4 flex-shrink-0 cursor-pointer rounded border-zinc-300 accent-zinc-900 disabled:cursor-not-allowed dark:border-zinc-600 dark:accent-zinc-100"
-              />
+              {/*
+               * Checkbox slot — always in the DOM.
+               * Animates width (0→1rem) and margin-right (0→0.75rem) together
+               * with opacity, so the row content shifts smoothly without a pop.
+               * overflow-hidden clips the 16px checkbox as the wrapper narrows.
+               */}
+              <div
+                className={[
+                  "flex-shrink-0 overflow-hidden transition-all duration-200 ease-out",
+                  isMultiSelectMode
+                    ? "mr-3 w-4 opacity-100"
+                    : "pointer-events-none mr-0 w-0 opacity-0",
+                ].join(" ")}
+                aria-hidden={!isMultiSelectMode || undefined}
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedIds.has(review.id)}
+                  onChange={() => toggleSelect(review.id)}
+                  disabled={isDeleting}
+                  tabIndex={isMultiSelectMode ? 0 : -1}
+                  aria-label={t("checkboxLabel")}
+                  className="h-4 w-4 cursor-pointer rounded border-zinc-300 accent-teal-600 disabled:cursor-not-allowed"
+                />
+              </div>
+
+              {/*
+               * Clickable content area — tag, language, summary.
+               * Date has been moved to the right-side action area
+               * so it aligns with the trash button consistently.
+               */}
               <Link
                 href={`/dashboard/reviews/${review.id}`}
-                className="flex flex-1 flex-col gap-1 py-1"
+                className="flex min-w-0 flex-1 flex-col gap-0.5 py-0.5"
               >
-                <div className="flex items-center gap-3">
-                  <span className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-700 dark:bg-zinc-700 dark:text-zinc-300">
+                <div className="flex items-center gap-2">
+                  <span className="shrink-0 rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-700 dark:bg-zinc-700 dark:text-zinc-300">
                     {localizedType(review.reviewType)}
                   </span>
                   {review.language && (
-                    <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                    <span className="shrink-0 text-xs text-zinc-400 dark:text-zinc-500">
                       {review.language}
                     </span>
                   )}
-                  <span className="ml-auto text-xs text-zinc-400 dark:text-zinc-500">
-                    {new Date(review.createdAt).toLocaleDateString()}
-                  </span>
                 </div>
                 <p className="line-clamp-2 text-sm text-zinc-700 dark:text-zinc-300">
                   {review.summary}
                 </p>
               </Link>
-              <button
-                type="button"
-                onClick={() => handleDeleteOne(review.id)}
-                disabled={isDeleting}
-                aria-label={t("delete")}
-                className="flex-shrink-0 rounded p-1.5 text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50 dark:text-zinc-500 dark:hover:bg-red-950 dark:hover:text-red-400"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  className="h-4 w-4"
-                  aria-hidden="true"
+
+              {/*
+               * Right-side action area — date and trash button share a single
+               * flex items-center container, so they are always vertically
+               * centered together regardless of summary line count.
+               */}
+              <div className="ml-3 flex flex-shrink-0 items-center gap-1.5">
+                <span className="text-xs text-zinc-400 tabular-nums dark:text-zinc-500">
+                  {new Date(review.createdAt).toLocaleDateString()}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => handleDeleteOne(review.id)}
+                  disabled={isDeleting}
+                  aria-label={t("delete")}
+                  className="flex-shrink-0 rounded-lg p-1.5 text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50 dark:text-zinc-500 dark:hover:bg-red-950/60 dark:hover:text-red-400"
                 >
-                  <path
-                    fillRule="evenodd"
-                    d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 3.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    className="h-4 w-4"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 3.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+              </div>
             </li>
           ))}
         </ul>
