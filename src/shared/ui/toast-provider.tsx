@@ -42,6 +42,29 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     [dismiss],
   );
 
+  // On mount, check for a pending toast written before locale navigation (e.g., language change).
+  // The key is removed immediately to prevent duplicate toasts on refresh.
+  // setTimeout defers the setState call out of the effect body to avoid cascading renders.
+  useEffect(() => {
+    let message: string | null = null;
+    try {
+      const raw = sessionStorage.getItem("ai-code-review-trainer-pending-toast");
+      if (raw) {
+        sessionStorage.removeItem("ai-code-review-trainer-pending-toast");
+        const pending = JSON.parse(raw) as { key: string };
+        if (pending.key === "languageChanged") {
+          message = t("languageChanged");
+        }
+      }
+    } catch {
+      // sessionStorage unavailable or malformed — ignore
+    }
+    if (!message) return;
+    const captured = message;
+    const id = setTimeout(() => showToast(captured, "success"), 0);
+    return () => clearTimeout(id);
+  }, [showToast, t]);
+
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}

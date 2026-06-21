@@ -4,13 +4,12 @@ import { useTranslations } from "next-intl";
 
 import { useLanguagePreference } from "@/shared/hooks/use-language-preference";
 import { LANGUAGE_PREFERENCES, type LanguagePreference } from "@/shared/language/language-types";
-import { useToast } from "@/shared/hooks/use-toast";
+
+const PENDING_TOAST_KEY = "ai-code-review-trainer-pending-toast";
 
 export function LanguageSettings() {
   const t = useTranslations("settings.language");
-  const tToast = useTranslations("toast");
   const { preference, applyPreference } = useLanguagePreference();
-  const { showToast } = useToast();
 
   return (
     <div className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-800">
@@ -27,8 +26,12 @@ export function LanguageSettings() {
           id="languagePreference"
           value={preference}
           onChange={(e) => {
+            try {
+              sessionStorage.setItem(PENDING_TOAST_KEY, JSON.stringify({ key: "languageChanged" }));
+            } catch {
+              // sessionStorage unavailable — skip pending toast
+            }
             applyPreference(e.target.value as LanguagePreference);
-            showToast(tToast("settingsSaved"));
           }}
           className="w-full max-w-xs rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 focus:border-zinc-500 focus:ring-2 focus:ring-zinc-500/20 focus:outline-none dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-100"
         >

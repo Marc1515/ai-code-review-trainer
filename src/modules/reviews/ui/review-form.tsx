@@ -98,7 +98,7 @@ export function ReviewForm({
       const result = await reviewAction(initialState, fd);
       setState(result);
       if (result.status === "success") {
-        showToast(tToast("reviewComplete"));
+        showToast(tToast("reviewCompleted"));
       }
     });
   }

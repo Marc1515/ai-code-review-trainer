@@ -131,10 +131,20 @@
     }
   },
   "toast": {
-    "settingsSaved": "Setting saved",
+    "themeChanged": {
+      "dark": "Theme changed to dark",
+      "light": "Theme changed to light",
+      "system": "Theme changed to system"
+    },
+    "editorThemeChanged": {
+      "githubDark": "Editor changed to GitHub Dark",
+      "githubLight": "Editor changed to GitHub Light",
+      "dracula": "Editor changed to Dracula"
+    },
+    "languageChanged": "Language changed to English",
     "reviewDeleted": "Review deleted",
     "reviewsDeleted": "{count} reviews deleted",
-    "reviewComplete": "Review complete",
+    "reviewCompleted": "Review completed",
     "dismiss": "Dismiss"
   },
   "review": {
