@@ -13,6 +13,7 @@ import type { ReviewActionState } from "@/server/actions/review.action";
 import { ReviewResult } from "@/modules/reviews/ui/review-result";
 import { CODE_SAMPLES } from "@/modules/reviews/ui/review-examples";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
+import { useToast } from "@/shared/hooks/use-toast";
 
 // Load CodeMirror client-side only to avoid server-side browser API errors.
 const CodeEditor = dynamic(
@@ -42,6 +43,8 @@ export function ReviewForm({
   maxSavedReviews = 10,
 }: Props) {
   const t = useTranslations("review");
+  const tToast = useTranslations("toast");
+  const { showToast } = useToast();
   const [state, setState] = useState<ReviewActionState>(initialState);
   const [isPending, startTransition] = useTransition();
   const [code, setCode] = useState("");
@@ -94,6 +97,9 @@ export function ReviewForm({
     startTransition(async () => {
       const result = await reviewAction(initialState, fd);
       setState(result);
+      if (result.status === "success") {
+        showToast(tToast("reviewCompleted"));
+      }
     });
   }
 

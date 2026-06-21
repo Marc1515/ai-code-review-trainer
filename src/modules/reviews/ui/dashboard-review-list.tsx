@@ -8,6 +8,7 @@ import { REVIEW_TYPES, type ReviewType } from "@/modules/reviews/domain/types";
 import type { ReviewSummary } from "@/modules/reviews/infrastructure/db/review-repository";
 import { deleteReviewAction, deleteManyReviewsAction } from "@/server/actions/dashboard.action";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
+import { useToast } from "@/shared/hooks/use-toast";
 
 interface Props {
   reviews: ReviewSummary[];
@@ -19,7 +20,9 @@ type ConfirmState = { kind: "none" } | { kind: "one"; id: string } | { kind: "ma
 export function DashboardReviewList({ reviews, maxReviews }: Props) {
   const t = useTranslations("dashboard");
   const tReview = useTranslations("review");
+  const tToast = useTranslations("toast");
   const router = useRouter();
+  const { showToast } = useToast();
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isDeleting, setIsDeleting] = useState(false);
@@ -116,6 +119,7 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
       return next;
     });
     router.refresh();
+    showToast(tToast("reviewDeleted"));
   }
 
   async function executeDeleteMany() {
@@ -129,8 +133,10 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
       setError(result.code);
       return;
     }
+    const deletedCount = ids.length;
     setSelectedIds(new Set());
     router.refresh();
+    showToast(tToast("reviewsDeleted", { count: deletedCount }));
   }
 
   const isModalOpen = confirmState.kind !== "none";

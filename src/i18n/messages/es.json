@@ -130,6 +130,23 @@
       }
     }
   },
+  "toast": {
+    "themeChanged": {
+      "dark": "Tema cambiado a oscuro",
+      "light": "Tema cambiado a claro",
+      "system": "Tema cambiado a sistema"
+    },
+    "editorThemeChanged": {
+      "githubDark": "Editor cambiado a GitHub Dark",
+      "githubLight": "Editor cambiado a GitHub Light",
+      "dracula": "Editor cambiado a Dracula"
+    },
+    "languageChanged": "Idioma cambiado a español",
+    "reviewDeleted": "Review eliminada",
+    "reviewsDeleted": "{count} reviews eliminadas",
+    "reviewCompleted": "Review completada",
+    "dismiss": "Descartar"
+  },
   "review": {
     "page": {
       "title": "Revisión de código",
