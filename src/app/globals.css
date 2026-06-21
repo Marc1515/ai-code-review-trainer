@@ -147,6 +147,18 @@
   }
 }
 
+@keyframes submit-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.45);
+  }
+  35% {
+    box-shadow: 0 0 0 8px rgba(13, 148, 136, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(13, 148, 136, 0);
+  }
+}
+
 @keyframes dot-drift {
   to {
     background-position: 20px 20px;
@@ -186,7 +198,23 @@
       animation: none;
     }
   }
+}
 
+/* Submit-button pulse driven by data-pulse-active attribute to avoid
+   Tailwind class-sorter interference with conditional class strings. */
+[data-pulse-active] {
+  animation: submit-pulse 2.5s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-pulse-active] {
+    animation: none;
+    outline: 2px solid rgba(13, 148, 136, 0.6);
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
   .text-brand-navy {
     color: var(--brand-navy);
   }
