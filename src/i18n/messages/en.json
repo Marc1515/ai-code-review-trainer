@@ -150,7 +150,15 @@
       "submit": "Review code",
       "submitting": "Reviewing...",
       "trustNotice": "Your code is analyzed as data and never executed. It is only saved if you are signed in.",
-      "saveHint": "Want to save this review? Sign in to keep your history."
+      "saveHint": "Want to save this review? Sign in to keep your history.",
+      "samples": {
+        "bugs": "Bug sample",
+        "security": "Security sample",
+        "architecture": "Architecture sample",
+        "bugsAria": "Load bug review sample",
+        "securityAria": "Load security review sample",
+        "architectureAria": "Load architecture review sample"
+      }
     },
     "types": {
       "general": "General",

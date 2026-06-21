@@ -150,7 +150,15 @@
       "submit": "Revisar código",
       "submitting": "Revisando...",
       "trustNotice": "Tu código es analizado como dato, nunca ejecutado ni almacenado si no has iniciado sesión.",
-      "saveHint": "¿Quieres guardar esta revisión? Inicia sesión para conservar tu historial."
+      "saveHint": "¿Quieres guardar esta revisión? Inicia sesión para conservar tu historial.",
+      "samples": {
+        "bugs": "Ejemplo: bugs",
+        "security": "Ejemplo: seguridad",
+        "architecture": "Ejemplo: arquitectura",
+        "bugsAria": "Cargar ejemplo para revisar bugs",
+        "securityAria": "Cargar ejemplo para revisar seguridad",
+        "architectureAria": "Cargar ejemplo para revisar arquitectura"
+      }
     },
     "types": {
       "general": "General",

@@ -10,6 +10,7 @@ import { useEditorTheme } from "@/shared/hooks/use-editor-theme";
 import { reviewAction } from "@/server/actions/review.action";
 import type { ReviewActionState } from "@/server/actions/review.action";
 import { ReviewResult } from "@/modules/reviews/ui/review-result";
+import { CODE_SAMPLES } from "@/modules/reviews/ui/review-examples";
 
 // Load CodeMirror client-side only to avoid server-side browser API errors.
 const CodeEditor = dynamic(
@@ -39,10 +40,13 @@ export function ReviewForm({
   const [state, setState] = useState<ReviewActionState>(initialState);
   const [isPending, startTransition] = useTransition();
   const [code, setCode] = useState("");
+  const [reviewType, setReviewType] = useState<ReviewType>("general");
   const [showLimitModal, setShowLimitModal] = useState(false);
+  const [shouldPulse, setShouldPulse] = useState(false);
   const { theme } = useEditorTheme();
   const formRef = useRef<HTMLFormElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
+  const submitRef = useRef<HTMLButtonElement>(null);
   const skipSaveRef = useRef(false);
 
   const isAtLimit = isAuthenticated && savedCount >= maxSavedReviews;
@@ -53,6 +57,13 @@ export function ReviewForm({
       resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }, [state.status]);
+
+  // Reset the pulse class after the animation completes so it can re-fire on the next sample load.
+  useEffect(() => {
+    if (!shouldPulse) return;
+    const timer = setTimeout(() => setShouldPulse(false), 2200);
+    return () => clearTimeout(timer);
+  }, [shouldPulse]);
 
   const typeLabels: Record<ReviewType, string> = {
     general: t("types.general"),
@@ -106,22 +117,51 @@ export function ReviewForm({
     if (fd) submitFormData(fd);
   }
 
+  function handleLoadExample(type: ReviewType) {
+    setCode(CODE_SAMPLES[type] ?? "");
+    setReviewType(type);
+    // Reset then re-enable so the animation re-fires even if already active.
+    setShouldPulse(false);
+    setTimeout(() => {
+      setShouldPulse(true);
+      submitRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }, 10);
+  }
+
+  const sampleButtons: { type: ReviewType; label: string; aria: string }[] = [
+    { type: "bugs", label: t("form.samples.bugs"), aria: t("form.samples.bugsAria") },
+    { type: "security", label: t("form.samples.security"), aria: t("form.samples.securityAria") },
+    {
+      type: "architecture",
+      label: t("form.samples.architecture"),
+      aria: t("form.samples.architectureAria"),
+    },
+  ];
+
   return (
     <div>
       <form ref={formRef} onSubmit={handleFormSubmit} className="space-y-6">
         <div>
-          <label
-            htmlFor="cm-code"
-            className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
-          >
-            {t("form.codeLabel")}
-          </label>
+          <div className="mb-1.5 flex flex-wrap gap-2">
+            {sampleButtons.map(({ type, label, aria }) => (
+              <button
+                key={type}
+                type="button"
+                onClick={() => handleLoadExample(type)}
+                aria-label={aria}
+                className="rounded-md border border-zinc-200 bg-transparent px-2.5 py-1 text-xs font-medium text-zinc-500 transition-colors hover:border-teal-400/60 hover:text-teal-700 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-teal-500/50 dark:hover:text-teal-400"
+              >
+                {label}
+              </button>
+            ))}
+          </div>
           <CodeEditor
             value={code}
             onChange={setCode}
             theme={theme}
             placeholder={t("form.codePlaceholder")}
             maxLength={MAX_CODE_LENGTH}
+            ariaLabel={t("form.codeLabel")}
           />
           <p className={`mt-1.5 text-xs ${charCountColor}`}>
             {t("form.charCount", { current: codeLength, max: MAX_CODE_LENGTH })}
@@ -155,7 +195,8 @@ export function ReviewForm({
             <select
               id="reviewType"
               name="reviewType"
-              defaultValue="general"
+              value={reviewType}
+              onChange={(e) => setReviewType(e.target.value as ReviewType)}
               className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 focus:border-zinc-500 focus:ring-2 focus:ring-zinc-500/20 focus:outline-none dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-100"
             >
               {REVIEW_TYPES.map((type) => (
@@ -185,9 +226,10 @@ export function ReviewForm({
 
         <div className="flex flex-col gap-2">
           <button
+            ref={submitRef}
             type="submit"
             disabled={isPending}
-            className="flex w-fit items-center gap-2 rounded-lg bg-zinc-900 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+            className={`flex w-fit items-center gap-2 rounded-lg bg-zinc-900 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300${shouldPulse ? "animate-submit-pulse" : ""}`}
           >
             {isPending && (
               <svg

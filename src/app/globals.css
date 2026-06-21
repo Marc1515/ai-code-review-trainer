@@ -147,6 +147,18 @@
   }
 }
 
+@keyframes submit-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.55);
+  }
+  65% {
+    box-shadow: 0 0 0 10px rgba(13, 148, 136, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(13, 148, 136, 0);
+  }
+}
+
 @keyframes dot-drift {
   to {
     background-position: 20px 20px;
@@ -179,10 +191,16 @@
   .animate-dot-glow {
     animation: dot-glow-shift 14s ease-in-out infinite;
   }
+  .animate-submit-pulse {
+    animation: submit-pulse 2s ease-out forwards;
+  }
   @media (prefers-reduced-motion: reduce) {
     .animate-dot-drift,
     .animate-dot-reverse,
     .animate-dot-glow {
+      animation: none;
+    }
+    .animate-submit-pulse {
       animation: none;
     }
   }
