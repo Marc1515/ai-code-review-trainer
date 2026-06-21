@@ -151,6 +151,9 @@
       "submitting": "Reviewing...",
       "trustNotice": "Your code is analyzed as data and never executed. It is only saved if you are signed in.",
       "saveHint": "Want to save this review? Sign in to keep your history.",
+      "copyCode": "Copy code",
+      "clearCode": "Clear code",
+      "codeCopied": "Code copied",
       "samples": {
         "bugs": "Bug sample",
         "security": "Security sample",

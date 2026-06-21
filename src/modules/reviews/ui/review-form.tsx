@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
+import { Copy, Check, Trash2 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { REVIEW_TYPES, type ReviewType } from "@/modules/reviews/domain/types";
 import { MAX_CODE_LENGTH } from "@/modules/reviews/schemas/review.schema";
@@ -25,6 +26,9 @@ const CodeEditor = dynamic(
 
 const initialState: ReviewActionState = { status: "idle" };
 
+const ICON_BTN =
+  "rounded-md border border-zinc-200 bg-transparent p-1.5 transition-colors disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:disabled:opacity-30";
+
 interface Props {
   isAuthenticated?: boolean;
   savedCount?: number;
@@ -43,6 +47,7 @@ export function ReviewForm({
   const [reviewType, setReviewType] = useState<ReviewType>("general");
   const [showLimitModal, setShowLimitModal] = useState(false);
   const [shouldPulse, setShouldPulse] = useState(false);
+  const [copiedCode, setCopiedCode] = useState(false);
   const { theme } = useEditorTheme();
   const formRef = useRef<HTMLFormElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
@@ -57,13 +62,6 @@ export function ReviewForm({
       resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }, [state.status]);
-
-  // Reset the pulse class after the animation completes so it can re-fire on the next sample load.
-  useEffect(() => {
-    if (!shouldPulse) return;
-    const timer = setTimeout(() => setShouldPulse(false), 2200);
-    return () => clearTimeout(timer);
-  }, [shouldPulse]);
 
   const typeLabels: Record<ReviewType, string> = {
     general: t("types.general"),
@@ -101,6 +99,8 @@ export function ReviewForm({
     e.preventDefault();
     if (!code.trim()) return;
 
+    setShouldPulse(false);
+
     if (isAtLimit && !skipSaveRef.current) {
       setShowLimitModal(true);
       return;
@@ -113,6 +113,7 @@ export function ReviewForm({
 
   function handleContinueWithoutSaving() {
     setShowLimitModal(false);
+    setShouldPulse(false);
     const fd = buildFormData(true);
     if (fd) submitFormData(fd);
   }
@@ -120,12 +121,24 @@ export function ReviewForm({
   function handleLoadExample(type: ReviewType) {
     setCode(CODE_SAMPLES[type] ?? "");
     setReviewType(type);
-    // Reset then re-enable so the animation re-fires even if already active.
+    setShouldPulse(true);
+    submitRef.current?.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+  }
+
+  async function handleCopyCode() {
+    if (!code) return;
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopiedCode(true);
+      setTimeout(() => setCopiedCode(false), 1500);
+    } catch {
+      // clipboard API unavailable — fail silently
+    }
+  }
+
+  function handleClearCode() {
+    setCode("");
     setShouldPulse(false);
-    setTimeout(() => {
-      setShouldPulse(true);
-      submitRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }, 10);
   }
 
   const sampleButtons: { type: ReviewType; label: string; aria: string }[] = [
@@ -142,18 +155,49 @@ export function ReviewForm({
     <div>
       <form ref={formRef} onSubmit={handleFormSubmit} className="space-y-6">
         <div>
-          <div className="mb-1.5 flex flex-wrap gap-2">
-            {sampleButtons.map(({ type, label, aria }) => (
+          <div className="mb-1.5 flex flex-wrap items-center justify-between gap-x-2 gap-y-1.5">
+            <div className="flex flex-wrap items-center gap-2">
+              {sampleButtons.map(({ type, label, aria }) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => handleLoadExample(type)}
+                  aria-label={aria}
+                  className="rounded-md border border-zinc-200 bg-transparent px-2.5 py-1 text-xs font-medium text-zinc-500 transition-colors hover:border-teal-400/60 hover:text-teal-700 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-teal-500/50 dark:hover:text-teal-400"
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <div className="flex shrink-0 items-center gap-1">
               <button
-                key={type}
                 type="button"
-                onClick={() => handleLoadExample(type)}
-                aria-label={aria}
-                className="rounded-md border border-zinc-200 bg-transparent px-2.5 py-1 text-xs font-medium text-zinc-500 transition-colors hover:border-teal-400/60 hover:text-teal-700 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-teal-500/50 dark:hover:text-teal-400"
+                onClick={handleCopyCode}
+                disabled={!code}
+                aria-label={copiedCode ? t("form.codeCopied") : t("form.copyCode")}
+                title={copiedCode ? t("form.codeCopied") : t("form.copyCode")}
+                className={`${ICON_BTN} text-zinc-400 hover:border-teal-400/60 hover:text-teal-700 dark:text-zinc-500 dark:hover:border-teal-500/50 dark:hover:text-teal-400`}
               >
-                {label}
+                {copiedCode ? (
+                  <Check
+                    className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400"
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+                )}
               </button>
-            ))}
+              <button
+                type="button"
+                onClick={handleClearCode}
+                disabled={!code}
+                aria-label={t("form.clearCode")}
+                title={t("form.clearCode")}
+                className={`${ICON_BTN} text-zinc-400 hover:border-zinc-400/60 hover:text-zinc-600 dark:text-zinc-500 dark:hover:border-zinc-500 dark:hover:text-zinc-300`}
+              >
+                <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
+            </div>
           </div>
           <CodeEditor
             value={code}
@@ -229,7 +273,7 @@ export function ReviewForm({
             ref={submitRef}
             type="submit"
             disabled={isPending}
-            className={`flex w-fit items-center gap-2 rounded-lg bg-zinc-900 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300${shouldPulse ? "animate-submit-pulse" : ""}`}
+            className={`flex w-fit items-center gap-2 rounded-lg bg-zinc-900 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300${shouldPulse && !isPending ? "animate-submit-pulse" : ""}`}
           >
             {isPending && (
               <svg

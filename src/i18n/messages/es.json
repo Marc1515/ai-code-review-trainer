@@ -151,6 +151,9 @@
       "submitting": "Revisando...",
       "trustNotice": "Tu código es analizado como dato, nunca ejecutado ni almacenado si no has iniciado sesión.",
       "saveHint": "¿Quieres guardar esta revisión? Inicia sesión para conservar tu historial.",
+      "copyCode": "Copiar código",
+      "clearCode": "Limpiar código",
+      "codeCopied": "Código copiado",
       "samples": {
         "bugs": "Ejemplo: bugs",
         "security": "Ejemplo: seguridad",
