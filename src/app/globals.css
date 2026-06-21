@@ -147,6 +147,18 @@
   }
 }
 
+@keyframes submit-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.45);
+  }
+  35% {
+    box-shadow: 0 0 0 8px rgba(13, 148, 136, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(13, 148, 136, 0);
+  }
+}
+
 @keyframes dot-drift {
   to {
     background-position: 20px 20px;
@@ -167,6 +179,69 @@
   50% {
     transform: translate(5%, -5%);
   }
+}
+
+@layer utilities {
+  .animate-dot-drift {
+    animation: dot-drift 24s linear infinite;
+  }
+  .animate-dot-reverse {
+    animation: dot-drift-reverse 32s linear infinite;
+  }
+  .animate-dot-glow {
+    animation: dot-glow-shift 14s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-dot-drift,
+    .animate-dot-reverse,
+    .animate-dot-glow {
+      animation: none;
+    }
+  }
+}
+
+/* Submit-button pulse driven by data-pulse-active attribute to avoid
+   Tailwind class-sorter interference with conditional class strings. */
+[data-pulse-active] {
+  animation: submit-pulse 2.5s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-pulse-active] {
+    animation: none;
+    outline: 2px solid rgba(13, 148, 136, 0.6);
+    outline-offset: 2px;
+  }
+}
+
+@keyframes toast-slide-in {
+  from {
+    transform: translateX(calc(100% + 1rem));
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@layer utilities {
+  .animate-toast-in {
+    animation: toast-slide-in 0.2s ease-out;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-toast-in {
+      animation: none;
+    }
+  }
+}
+
+/* Toast variant accents — data attribute selectors avoid conditional class issues */
+[data-toast-dot="success"] {
+  background-color: rgb(13, 148, 136);
+}
+[data-toast-dot="info"] {
+  background-color: rgb(113, 113, 122);
 }
 
 @layer utilities {

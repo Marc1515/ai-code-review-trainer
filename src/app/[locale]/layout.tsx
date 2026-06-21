@@ -6,6 +6,8 @@ import { routing } from "@/i18n/routing";
 import { AuthHeader } from "@/modules/auth/ui/header";
 import { NavigationLoadingOverlay } from "@/shared/ui/navigation-loading-overlay";
 import { ThemeSync } from "@/shared/theme/theme-sync";
+import { ToastProvider } from "@/shared/ui/toast-provider";
+import { PendingToastBridge } from "@/shared/ui/pending-toast-bridge";
 
 export default async function LocaleLayout({
   children,
@@ -24,10 +26,13 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider messages={messages}>
-      <NavigationLoadingOverlay />
-      <ThemeSync />
-      <AuthHeader />
-      {children}
+      <ToastProvider>
+        <PendingToastBridge />
+        <NavigationLoadingOverlay />
+        <ThemeSync />
+        <AuthHeader />
+        {children}
+      </ToastProvider>
     </NextIntlClientProvider>
   );
 }

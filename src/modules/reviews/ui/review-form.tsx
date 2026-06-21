@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
+import { Copy, Check, Trash2 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { REVIEW_TYPES, type ReviewType } from "@/modules/reviews/domain/types";
 import { MAX_CODE_LENGTH } from "@/modules/reviews/schemas/review.schema";
@@ -10,6 +11,9 @@ import { useEditorTheme } from "@/shared/hooks/use-editor-theme";
 import { reviewAction } from "@/server/actions/review.action";
 import type { ReviewActionState } from "@/server/actions/review.action";
 import { ReviewResult } from "@/modules/reviews/ui/review-result";
+import { CODE_SAMPLES } from "@/modules/reviews/ui/review-examples";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
+import { useToast } from "@/shared/hooks/use-toast";
 
 // Load CodeMirror client-side only to avoid server-side browser API errors.
 const CodeEditor = dynamic(
@@ -24,6 +28,9 @@ const CodeEditor = dynamic(
 
 const initialState: ReviewActionState = { status: "idle" };
 
+const ICON_BTN =
+  "rounded-md border border-zinc-200 bg-transparent p-1.5 transition-colors disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:disabled:opacity-30";
+
 interface Props {
   isAuthenticated?: boolean;
   savedCount?: number;
@@ -36,13 +43,20 @@ export function ReviewForm({
   maxSavedReviews = 10,
 }: Props) {
   const t = useTranslations("review");
+  const tToast = useTranslations("toast");
+  const { showToast } = useToast();
   const [state, setState] = useState<ReviewActionState>(initialState);
   const [isPending, startTransition] = useTransition();
   const [code, setCode] = useState("");
+  const [reviewType, setReviewType] = useState<ReviewType>("general");
   const [showLimitModal, setShowLimitModal] = useState(false);
+  const [showClearModal, setShowClearModal] = useState(false);
+  const [shouldPulse, setShouldPulse] = useState(false);
+  const [copiedCode, setCopiedCode] = useState(false);
   const { theme } = useEditorTheme();
   const formRef = useRef<HTMLFormElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
+  const submitRef = useRef<HTMLButtonElement>(null);
   const skipSaveRef = useRef(false);
 
   const isAtLimit = isAuthenticated && savedCount >= maxSavedReviews;
@@ -83,12 +97,17 @@ export function ReviewForm({
     startTransition(async () => {
       const result = await reviewAction(initialState, fd);
       setState(result);
+      if (result.status === "success") {
+        showToast(tToast("reviewCompleted"));
+      }
     });
   }
 
   function handleFormSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!code.trim()) return;
+
+    setShouldPulse(false);
 
     if (isAtLimit && !skipSaveRef.current) {
       setShowLimitModal(true);
@@ -102,26 +121,123 @@ export function ReviewForm({
 
   function handleContinueWithoutSaving() {
     setShowLimitModal(false);
+    setShouldPulse(false);
     const fd = buildFormData(true);
     if (fd) submitFormData(fd);
   }
+
+  // Scroll so the submit button is as close to the vertical center as possible.
+  // Falls back to the maximum scroll position when there isn't enough content below.
+  function scrollToSubmit() {
+    const el = submitRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const scrollDelta = rect.top + rect.height / 2 - window.innerHeight / 2;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    window.scrollTo({
+      top: Math.min(Math.max(window.scrollY + scrollDelta, 0), maxScroll),
+      behavior: "smooth",
+    });
+  }
+
+  function handleLoadExample(type: ReviewType) {
+    setCode(CODE_SAMPLES[type] ?? "");
+    setReviewType(type);
+    setShouldPulse(true);
+    // Wait one rAF so React has committed the new code to the DOM before
+    // we measure the submit button's position for the scroll calculation.
+    requestAnimationFrame(scrollToSubmit);
+  }
+
+  async function handleCopyCode() {
+    if (!code) return;
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopiedCode(true);
+      setTimeout(() => setCopiedCode(false), 1500);
+    } catch {
+      // clipboard API unavailable — fail silently
+    }
+  }
+
+  function handleClearCode() {
+    if (!code) return;
+    setShowClearModal(true);
+  }
+
+  function handleConfirmClear() {
+    setCode("");
+    setShouldPulse(false);
+    setShowClearModal(false);
+  }
+
+  const sampleButtons: { type: ReviewType; label: string; aria: string }[] = [
+    { type: "bugs", label: t("form.samples.bugs"), aria: t("form.samples.bugsAria") },
+    { type: "security", label: t("form.samples.security"), aria: t("form.samples.securityAria") },
+    {
+      type: "architecture",
+      label: t("form.samples.architecture"),
+      aria: t("form.samples.architectureAria"),
+    },
+  ];
+
+  const pulseActive = shouldPulse && !isPending;
 
   return (
     <div>
       <form ref={formRef} onSubmit={handleFormSubmit} className="space-y-6">
         <div>
-          <label
-            htmlFor="cm-code"
-            className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
-          >
-            {t("form.codeLabel")}
-          </label>
+          <div className="mb-1.5 flex flex-wrap items-center justify-between gap-x-2 gap-y-1.5">
+            <div className="flex flex-wrap items-center gap-2">
+              {sampleButtons.map(({ type, label, aria }) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => handleLoadExample(type)}
+                  aria-label={aria}
+                  className="rounded-md border border-zinc-200 bg-transparent px-2.5 py-1 text-xs font-medium text-zinc-500 transition-colors hover:border-teal-400/60 hover:text-teal-700 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-teal-500/50 dark:hover:text-teal-400"
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <div className="flex shrink-0 items-center gap-1">
+              <button
+                type="button"
+                onClick={handleCopyCode}
+                disabled={!code}
+                aria-label={copiedCode ? t("form.codeCopied") : t("form.copyCode")}
+                title={copiedCode ? t("form.codeCopied") : t("form.copyCode")}
+                className={`${ICON_BTN} text-zinc-400 hover:border-teal-400/60 hover:text-teal-700 dark:text-zinc-500 dark:hover:border-teal-500/50 dark:hover:text-teal-400`}
+              >
+                {copiedCode ? (
+                  <Check
+                    className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400"
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={handleClearCode}
+                disabled={!code}
+                aria-label={t("form.clearCode")}
+                title={t("form.clearCode")}
+                className={`${ICON_BTN} text-zinc-400 hover:border-zinc-400/60 hover:text-zinc-600 dark:text-zinc-500 dark:hover:border-zinc-500 dark:hover:text-zinc-300`}
+              >
+                <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
+            </div>
+          </div>
           <CodeEditor
             value={code}
             onChange={setCode}
             theme={theme}
             placeholder={t("form.codePlaceholder")}
             maxLength={MAX_CODE_LENGTH}
+            ariaLabel={t("form.codeLabel")}
           />
           <p className={`mt-1.5 text-xs ${charCountColor}`}>
             {t("form.charCount", { current: codeLength, max: MAX_CODE_LENGTH })}
@@ -155,7 +271,8 @@ export function ReviewForm({
             <select
               id="reviewType"
               name="reviewType"
-              defaultValue="general"
+              value={reviewType}
+              onChange={(e) => setReviewType(e.target.value as ReviewType)}
               className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 focus:border-zinc-500 focus:ring-2 focus:ring-zinc-500/20 focus:outline-none dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-100"
             >
               {REVIEW_TYPES.map((type) => (
@@ -184,9 +301,13 @@ export function ReviewForm({
         )}
 
         <div className="flex flex-col gap-2">
+          {/* data-pulse-active drives the animation via a CSS attribute selector,
+              avoiding Tailwind class-sorter interference with conditional class strings. */}
           <button
+            ref={submitRef}
             type="submit"
             disabled={isPending}
+            data-pulse-active={pulseActive ? "true" : undefined}
             className="flex w-fit items-center gap-2 rounded-lg bg-zinc-900 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
           >
             {isPending && (
@@ -279,6 +400,16 @@ export function ReviewForm({
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        open={showClearModal}
+        title={t("clearModal.title")}
+        description={t("clearModal.description")}
+        confirmLabel={t("clearModal.confirm")}
+        cancelLabel={t("clearModal.cancel")}
+        onConfirm={handleConfirmClear}
+        onCancel={() => setShowClearModal(false)}
+      />
     </div>
   );
 }

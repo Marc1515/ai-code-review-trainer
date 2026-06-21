@@ -130,6 +130,23 @@
       }
     }
   },
+  "toast": {
+    "themeChanged": {
+      "dark": "Theme changed to dark",
+      "light": "Theme changed to light",
+      "system": "Theme changed to system"
+    },
+    "editorThemeChanged": {
+      "githubDark": "Editor changed to GitHub Dark",
+      "githubLight": "Editor changed to GitHub Light",
+      "dracula": "Editor changed to Dracula"
+    },
+    "languageChanged": "Language changed to English",
+    "reviewDeleted": "Review deleted",
+    "reviewsDeleted": "{count} reviews deleted",
+    "reviewCompleted": "Review completed",
+    "dismiss": "Dismiss"
+  },
   "review": {
     "page": {
       "title": "Code Review",
@@ -150,7 +167,18 @@
       "submit": "Review code",
       "submitting": "Reviewing...",
       "trustNotice": "Your code is analyzed as data and never executed. It is only saved if you are signed in.",
-      "saveHint": "Want to save this review? Sign in to keep your history."
+      "saveHint": "Want to save this review? Sign in to keep your history.",
+      "copyCode": "Copy code",
+      "clearCode": "Clear code",
+      "codeCopied": "Code copied",
+      "samples": {
+        "bugs": "Bug sample",
+        "security": "Security sample",
+        "architecture": "Architecture sample",
+        "bugsAria": "Load bug review sample",
+        "securityAria": "Load security review sample",
+        "architectureAria": "Load architecture review sample"
+      }
     },
     "types": {
       "general": "General",
@@ -182,6 +210,12 @@
       "providerBusy": "The system is processing another review. Please wait a few seconds and try again.",
       "providerTimeout": "The review took too long. Please try again.",
       "providerUnavailable": "The review service is currently unavailable. Please try again shortly."
+    },
+    "clearModal": {
+      "title": "Clear code",
+      "description": "This will remove the current code from the editor. You can still paste or load another sample afterwards.",
+      "confirm": "Clear code",
+      "cancel": "Cancel"
     },
     "limitModal": {
       "title": "Saved reviews limit reached",
