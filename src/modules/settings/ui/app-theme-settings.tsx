@@ -4,10 +4,13 @@ import { useTranslations } from "next-intl";
 
 import { useAppTheme } from "@/shared/hooks/use-app-theme";
 import { THEME_PREFERENCES, type ThemePreference } from "@/shared/theme/theme-types";
+import { useToast } from "@/shared/hooks/use-toast";
 
 export function AppThemeSettings() {
   const t = useTranslations("settings.appTheme");
+  const tToast = useTranslations("toast");
   const { preference, savePreference } = useAppTheme();
+  const { showToast } = useToast();
 
   return (
     <div className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-800">
@@ -23,7 +26,10 @@ export function AppThemeSettings() {
         <select
           id="appTheme"
           value={preference}
-          onChange={(e) => savePreference(e.target.value as ThemePreference)}
+          onChange={(e) => {
+            savePreference(e.target.value as ThemePreference);
+            showToast(tToast("settingsSaved"));
+          }}
           className="w-full max-w-xs rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 focus:border-zinc-500 focus:ring-2 focus:ring-zinc-500/20 focus:outline-none dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-100"
         >
           {THEME_PREFERENCES.map((value) => (

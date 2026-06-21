@@ -130,6 +130,13 @@
       }
     }
   },
+  "toast": {
+    "settingsSaved": "Configuración guardada",
+    "reviewDeleted": "Revisión eliminada",
+    "reviewsDeleted": "{count} revisiones eliminadas",
+    "reviewComplete": "Revisión completada",
+    "dismiss": "Descartar"
+  },
   "review": {
     "page": {
       "title": "Revisión de código",

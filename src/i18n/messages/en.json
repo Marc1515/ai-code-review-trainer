@@ -130,6 +130,13 @@
       }
     }
   },
+  "toast": {
+    "settingsSaved": "Setting saved",
+    "reviewDeleted": "Review deleted",
+    "reviewsDeleted": "{count} reviews deleted",
+    "reviewComplete": "Review complete",
+    "dismiss": "Dismiss"
+  },
   "review": {
     "page": {
       "title": "Code Review",
