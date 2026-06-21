@@ -194,6 +194,12 @@
       "providerTimeout": "La revisión tardó demasiado. Por favor, inténtalo de nuevo.",
       "providerUnavailable": "El servicio de revisión no está disponible en este momento. Inténtalo de nuevo pronto."
     },
+    "clearModal": {
+      "title": "Limpiar código",
+      "description": "Esto eliminará el código actual del editor. Después podrás pegar código o cargar otro ejemplo.",
+      "confirm": "Limpiar código",
+      "cancel": "Cancelar"
+    },
     "limitModal": {
       "title": "Límite de revisiones guardadas alcanzado",
       "description": "Tienes {current}/{max} revisiones guardadas. Esta revisión no se guardará a menos que elimines una existente primero.",

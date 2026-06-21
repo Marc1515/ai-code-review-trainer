@@ -12,6 +12,7 @@ import { reviewAction } from "@/server/actions/review.action";
 import type { ReviewActionState } from "@/server/actions/review.action";
 import { ReviewResult } from "@/modules/reviews/ui/review-result";
 import { CODE_SAMPLES } from "@/modules/reviews/ui/review-examples";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 
 // Load CodeMirror client-side only to avoid server-side browser API errors.
 const CodeEditor = dynamic(
@@ -46,6 +47,7 @@ export function ReviewForm({
   const [code, setCode] = useState("");
   const [reviewType, setReviewType] = useState<ReviewType>("general");
   const [showLimitModal, setShowLimitModal] = useState(false);
+  const [showClearModal, setShowClearModal] = useState(false);
   const [shouldPulse, setShouldPulse] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
   const { theme } = useEditorTheme();
@@ -118,11 +120,27 @@ export function ReviewForm({
     if (fd) submitFormData(fd);
   }
 
+  // Scroll so the submit button is as close to the vertical center as possible.
+  // Falls back to the maximum scroll position when there isn't enough content below.
+  function scrollToSubmit() {
+    const el = submitRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const scrollDelta = rect.top + rect.height / 2 - window.innerHeight / 2;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    window.scrollTo({
+      top: Math.min(Math.max(window.scrollY + scrollDelta, 0), maxScroll),
+      behavior: "smooth",
+    });
+  }
+
   function handleLoadExample(type: ReviewType) {
     setCode(CODE_SAMPLES[type] ?? "");
     setReviewType(type);
     setShouldPulse(true);
-    submitRef.current?.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+    // Wait one rAF so React has committed the new code to the DOM before
+    // we measure the submit button's position for the scroll calculation.
+    requestAnimationFrame(scrollToSubmit);
   }
 
   async function handleCopyCode() {
@@ -137,8 +155,14 @@ export function ReviewForm({
   }
 
   function handleClearCode() {
+    if (!code) return;
+    setShowClearModal(true);
+  }
+
+  function handleConfirmClear() {
     setCode("");
     setShouldPulse(false);
+    setShowClearModal(false);
   }
 
   const sampleButtons: { type: ReviewType; label: string; aria: string }[] = [
@@ -150,6 +174,8 @@ export function ReviewForm({
       aria: t("form.samples.architectureAria"),
     },
   ];
+
+  const pulseActive = shouldPulse && !isPending;
 
   return (
     <div>
@@ -269,11 +295,14 @@ export function ReviewForm({
         )}
 
         <div className="flex flex-col gap-2">
+          {/* data-pulse-active drives the animation via a CSS attribute selector,
+              avoiding Tailwind class-sorter interference with conditional class strings. */}
           <button
             ref={submitRef}
             type="submit"
             disabled={isPending}
-            className={`flex w-fit items-center gap-2 rounded-lg bg-zinc-900 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300${shouldPulse && !isPending ? "animate-submit-pulse" : ""}`}
+            data-pulse-active={pulseActive ? "true" : undefined}
+            className="flex w-fit items-center gap-2 rounded-lg bg-zinc-900 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
           >
             {isPending && (
               <svg
@@ -365,6 +394,16 @@ export function ReviewForm({
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        open={showClearModal}
+        title={t("clearModal.title")}
+        description={t("clearModal.description")}
+        confirmLabel={t("clearModal.confirm")}
+        cancelLabel={t("clearModal.cancel")}
+        onConfirm={handleConfirmClear}
+        onCancel={() => setShowClearModal(false)}
+      />
     </div>
   );
 }

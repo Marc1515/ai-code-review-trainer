@@ -194,6 +194,12 @@
       "providerTimeout": "The review took too long. Please try again.",
       "providerUnavailable": "The review service is currently unavailable. Please try again shortly."
     },
+    "clearModal": {
+      "title": "Clear code",
+      "description": "This will remove the current code from the editor. You can still paste or load another sample afterwards.",
+      "confirm": "Clear code",
+      "cancel": "Cancel"
+    },
     "limitModal": {
       "title": "Saved reviews limit reached",
       "description": "You have {current}/{max} saved reviews. This review will not be saved unless you delete an existing one first.",

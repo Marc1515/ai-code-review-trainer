@@ -191,22 +191,30 @@
   .animate-dot-glow {
     animation: dot-glow-shift 14s ease-in-out infinite;
   }
-  .animate-submit-pulse {
-    animation: submit-pulse 2.5s ease-out infinite;
-  }
   @media (prefers-reduced-motion: reduce) {
     .animate-dot-drift,
     .animate-dot-reverse,
     .animate-dot-glow {
       animation: none;
     }
-    .animate-submit-pulse {
-      animation: none;
-      outline: 2px solid rgba(13, 148, 136, 0.6);
-      outline-offset: 2px;
-    }
   }
+}
 
+/* Submit-button pulse driven by data-pulse-active attribute to avoid
+   Tailwind class-sorter interference with conditional class strings. */
+[data-pulse-active] {
+  animation: submit-pulse 2.5s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-pulse-active] {
+    animation: none;
+    outline: 2px solid rgba(13, 148, 136, 0.6);
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
   .text-brand-navy {
     color: var(--brand-navy);
   }
