@@ -2,13 +2,37 @@ import { getTranslations } from "next-intl/server";
 import NextLink from "next/link";
 
 import { auth } from "@/auth";
-import { MAX_SAVED_REVIEWS } from "@/modules/reviews/domain/constants";
+import { MAX_SAVED_REVIEWS, REVIEWS_PER_PAGE } from "@/modules/reviews/domain/constants";
+import { REVIEW_TYPES, type ReviewType } from "@/modules/reviews/domain/types";
 import { listReviewsByUser } from "@/modules/reviews/infrastructure/db/review-repository";
 import { DashboardReviewList } from "@/modules/reviews/ui/dashboard-review-list";
 import { PageShell } from "@/shared/ui/page-shell";
 
-export default async function DashboardPage() {
+interface DashboardPageProps {
+  searchParams: Promise<{
+    page?: string | string[];
+    type?: string | string[];
+  }>;
+}
+
+function firstSearchParam(value: string | string[] | undefined): string | undefined {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function parsePage(value: string | undefined): number {
+  const page = Number(value);
+  return Number.isInteger(page) && page > 0 ? page : 1;
+}
+
+function parseReviewType(value: string | undefined): ReviewType | undefined {
+  return REVIEW_TYPES.includes(value as ReviewType) ? (value as ReviewType) : undefined;
+}
+
+export default async function DashboardPage({ searchParams }: DashboardPageProps) {
   const t = await getTranslations("dashboard");
+  const query = await searchParams;
+  const requestedPage = parsePage(firstSearchParam(query.page));
+  const reviewType = parseReviewType(firstSearchParam(query.type));
 
   let session = null;
   try {
@@ -31,7 +55,11 @@ export default async function DashboardPage() {
     );
   }
 
-  const reviews = await listReviewsByUser(session.user.id);
+  const result = await listReviewsByUser(session.user.id, {
+    page: requestedPage,
+    pageSize: REVIEWS_PER_PAGE,
+    reviewType,
+  });
 
   return (
     <PageShell>
@@ -41,7 +69,15 @@ export default async function DashboardPage() {
         </h1>
         <p className="mt-2 text-zinc-600 dark:text-zinc-400">{t("subtitle")}</p>
       </header>
-      <DashboardReviewList reviews={reviews} maxReviews={MAX_SAVED_REVIEWS} />
+      <DashboardReviewList
+        reviews={result.reviews}
+        totalReviews={result.totalReviews}
+        filteredReviews={result.filteredReviews}
+        maxReviews={MAX_SAVED_REVIEWS}
+        currentPage={result.page}
+        totalPages={result.totalPages}
+        activeFilter={reviewType ?? "all"}
+      />
     </PageShell>
   );
 }

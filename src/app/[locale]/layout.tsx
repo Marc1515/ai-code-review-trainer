@@ -1,6 +1,7 @@
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 import { routing } from "@/i18n/routing";
 import { AuthHeader } from "@/modules/auth/ui/header";
@@ -28,7 +29,9 @@ export default async function LocaleLayout({
     <NextIntlClientProvider messages={messages}>
       <ToastProvider>
         <PendingToastBridge />
-        <NavigationLoadingOverlay />
+        <Suspense fallback={null}>
+          <NavigationLoadingOverlay />
+        </Suspense>
         <ThemeSync />
         <AuthHeader />
         {children}
