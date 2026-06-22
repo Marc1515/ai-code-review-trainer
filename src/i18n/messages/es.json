@@ -60,6 +60,12 @@
     "multiselect": "Selección múltiple",
     "checkboxLabel": "Seleccionar revisión",
     "emptyFilter": "No hay revisiones con este filtro.",
+    "pagination": {
+      "label": "Páginas de revisiones",
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "status": "Página {current} de {total}"
+    },
     "deleteModal": {
       "cancelLabel": "Cancelar",
       "titleOne": "Eliminar revisión",

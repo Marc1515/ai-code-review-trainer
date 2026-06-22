@@ -1,6 +1,12 @@
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/shared/db/client";
-import type { Finding, ReviewInput, ReviewResult } from "@/modules/reviews/domain/types";
+import type {
+  Finding,
+  ReviewInput,
+  ReviewResult,
+  ReviewType,
+} from "@/modules/reviews/domain/types";
+import { getPagination } from "@/modules/reviews/domain/pagination";
 
 export interface SaveReviewParams {
   userId: string;
@@ -29,17 +35,57 @@ export interface ReviewSummary {
   createdAt: Date;
 }
 
-export async function listReviewsByUser(userId: string): Promise<ReviewSummary[]> {
-  return prisma.review.findMany({
-    where: { userId },
-    select: {
-      id: true,
-      reviewType: true,
-      language: true,
-      summary: true,
-      createdAt: true,
-    },
-    orderBy: { createdAt: "desc" },
+export interface PaginatedReviewSummaries {
+  reviews: ReviewSummary[];
+  totalReviews: number;
+  filteredReviews: number;
+  page: number;
+  totalPages: number;
+}
+
+interface ListReviewsByUserOptions {
+  page: number;
+  pageSize: number;
+  reviewType?: ReviewType;
+}
+
+export async function listReviewsByUser(
+  userId: string,
+  { page, pageSize, reviewType }: ListReviewsByUserOptions,
+): Promise<PaginatedReviewSummaries> {
+  const where: Prisma.ReviewWhereInput = {
+    userId,
+    ...(reviewType ? { reviewType } : {}),
+  };
+
+  return prisma.$transaction(async (transaction) => {
+    const [totalReviews, filteredReviews] = await Promise.all([
+      transaction.review.count({ where: { userId } }),
+      transaction.review.count({ where }),
+    ]);
+    const pagination = getPagination(page, filteredReviews, pageSize);
+
+    const reviews = await transaction.review.findMany({
+      where,
+      select: {
+        id: true,
+        reviewType: true,
+        language: true,
+        summary: true,
+        createdAt: true,
+      },
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+      skip: pagination.offset,
+      take: pagination.limit,
+    });
+
+    return {
+      reviews,
+      totalReviews,
+      filteredReviews,
+      page: pagination.page,
+      totalPages: pagination.totalPages,
+    };
   });
 }
 

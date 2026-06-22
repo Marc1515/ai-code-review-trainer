@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { REVIEW_TYPES, type ReviewType } from "@/modules/reviews/domain/types";
 import type { ReviewSummary } from "@/modules/reviews/infrastructure/db/review-repository";
 import { deleteReviewAction, deleteManyReviewsAction } from "@/server/actions/dashboard.action";
@@ -12,12 +11,25 @@ import { useToast } from "@/shared/hooks/use-toast";
 
 interface Props {
   reviews: ReviewSummary[];
+  totalReviews: number;
+  filteredReviews: number;
   maxReviews: number;
+  currentPage: number;
+  totalPages: number;
+  activeFilter: ReviewType | "all";
 }
 
 type ConfirmState = { kind: "none" } | { kind: "one"; id: string } | { kind: "many" };
 
-export function DashboardReviewList({ reviews, maxReviews }: Props) {
+export function DashboardReviewList({
+  reviews,
+  totalReviews,
+  filteredReviews,
+  maxReviews,
+  currentPage,
+  totalPages,
+  activeFilter,
+}: Props) {
   const t = useTranslations("dashboard");
   const tReview = useTranslations("review");
   const tToast = useTranslations("toast");
@@ -28,7 +40,6 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isMultiSelectMode, setIsMultiSelectMode] = useState(false);
-  const [activeFilter, setActiveFilter] = useState<ReviewType | "all">("all");
   const [confirmState, setConfirmState] = useState<ConfirmState>({ kind: "none" });
 
   const typeLabels: Record<ReviewType, string> = {
@@ -44,13 +55,20 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
   const localizedType = (raw: string): string =>
     REVIEW_TYPES.includes(raw as ReviewType) ? typeLabels[raw as ReviewType] : raw;
 
-  const filteredReviews =
-    activeFilter === "all" ? reviews : reviews.filter((r) => r.reviewType === activeFilter);
+  const allSelected = reviews.length > 0 && reviews.every((r) => selectedIds.has(r.id));
 
-  const allSelected =
-    filteredReviews.length > 0 && filteredReviews.every((r) => selectedIds.has(r.id));
+  function dashboardHref(page: number, filter: ReviewType | "all" = activeFilter): string {
+    const params = new URLSearchParams();
+    if (page > 1) params.set("page", String(page));
+    if (filter !== "all") params.set("type", filter);
+    const query = params.toString();
+    return query ? `/dashboard?${query}` : "/dashboard";
+  }
 
-  const availableTypes = REVIEW_TYPES.filter((type) => reviews.some((r) => r.reviewType === type));
+  function changeFilter(filter: ReviewType | "all") {
+    setSelectedIds(new Set());
+    router.replace(dashboardHref(1, filter));
+  }
 
   function toggleMultiSelectMode() {
     if (isMultiSelectMode) {
@@ -75,13 +93,13 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
     if (allSelected) {
       setSelectedIds((prev) => {
         const next = new Set(prev);
-        filteredReviews.forEach((r) => next.delete(r.id));
+        reviews.forEach((r) => next.delete(r.id));
         return next;
       });
     } else {
       setSelectedIds((prev) => {
         const next = new Set(prev);
-        filteredReviews.forEach((r) => next.add(r.id));
+        reviews.forEach((r) => next.add(r.id));
         return next;
       });
     }
@@ -118,7 +136,11 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
       next.delete(id);
       return next;
     });
-    router.refresh();
+    if (reviews.length === 1 && currentPage > 1) {
+      router.replace(dashboardHref(currentPage - 1));
+    } else {
+      router.refresh();
+    }
     showToast(tToast("reviewDeleted"));
   }
 
@@ -135,7 +157,11 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
     }
     const deletedCount = ids.length;
     setSelectedIds(new Set());
-    router.refresh();
+    if (ids.length === reviews.length && currentPage > 1) {
+      router.replace(dashboardHref(currentPage - 1));
+    } else {
+      router.refresh();
+    }
     showToast(tToast("reviewsDeleted", { count: deletedCount }));
   }
 
@@ -147,20 +173,20 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
       {/* Controls bar */}
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <span className="text-sm text-zinc-500 dark:text-zinc-400">
-          {t("count", { current: reviews.length, max: maxReviews })}
+          {t("count", { current: totalReviews, max: maxReviews })}
         </span>
 
-        {reviews.length > 0 && (
+        {totalReviews > 0 && (
           <div className="flex flex-wrap items-center gap-2">
             {/* Filter by review type */}
             <select
               value={activeFilter}
-              onChange={(e) => setActiveFilter(e.target.value as ReviewType | "all")}
+              onChange={(e) => changeFilter(e.target.value as ReviewType | "all")}
               aria-label={t("filterLabel")}
               className="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/50 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:focus:border-teal-500"
             >
               <option value="all">{t("filterAll")}</option>
-              {availableTypes.map((type) => (
+              {REVIEW_TYPES.map((type) => (
                 <option key={type} value={type}>
                   {localizedType(type)}
                 </option>
@@ -212,7 +238,7 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
                   <button
                     type="button"
                     onClick={toggleSelectAll}
-                    disabled={isDeleting || filteredReviews.length === 0}
+                    disabled={isDeleting || reviews.length === 0}
                     tabIndex={isMultiSelectMode ? 0 : -1}
                     className="rounded-lg border border-zinc-300 bg-zinc-50 px-3 py-1.5 text-sm whitespace-nowrap text-zinc-600 transition-colors hover:border-zinc-400 hover:text-zinc-800 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
                   >
@@ -248,16 +274,16 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
       </div>
 
       {/* List / empty states */}
-      {reviews.length === 0 ? (
+      {totalReviews === 0 ? (
         <p className="text-sm text-zinc-500 dark:text-zinc-400">{t("empty")}</p>
-      ) : filteredReviews.length === 0 ? (
+      ) : filteredReviews === 0 ? (
         <p className="text-sm text-zinc-500 dark:text-zinc-400">{t("emptyFilter")}</p>
       ) : (
         <ul
           className="divide-y divide-zinc-200 rounded-xl border border-zinc-200 bg-white dark:divide-zinc-700/60 dark:border-zinc-700/60 dark:bg-zinc-800/60"
           aria-busy={isDeleting}
         >
-          {filteredReviews.map((review) => (
+          {reviews.map((review) => (
             <li
               key={review.id}
               className="flex items-center px-4 py-3 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-700/40"
@@ -337,6 +363,43 @@ export function DashboardReviewList({ reviews, maxReviews }: Props) {
             </li>
           ))}
         </ul>
+      )}
+
+      {filteredReviews > 0 && totalPages > 1 && (
+        <nav
+          className="mt-5 flex items-center justify-between gap-3"
+          aria-label={t("pagination.label")}
+        >
+          {currentPage > 1 ? (
+            <Link
+              href={dashboardHref(currentPage - 1)}
+              className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm font-medium text-zinc-700 transition-colors hover:border-teal-500 hover:text-teal-700 focus-visible:ring-2 focus-visible:ring-teal-500/50 focus-visible:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-teal-500 dark:hover:text-teal-400"
+            >
+              ← {t("pagination.previous")}
+            </Link>
+          ) : (
+            <span className="cursor-not-allowed rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-400 dark:border-zinc-800 dark:text-zinc-600">
+              ← {t("pagination.previous")}
+            </span>
+          )}
+
+          <span className="text-xs font-medium tracking-wide text-zinc-500 tabular-nums dark:text-zinc-400">
+            {t("pagination.status", { current: currentPage, total: totalPages })}
+          </span>
+
+          {currentPage < totalPages ? (
+            <Link
+              href={dashboardHref(currentPage + 1)}
+              className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm font-medium text-zinc-700 transition-colors hover:border-teal-500 hover:text-teal-700 focus-visible:ring-2 focus-visible:ring-teal-500/50 focus-visible:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-teal-500 dark:hover:text-teal-400"
+            >
+              {t("pagination.next")} →
+            </Link>
+          ) : (
+            <span className="cursor-not-allowed rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-400 dark:border-zinc-800 dark:text-zinc-600">
+              {t("pagination.next")} →
+            </span>
+          )}
+        </nav>
       )}
 
       {error && (

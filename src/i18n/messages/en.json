@@ -60,6 +60,12 @@
     "multiselect": "Multi-select",
     "checkboxLabel": "Select review",
     "emptyFilter": "No reviews match this filter.",
+    "pagination": {
+      "label": "Review pages",
+      "previous": "Previous",
+      "next": "Next",
+      "status": "Page {current} of {total}"
+    },
     "deleteModal": {
       "cancelLabel": "Cancel",
       "titleOne": "Delete review",

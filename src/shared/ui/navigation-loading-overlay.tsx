@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 
@@ -9,6 +9,8 @@ const MIN_DURATION_MS = 100;
 export function NavigationLoadingOverlay() {
   const t = useTranslations("navigation");
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const searchParamsKey = searchParams.toString();
   const [visible, setVisible] = useState(false);
   const startTimeRef = useRef<number | null>(null);
   const pendingRef = useRef(false);
@@ -63,7 +65,7 @@ export function NavigationLoadingOverlay() {
 
     const timer = setTimeout(() => setVisible(false), delay);
     return () => clearTimeout(timer);
-  }, [pathname]);
+  }, [pathname, searchParamsKey]);
 
   if (!visible) return null;
 
