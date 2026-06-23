@@ -150,6 +150,7 @@
     "languageChanged": "Language changed to English",
     "reviewDeleted": "Review deleted",
     "reviewsDeleted": "{count} reviews deleted",
+    "reviewStarted": "The review is being generated. You can keep browsing.",
     "reviewCompleted": "Review completed",
     "dismiss": "Dismiss"
   },

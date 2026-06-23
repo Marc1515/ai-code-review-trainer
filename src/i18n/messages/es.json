@@ -150,6 +150,7 @@
     "languageChanged": "Idioma cambiado a español",
     "reviewDeleted": "Review eliminada",
     "reviewsDeleted": "{count} reviews eliminadas",
+    "reviewStarted": "La revisión se está generando. Puedes seguir navegando.",
     "reviewCompleted": "Review completada",
     "dismiss": "Descartar"
   },
