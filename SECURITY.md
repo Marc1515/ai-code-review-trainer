@@ -69,7 +69,11 @@ kept here for reference.
 
 - Auth via Auth.js / NextAuth (GitHub, Google).
 - Review history is persisted **only for authenticated users**; anonymous use
-  is stateless and stores no PII.
+  does not create review history.
+- In-progress review generation state is stored temporarily by `clientRequestId`
+  so the browser can recover a result after a tab closes mid-request. These
+  temporary rows expire and are cleaned opportunistically; they are not shown as
+  review history.
 - Dev and prod use **separate** PostgreSQL databases/containers (ADR-007).
 
 ## Secrets management

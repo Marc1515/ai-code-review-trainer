@@ -21,7 +21,7 @@
       },
       "private": {
         "title": "Private by design",
-        "description": "Your code is analyzed as data, never executed. Saved only if you sign in."
+        "description": "Your code is analyzed as data, never executed. Saved to your history only if you sign in."
       },
       "local": {
         "title": "Local AI",
@@ -60,6 +60,12 @@
     "multiselect": "Multi-select",
     "checkboxLabel": "Select review",
     "emptyFilter": "No reviews match this filter.",
+    "pagination": {
+      "label": "Review pages",
+      "previous": "Previous",
+      "next": "Next",
+      "status": "Page {current} of {total}"
+    },
     "deleteModal": {
       "cancelLabel": "Cancel",
       "titleOne": "Delete review",
@@ -144,6 +150,7 @@
     "languageChanged": "Language changed to English",
     "reviewDeleted": "Review deleted",
     "reviewsDeleted": "{count} reviews deleted",
+    "reviewStarted": "The review is being generated. You can keep browsing.",
     "reviewCompleted": "Review completed",
     "dismiss": "Dismiss"
   },
@@ -166,7 +173,7 @@
       "charCount": "{current} / {max} characters",
       "submit": "Review code",
       "submitting": "Reviewing...",
-      "trustNotice": "Your code is analyzed as data and never executed. It is only saved if you are signed in.",
+      "trustNotice": "Your code is analyzed as data and never executed. It may be kept temporarily to recover an in-progress review; it is saved to your history only if you are signed in.",
       "saveHint": "Want to save this review? Sign in to keep your history.",
       "copyCode": "Copy code",
       "clearCode": "Clear code",

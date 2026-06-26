@@ -243,6 +243,9 @@
 [data-toast-dot="info"] {
   background-color: rgb(113, 113, 122);
 }
+[data-toast-dot="error"] {
+  background-color: rgb(220, 38, 38);
+}
 
 @layer utilities {
   .animate-dot-drift {

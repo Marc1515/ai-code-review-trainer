@@ -1,6 +1,6 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
 
 ## Golden rules
 
@@ -96,10 +96,8 @@ To add a new AI provider: implement the `AiReviewProvider` port and wire it in `
 
 ## Phasing
 
-Completed: scaffold → next-intl i18n → mock review flow → auth → authenticated persistence → dashboard (list) → review detail page → security hardening & rate limiting → infra/deploy preparation → Sentry observability → Ollama provider → product & docs alignment → dashboard pagination.
+Completed: scaffold → next-intl i18n → mock review flow → auth → authenticated persistence → dashboard (list) → review detail page → security hardening & rate limiting → infra/deploy preparation → Sentry observability → Ollama provider → product & docs alignment.  
+**Current phase:** complete.  
+Next: post-MVP (simulated pull requests, pagination, second AI provider if planned).
 
-**Current phase:** complete.
-
-Next: post-MVP (simulated pull requests, second AI provider if planned).
-
-Don't pull later-phase work forward. Off-limits until explicitly planned: BYOK, second AI provider, simulated pull requests, Docker/CI/deploy changes.
+Don't pull later-phase work forward. Off-limits until explicitly planned: BYOK, second AI provider, simulated pull requests, pagination, Docker/CI/deploy changes.

@@ -7,25 +7,28 @@ import { reviewResultSchema } from "@/modules/reviews/schemas/review.schema";
 export interface CreateReviewResult {
   result: ReviewResult;
   saved: boolean;
+  reviewId?: string;
 }
 
 export async function createCodeReview(
   input: ReviewInput,
   userId?: string,
   skipSave = false,
+  clientRequestId?: string,
 ): Promise<CreateReviewResult> {
   const provider = getAiReviewProvider();
   const raw = await provider.review(input);
   const result = reviewResultSchema.parse(raw);
 
   let saved = false;
+  let reviewId: string | undefined;
   if (userId && !skipSave) {
     const count = await countByUserId(userId);
     if (count < MAX_SAVED_REVIEWS) {
-      await saveReview({ userId, input, result });
+      reviewId = await saveReview({ userId, input, result, clientRequestId });
       saved = true;
     }
   }
 
-  return { result, saved };
+  return { result, saved, reviewId };
 }

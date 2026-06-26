@@ -1,16 +1,29 @@
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/shared/db/client";
-import type { Finding, ReviewInput, ReviewResult } from "@/modules/reviews/domain/types";
+import type {
+  Finding,
+  ReviewInput,
+  ReviewResult,
+  ReviewType,
+} from "@/modules/reviews/domain/types";
+import { getPagination } from "@/modules/reviews/domain/pagination";
 
 export interface SaveReviewParams {
   userId: string;
   input: ReviewInput;
   result: ReviewResult;
+  clientRequestId?: string;
 }
 
-export async function saveReview({ userId, input, result }: SaveReviewParams): Promise<void> {
-  await prisma.review.create({
+export async function saveReview({
+  userId,
+  input,
+  result,
+  clientRequestId,
+}: SaveReviewParams): Promise<string> {
+  const review = await prisma.review.create({
     data: {
+      clientRequestId,
       userId,
       reviewType: result.reviewType,
       language: input.language ?? null,
@@ -18,7 +31,10 @@ export async function saveReview({ userId, input, result }: SaveReviewParams): P
       summary: result.summary,
       findings: result.findings as unknown as Prisma.InputJsonValue,
     },
+    select: { id: true },
   });
+
+  return review.id;
 }
 
 export interface ReviewSummary {
@@ -29,23 +45,78 @@ export interface ReviewSummary {
   createdAt: Date;
 }
 
-export async function listReviewsByUser(userId: string): Promise<ReviewSummary[]> {
-  return prisma.review.findMany({
-    where: { userId },
-    select: {
-      id: true,
-      reviewType: true,
-      language: true,
-      summary: true,
-      createdAt: true,
-    },
-    orderBy: { createdAt: "desc" },
+export interface PaginatedReviewSummaries {
+  reviews: ReviewSummary[];
+  totalReviews: number;
+  filteredReviews: number;
+  page: number;
+  totalPages: number;
+}
+
+interface ListReviewsByUserOptions {
+  page: number;
+  pageSize: number;
+  reviewType?: ReviewType;
+}
+
+export async function listReviewsByUser(
+  userId: string,
+  { page, pageSize, reviewType }: ListReviewsByUserOptions,
+): Promise<PaginatedReviewSummaries> {
+  const where: Prisma.ReviewWhereInput = {
+    userId,
+    ...(reviewType ? { reviewType } : {}),
+  };
+
+  return prisma.$transaction(async (transaction) => {
+    const [totalReviews, filteredReviews] = await Promise.all([
+      transaction.review.count({ where: { userId } }),
+      transaction.review.count({ where }),
+    ]);
+    const pagination = getPagination(page, filteredReviews, pageSize);
+
+    const reviews = await transaction.review.findMany({
+      where,
+      select: {
+        id: true,
+        reviewType: true,
+        language: true,
+        summary: true,
+        createdAt: true,
+      },
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+      skip: pagination.offset,
+      take: pagination.limit,
+    });
+
+    return {
+      reviews,
+      totalReviews,
+      filteredReviews,
+      page: pagination.page,
+      totalPages: pagination.totalPages,
+    };
   });
 }
 
 export interface ReviewDetail extends ReviewSummary {
   code: string;
   findings: Finding[];
+}
+
+function toReviewDetail(row: {
+  id: string;
+  reviewType: string;
+  language: string | null;
+  summary: string;
+  createdAt: Date;
+  code: string;
+  findings: Prisma.JsonValue;
+}): ReviewDetail {
+  return {
+    ...row,
+    findings: row.findings as unknown as Finding[],
+  };
 }
 
 export async function getReviewByIdAndUser(
@@ -67,10 +138,54 @@ export async function getReviewByIdAndUser(
 
   if (!row) return null;
 
-  return {
-    ...row,
-    findings: row.findings as unknown as Finding[],
-  };
+  return toReviewDetail(row);
+}
+
+export interface FindCompletedReviewForUserParams {
+  userId: string;
+  clientRequestId?: string;
+  input: ReviewInput;
+  startedAt?: Date;
+}
+
+export async function findCompletedReviewForUser({
+  userId,
+  clientRequestId,
+  input,
+  startedAt,
+}: FindCompletedReviewForUserParams): Promise<ReviewDetail | null> {
+  const select = {
+    id: true,
+    reviewType: true,
+    language: true,
+    summary: true,
+    createdAt: true,
+    code: true,
+    findings: true,
+  } satisfies Prisma.ReviewSelect;
+
+  if (clientRequestId) {
+    const row = await prisma.review.findFirst({
+      where: { userId, clientRequestId },
+      select,
+    });
+
+    if (row) return toReviewDetail(row);
+  }
+
+  const row = await prisma.review.findFirst({
+    where: {
+      userId,
+      reviewType: input.reviewType,
+      language: input.language ?? null,
+      code: input.code,
+      ...(startedAt ? { createdAt: { gte: startedAt } } : {}),
+    },
+    select,
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+  });
+
+  return row ? toReviewDetail(row) : null;
 }
 
 export async function countByUserId(userId: string): Promise<number> {
