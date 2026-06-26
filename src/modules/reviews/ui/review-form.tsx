@@ -27,6 +27,9 @@ const CodeEditor = dynamic(
 const ICON_BTN =
   "rounded-md border border-zinc-200 bg-transparent p-1.5 transition-colors disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:disabled:opacity-30";
 
+const ICON_BTN =
+  "rounded-md border border-zinc-200 bg-transparent p-1.5 transition-colors disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:disabled:opacity-30";
+
 interface Props {
   isAuthenticated?: boolean;
   savedCount?: number;
