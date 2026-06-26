@@ -7,15 +7,37 @@ datasource db {
 }
 
 model Review {
-  id         String   @id @default(cuid())
-  reviewType String
-  language   String?
-  code       String   @db.Text
-  summary    String
-  findings   Json
-  userId     String?
-  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  createdAt  DateTime @default(now())
+  id              String   @id @default(cuid())
+  clientRequestId String?  @unique
+  reviewType      String
+  language        String?
+  code            String   @db.Text
+  summary         String
+  findings        Json
+  userId          String?
+  user            User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt       DateTime @default(now())
+}
+
+model ReviewGeneration {
+  id              String    @id @default(cuid())
+  clientRequestId String    @unique
+  status          String
+  reviewType      String
+  language        String?
+  code            String    @db.Text
+  summary         String?
+  findings        Json?
+  errorCode       String?
+  saved           Boolean   @default(false)
+  savedReviewId   String?
+  userId          String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  completedAt     DateTime?
+  expiresAt       DateTime
+
+  @@index([expiresAt])
 }
 
 // Auth.js / NextAuth v5 — standard Prisma Adapter models.

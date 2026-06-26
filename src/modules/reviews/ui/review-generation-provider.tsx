@@ -15,11 +15,16 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { REVIEW_TYPES, type ReviewType } from "@/modules/reviews/domain/types";
 import type { ReviewResult } from "@/modules/reviews/domain/types";
-import { reviewAction, type ReviewActionState } from "@/server/actions/review.action";
+import {
+  reconcileReviewAction,
+  reviewAction,
+  type ReviewActionState,
+} from "@/server/actions/review.action";
 import { useToast } from "@/shared/hooks/use-toast";
 
 const STORAGE_KEY = "ai-code-review-trainer-review-generation";
 const REVIEW_TOAST_ID = "ai-code-review-trainer-review-generation-toast";
+const RECONCILE_INTERVAL_MS = 3_000;
 
 type ReviewErrorCode = Extract<ReviewActionState, { status: "error" }>["code"];
 
@@ -34,6 +39,7 @@ interface ReviewGenerationState {
   saved?: boolean;
   errorCode?: ReviewErrorCode;
   requestId?: string;
+  startedAt?: number;
 }
 
 interface ReviewGenerationContextValue {
@@ -78,6 +84,7 @@ function toFormData(state: ReviewGenerationState, skipSave: boolean): FormData {
   const formData = new FormData();
   formData.set("code", state.code);
   formData.set("reviewType", state.reviewType);
+  if (state.requestId) formData.set("clientRequestId", state.requestId);
   if (state.language.trim()) formData.set("language", state.language.trim());
   if (skipSave) formData.set("skipSave", "true");
   return formData;
@@ -93,10 +100,16 @@ function restoreStoredState(): ReviewGenerationState | null {
     const parsed = JSON.parse(raw) as Partial<ReviewGenerationState>;
     if (!isReviewType(parsed.reviewType)) return null;
 
-    // A browser request cannot survive a fully closed tab. If a previous tab
-    // closed while pending, restore the draft instead of showing a stale spinner.
-    const status =
-      parsed.status === "success" || parsed.status === "error" ? parsed.status : "idle";
+    const startedAt = typeof parsed.startedAt === "number" ? parsed.startedAt : undefined;
+    const pendingCanBeReconciled =
+      parsed.status === "pending" &&
+      typeof parsed.requestId === "string" &&
+      parsed.requestId.length > 0;
+    const status = pendingCanBeReconciled
+      ? "pending"
+      : parsed.status === "success" || parsed.status === "error"
+        ? parsed.status
+        : "idle";
 
     return {
       status,
@@ -107,6 +120,7 @@ function restoreStoredState(): ReviewGenerationState | null {
       saved: status === "success" ? parsed.saved : undefined,
       errorCode: status === "error" ? parsed.errorCode : undefined,
       requestId: typeof parsed.requestId === "string" ? parsed.requestId : undefined,
+      startedAt: status === "pending" ? startedAt : undefined,
     };
   } catch {
     return null;
@@ -128,6 +142,7 @@ function persistState(state: ReviewGenerationState) {
         saved: state.status === "success" ? state.saved : undefined,
         errorCode: state.status === "error" ? state.errorCode : undefined,
         requestId: state.requestId,
+        startedAt: state.startedAt,
       }),
     );
   } catch {
@@ -171,6 +186,7 @@ function updateDraft(patch: Partial<ReviewGenerationState>) {
       saved: undefined,
       errorCode: undefined,
       requestId: undefined,
+      startedAt: undefined,
     };
   });
 }
@@ -188,6 +204,7 @@ function submitReviewGeneration(options: { skipSave?: boolean } = {}) {
     saved: undefined,
     errorCode: undefined,
     requestId,
+    startedAt: Date.now(),
   };
 
   setStoreState(pendingState);
@@ -206,6 +223,7 @@ function submitReviewGeneration(options: { skipSave?: boolean } = {}) {
             result: result.result,
             saved: result.saved,
             requestId,
+            startedAt: undefined,
           };
         });
         return;
@@ -220,6 +238,7 @@ function submitReviewGeneration(options: { skipSave?: boolean } = {}) {
           status: "error",
           errorCode,
           requestId,
+          startedAt: undefined,
         };
       });
     })
@@ -231,6 +250,7 @@ function submitReviewGeneration(options: { skipSave?: boolean } = {}) {
           status: "error",
           errorCode: "provider",
           requestId,
+          startedAt: undefined,
         };
       });
     })
@@ -259,6 +279,74 @@ export function ReviewGenerationProvider({ children }: { children: ReactNode }) 
   const submitReview = useCallback((options: { skipSave?: boolean } = {}) => {
     submitReviewGeneration(options);
   }, []);
+
+  useEffect(() => {
+    if (state.status !== "pending") return;
+
+    let cancelled = false;
+
+    async function reconcile() {
+      const result = await reconcileReviewAction({
+        clientRequestId: state.requestId,
+        code: state.code,
+        language: state.language.trim() ? state.language.trim() : undefined,
+        reviewType: state.reviewType,
+        startedAt: state.startedAt,
+      });
+
+      if (cancelled) return;
+
+      if (result.status === "error") {
+        if (result.code === "validation") return;
+
+        setStoreState((current) => {
+          if (current.status !== "pending" || current.requestId !== state.requestId) {
+            return current;
+          }
+
+          return {
+            ...current,
+            status: "error",
+            errorCode: result.code,
+            startedAt: undefined,
+          };
+        });
+        return;
+      }
+
+      if (result.status !== "success") return;
+
+      setStoreState((current) => {
+        if (current.status !== "pending" || current.requestId !== state.requestId) {
+          return current;
+        }
+
+        return {
+          ...current,
+          status: "success",
+          result: result.result,
+          saved: result.saved,
+          startedAt: undefined,
+        };
+      });
+    }
+
+    const initialTimer = window.setTimeout(reconcile, 750);
+    const interval = window.setInterval(reconcile, RECONCILE_INTERVAL_MS);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(initialTimer);
+      window.clearInterval(interval);
+    };
+  }, [
+    state.code,
+    state.language,
+    state.requestId,
+    state.reviewType,
+    state.startedAt,
+    state.status,
+  ]);
 
   const clearDraft = useCallback(() => {
     const current = getStoreState();

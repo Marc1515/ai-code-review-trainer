@@ -12,11 +12,18 @@ export interface SaveReviewParams {
   userId: string;
   input: ReviewInput;
   result: ReviewResult;
+  clientRequestId?: string;
 }
 
-export async function saveReview({ userId, input, result }: SaveReviewParams): Promise<void> {
-  await prisma.review.create({
+export async function saveReview({
+  userId,
+  input,
+  result,
+  clientRequestId,
+}: SaveReviewParams): Promise<string> {
+  const review = await prisma.review.create({
     data: {
+      clientRequestId,
       userId,
       reviewType: result.reviewType,
       language: input.language ?? null,
@@ -24,7 +31,10 @@ export async function saveReview({ userId, input, result }: SaveReviewParams): P
       summary: result.summary,
       findings: result.findings as unknown as Prisma.InputJsonValue,
     },
+    select: { id: true },
   });
+
+  return review.id;
 }
 
 export interface ReviewSummary {
@@ -94,6 +104,21 @@ export interface ReviewDetail extends ReviewSummary {
   findings: Finding[];
 }
 
+function toReviewDetail(row: {
+  id: string;
+  reviewType: string;
+  language: string | null;
+  summary: string;
+  createdAt: Date;
+  code: string;
+  findings: Prisma.JsonValue;
+}): ReviewDetail {
+  return {
+    ...row,
+    findings: row.findings as unknown as Finding[],
+  };
+}
+
 export async function getReviewByIdAndUser(
   id: string,
   userId: string,
@@ -113,10 +138,54 @@ export async function getReviewByIdAndUser(
 
   if (!row) return null;
 
-  return {
-    ...row,
-    findings: row.findings as unknown as Finding[],
-  };
+  return toReviewDetail(row);
+}
+
+export interface FindCompletedReviewForUserParams {
+  userId: string;
+  clientRequestId?: string;
+  input: ReviewInput;
+  startedAt?: Date;
+}
+
+export async function findCompletedReviewForUser({
+  userId,
+  clientRequestId,
+  input,
+  startedAt,
+}: FindCompletedReviewForUserParams): Promise<ReviewDetail | null> {
+  const select = {
+    id: true,
+    reviewType: true,
+    language: true,
+    summary: true,
+    createdAt: true,
+    code: true,
+    findings: true,
+  } satisfies Prisma.ReviewSelect;
+
+  if (clientRequestId) {
+    const row = await prisma.review.findFirst({
+      where: { userId, clientRequestId },
+      select,
+    });
+
+    if (row) return toReviewDetail(row);
+  }
+
+  const row = await prisma.review.findFirst({
+    where: {
+      userId,
+      reviewType: input.reviewType,
+      language: input.language ?? null,
+      code: input.code,
+      ...(startedAt ? { createdAt: { gte: startedAt } } : {}),
+    },
+    select,
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+  });
+
+  return row ? toReviewDetail(row) : null;
 }
 
 export async function countByUserId(userId: string): Promise<number> {

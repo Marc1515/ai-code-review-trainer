@@ -21,7 +21,7 @@
       },
       "private": {
         "title": "Privado por diseño",
-        "description": "Tu código se analiza como dato, nunca se ejecuta. Solo se guarda si inicias sesión."
+        "description": "Tu código se analiza como dato, nunca se ejecuta. Solo se guarda en tu historial si inicias sesión."
       },
       "local": {
         "title": "IA local",
@@ -173,7 +173,7 @@
       "charCount": "{current} / {max} caracteres",
       "submit": "Revisar código",
       "submitting": "Revisando...",
-      "trustNotice": "Tu código es analizado como dato, nunca ejecutado ni almacenado si no has iniciado sesión.",
+      "trustNotice": "Tu código es analizado como dato y nunca ejecutado. Puede conservarse temporalmente para recuperar una revisión en curso; solo se guarda en tu historial si has iniciado sesión.",
       "saveHint": "¿Quieres guardar esta revisión? Inicia sesión para conservar tu historial.",
       "copyCode": "Copiar código",
       "clearCode": "Limpiar código",
