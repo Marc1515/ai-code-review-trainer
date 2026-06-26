@@ -1,19 +1,17 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Copy, Check, Trash2 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { REVIEW_TYPES, type ReviewType } from "@/modules/reviews/domain/types";
 import { MAX_CODE_LENGTH } from "@/modules/reviews/schemas/review.schema";
 import { useEditorTheme } from "@/shared/hooks/use-editor-theme";
-import { reviewAction } from "@/server/actions/review.action";
-import type { ReviewActionState } from "@/server/actions/review.action";
 import { ReviewResult } from "@/modules/reviews/ui/review-result";
 import { CODE_SAMPLES } from "@/modules/reviews/ui/review-examples";
+import { useReviewGeneration } from "@/modules/reviews/ui/review-generation-provider";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
-import { useToast } from "@/shared/hooks/use-toast";
 
 // Load CodeMirror client-side only to avoid server-side browser API errors.
 const CodeEditor = dynamic(
@@ -25,8 +23,6 @@ const CodeEditor = dynamic(
     ),
   },
 );
-
-const initialState: ReviewActionState = { status: "idle" };
 
 const ICON_BTN =
   "rounded-md border border-zinc-200 bg-transparent p-1.5 transition-colors disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:disabled:opacity-30";
@@ -43,23 +39,20 @@ export function ReviewForm({
   maxSavedReviews = 10,
 }: Props) {
   const t = useTranslations("review");
-  const tToast = useTranslations("toast");
-  const { showToast } = useToast();
-  const [state, setState] = useState<ReviewActionState>(initialState);
-  const [isPending, startTransition] = useTransition();
-  const [code, setCode] = useState("");
-  const [reviewType, setReviewType] = useState<ReviewType>("general");
+  const { state, setCode, setLanguage, setReviewType, submitReview, clearDraft } =
+    useReviewGeneration();
   const [showLimitModal, setShowLimitModal] = useState(false);
   const [showClearModal, setShowClearModal] = useState(false);
   const [shouldPulse, setShouldPulse] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
   const { theme } = useEditorTheme();
-  const formRef = useRef<HTMLFormElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
   const submitRef = useRef<HTMLButtonElement>(null);
   const skipSaveRef = useRef(false);
 
   const isAtLimit = isAuthenticated && savedCount >= maxSavedReviews;
+  const isPending = state.status === "pending";
+  const { code, language, reviewType } = state;
   const codeLength = code.length;
 
   useEffect(() => {
@@ -85,24 +78,6 @@ export function ReviewForm({
         ? "text-yellow-500"
         : "text-zinc-400 dark:text-zinc-500";
 
-  function buildFormData(skipSave = false): FormData | null {
-    if (!formRef.current) return null;
-    const fd = new FormData(formRef.current);
-    fd.set("code", code);
-    if (skipSave) fd.set("skipSave", "true");
-    return fd;
-  }
-
-  function submitFormData(fd: FormData) {
-    startTransition(async () => {
-      const result = await reviewAction(initialState, fd);
-      setState(result);
-      if (result.status === "success") {
-        showToast(tToast("reviewCompleted"));
-      }
-    });
-  }
-
   function handleFormSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!code.trim()) return;
@@ -114,16 +89,14 @@ export function ReviewForm({
       return;
     }
 
-    const fd = buildFormData(skipSaveRef.current);
+    submitReview({ skipSave: skipSaveRef.current });
     skipSaveRef.current = false;
-    if (fd) submitFormData(fd);
   }
 
   function handleContinueWithoutSaving() {
     setShowLimitModal(false);
     setShouldPulse(false);
-    const fd = buildFormData(true);
-    if (fd) submitFormData(fd);
+    submitReview({ skipSave: true });
   }
 
   // Scroll so the submit button is as close to the vertical center as possible.
@@ -141,6 +114,7 @@ export function ReviewForm({
   }
 
   function handleLoadExample(type: ReviewType) {
+    if (isPending) return;
     setCode(CODE_SAMPLES[type] ?? "");
     setReviewType(type);
     setShouldPulse(true);
@@ -161,12 +135,12 @@ export function ReviewForm({
   }
 
   function handleClearCode() {
-    if (!code) return;
+    if (!code || isPending) return;
     setShowClearModal(true);
   }
 
   function handleConfirmClear() {
-    setCode("");
+    clearDraft();
     setShouldPulse(false);
     setShowClearModal(false);
   }
@@ -185,7 +159,7 @@ export function ReviewForm({
 
   return (
     <div>
-      <form ref={formRef} onSubmit={handleFormSubmit} className="space-y-6">
+      <form onSubmit={handleFormSubmit} className="space-y-6">
         <div>
           <div className="mb-1.5 flex flex-wrap items-center justify-between gap-x-2 gap-y-1.5">
             <div className="flex flex-wrap items-center gap-2">
@@ -194,8 +168,9 @@ export function ReviewForm({
                   key={type}
                   type="button"
                   onClick={() => handleLoadExample(type)}
+                  disabled={isPending}
                   aria-label={aria}
-                  className="rounded-md border border-zinc-200 bg-transparent px-2.5 py-1 text-xs font-medium text-zinc-500 transition-colors hover:border-teal-400/60 hover:text-teal-700 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-teal-500/50 dark:hover:text-teal-400"
+                  className="rounded-md border border-zinc-200 bg-transparent px-2.5 py-1 text-xs font-medium text-zinc-500 transition-colors hover:border-teal-400/60 hover:text-teal-700 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-teal-500/50 dark:hover:text-teal-400"
                 >
                   {label}
                 </button>
@@ -222,7 +197,7 @@ export function ReviewForm({
               <button
                 type="button"
                 onClick={handleClearCode}
-                disabled={!code}
+                disabled={!code || isPending}
                 aria-label={t("form.clearCode")}
                 title={t("form.clearCode")}
                 className={`${ICON_BTN} text-zinc-400 hover:border-zinc-400/60 hover:text-zinc-600 dark:text-zinc-500 dark:hover:border-zinc-500 dark:hover:text-zinc-300`}
@@ -237,6 +212,7 @@ export function ReviewForm({
             theme={theme}
             placeholder={t("form.codePlaceholder")}
             maxLength={MAX_CODE_LENGTH}
+            readOnly={isPending}
             ariaLabel={t("form.codeLabel")}
           />
           <p className={`mt-1.5 text-xs ${charCountColor}`}>
@@ -256,6 +232,9 @@ export function ReviewForm({
               id="language"
               name="language"
               type="text"
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              disabled={isPending}
               placeholder={t("form.languagePlaceholder")}
               className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:ring-2 focus:ring-zinc-500/20 focus:outline-none dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-100 dark:placeholder:text-zinc-500"
             />
@@ -272,6 +251,7 @@ export function ReviewForm({
               id="reviewType"
               name="reviewType"
               value={reviewType}
+              disabled={isPending}
               onChange={(e) => setReviewType(e.target.value as ReviewType)}
               className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 focus:border-zinc-500 focus:ring-2 focus:ring-zinc-500/20 focus:outline-none dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-100"
             >
@@ -286,15 +266,15 @@ export function ReviewForm({
 
         {state.status === "error" && (
           <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-            {state.code === "validation"
+            {state.errorCode === "validation"
               ? t("error.validation")
-              : state.code === "rate-limit"
+              : state.errorCode === "rate-limit"
                 ? t("error.rateLimit")
-                : state.code === "provider-busy"
+                : state.errorCode === "provider-busy"
                   ? t("error.providerBusy")
-                  : state.code === "provider-timeout"
+                  : state.errorCode === "provider-timeout"
                     ? t("error.providerTimeout")
-                    : state.code === "provider-unavailable"
+                    : state.errorCode === "provider-unavailable"
                       ? t("error.providerUnavailable")
                       : t("error.generic")}
           </p>
@@ -339,7 +319,7 @@ export function ReviewForm({
         </div>
       </form>
 
-      {state.status === "success" && (
+      {state.status === "success" && state.result && (
         <div ref={resultRef} className="scroll-mt-8">
           {isAuthenticated && !state.saved && (
             <p
