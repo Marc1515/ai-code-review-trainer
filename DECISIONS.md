@@ -81,16 +81,22 @@ segment and middleware; both are fully implemented.
 
 ---
 
-## ADR-006 — Anonymous reviews allowed; persist only when authenticated
+## ADR-006 — Anonymous reviews allowed; history only when authenticated
 
 **Context.** We want low friction for trying the tool, but also review history
-for signed-in users.
+for signed-in users. The app also needs to recover a review result if the
+browser tab is closed while Ollama is still processing.
 
-**Decision.** Anyone can run a review (stateless). History is persisted **only**
-for users authenticated via GitHub/Google.
+**Decision.** Anyone can run a review. Review history is persisted **only** for
+users authenticated via GitHub/Google. Separately, short-lived
+`ReviewGeneration` rows keyed by `clientRequestId` store temporary generation
+state/results so the UI can recover an in-progress or completed review after a
+tab close.
 
-**Consequences.** Simple anonymous path. Persistence and auth are implemented
-and active. No PII stored for anonymous users.
+**Consequences.** Anonymous users can try the app without signing in, and they
+do not get review history. Temporary recovery rows may contain submitted code
+and expire automatically; they are cleaned opportunistically and are not shown
+as saved history.
 
 ---
 
