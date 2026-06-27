@@ -61,16 +61,19 @@ Layer rules:
 2. Action calls `auth()` server-side to resolve `userId` (anonymous if absent).
 3. Action calls `checkRateLimit(userId, headers)` from `shared/security/rate-limiter.ts` — stricter limit for anonymous, higher for authenticated.
 4. Action validates FormData with `reviewInputSchema` (Zod).
-5. Action calls `createCodeReview(input, userId?)` use-case.
-6. Use-case calls `getAiReviewProvider()` and validates provider output with `reviewResultSchema`.
-7. If `userId` is present, use-case calls `saveReview()` in the repository — **anonymous reviews are never persisted**.
-8. Structured `ReviewResult` is returned to the UI.
+5. Action records temporary `ReviewGeneration` state by `clientRequestId` so the UI can recover after tab closes/reloads.
+6. Action calls `createCodeReview(input, userId?)` use-case.
+7. Use-case calls `getAiReviewProvider()` and validates provider output with `reviewResultSchema`.
+8. If `userId` is present, use-case calls `saveReview()` in the repository — authenticated users get review history.
+9. Anonymous users do not get review history, but temporary recovery state may exist until expiry.
+10. Structured `ReviewResult` is returned to the UI.
 
 To add a new AI provider: implement the `AiReviewProvider` port and wire it in `provider-factory.ts` — no other layer changes needed.
 
 ## Prisma / data access patterns
 
-- `Review.userId` is nullable — only authenticated users' reviews are stored.
+- `Review.userId` is nullable — only authenticated users' saved review history is stored.
+- `ReviewGeneration` stores short-lived generation recovery state by `clientRequestId`; it is not review history.
 - All repository queries that fetch reviews **must filter by `userId`** to prevent cross-user data exposure. See `listReviewsByUser` and (future) `getReviewByIdAndUser` in `infrastructure/db/review-repository.ts` for the pattern.
 - Shared singleton client: `src/shared/db/client.ts` — import `prisma` from there everywhere. Never instantiate `PrismaClient` elsewhere.
 - After any schema change, run `pnpm prisma generate` before `pnpm typecheck`.
@@ -96,8 +99,8 @@ To add a new AI provider: implement the `AiReviewProvider` port and wire it in `
 
 ## Phasing
 
-Completed: scaffold → next-intl i18n → mock review flow → auth → authenticated persistence → dashboard (list) → review detail page → security hardening & rate limiting → infra/deploy preparation → Sentry observability → Ollama provider → product & docs alignment.  
+Completed: scaffold → next-intl i18n → mock review flow → auth → authenticated persistence → dashboard (list/detail/pagination) → security hardening & rate limiting → infra/deploy preparation → Sentry observability → Ollama provider → product & docs alignment → non-blocking review generation with recovery.
 **Current phase:** complete.  
-Next: post-MVP (simulated pull requests, pagination, second AI provider if planned).
+Next: post-MVP (simulated pull requests, second AI provider if planned).
 
-Don't pull later-phase work forward. Off-limits until explicitly planned: BYOK, second AI provider, simulated pull requests, pagination, Docker/CI/deploy changes.
+Don't pull later-phase work forward. Off-limits until explicitly planned: BYOK, second AI provider, simulated pull requests.

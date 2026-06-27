@@ -20,8 +20,8 @@ describes the current, implemented architecture.
 ### Dockerfile
 Multi-stage build using **pnpm**, producing a Next.js **standalone** output for
 a small runtime image. Build installs only what's needed; runtime runs the
-standalone server. The entrypoint runs `pnpm prisma migrate deploy` before
-starting `node server.js`.
+standalone server. The entrypoint retries `prisma migrate deploy` until the
+database is ready, then starts `node server.js`.
 
 ### Compose files
 - `docker-compose.dev.yml` / `docker-compose.prod.yml` — the **app** service per
@@ -32,6 +32,9 @@ starting `node server.js`.
   external PostgreSQL** container per environment, with a named volume so data
   survives app redeploys (ADR-007). These are started once and managed
   independently of app deploys. Each DB compose file creates its backend network.
+- `docker-compose.local.yml` — self-contained local/evaluation stack with app,
+  PostgreSQL, Ollama, and an Ollama model initializer. It does not use Traefik
+  and is not part of the VPS deployment flow.
 
 ### Ollama service
 

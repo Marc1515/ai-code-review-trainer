@@ -78,7 +78,9 @@ kept here for reference.
 
 ## Secrets management
 
-- Local: copy `.env.example` → `.env`; fill real values locally only.
+- Local without Docker: copy `.env.example` → `.env.local`; fill real values locally only.
+- Local with `docker-compose.local.yml`: demo-safe defaults are defined in the
+  Compose file; OAuth credentials are optional and should stay local.
 - Server: env files live on the VPS outside version control and are injected
   into containers by Docker Compose. See [DEPLOYMENT.md](./DEPLOYMENT.md).
 - `AUTH_SECRET` is generated with `openssl rand -base64 32` and is unique per
