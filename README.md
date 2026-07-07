@@ -98,6 +98,12 @@ The production deployment may be slightly ahead of the local version downloaded
 from this repository, because the application continues to evolve after the
 submitted project snapshot.
 
+## TFM resources
+
+- **Production:** https://trainer.marcespana.com
+- **Video presentation:** https://www.youtube.com/watch?v=x9Ts6ddsd1g
+- **Slides:** https://docs.google.com/presentation/d/1Mxmdh7qrU7gMtlToSY-ZQ68PwvlGdR7dEhZEzBo6Otg/edit?usp=sharing
+
 ## Run locally without Docker
 
 ```bash
