@@ -13,7 +13,7 @@ import {
   type ReviewTypeCard,
 } from "@/modules/home/ui/home-content-sections";
 import { ReviewPreview } from "@/modules/home/ui/review-preview";
-import { AnimatedDotBackground } from "@/shared/ui/animated-dot-background";
+import { BackgroundBeams } from "@/shared/ui/background-beams";
 
 const HOW_STEP_KEYS = ["paste", "choose", "learn"] as const;
 const REVIEW_TYPE_KEYS = [
@@ -56,9 +56,9 @@ export default async function HomePage() {
   return (
     <div className="flex flex-1 flex-col bg-zinc-50 dark:bg-zinc-950">
       {/* Hero — full-viewport-width wrapper so background bleeds edge-to-edge */}
-      <div className="relative flex flex-1 flex-col overflow-hidden">
-        <AnimatedDotBackground />
-        <section className="relative mx-auto flex w-full max-w-5xl flex-1 flex-col items-center gap-12 px-6 py-16 md:flex-row md:items-center md:gap-16 md:py-24 lg:px-8">
+      <div className="relative isolate flex flex-1 flex-col overflow-hidden">
+        <BackgroundBeams />
+        <section className="relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col items-center gap-12 px-6 py-16 md:flex-row md:items-center md:gap-16 md:py-24 lg:px-8">
           {/* Left: copy */}
           <div className="relative flex flex-col items-start gap-6 md:flex-1">
             {/* Eyebrow */}
