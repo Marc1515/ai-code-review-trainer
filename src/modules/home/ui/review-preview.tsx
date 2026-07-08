@@ -49,9 +49,9 @@ const SEVERITY_LABEL: Record<"critical" | "major" | "info", string> = {
 
 export function ReviewPreview({ localAiLabel }: { localAiLabel: string }) {
   return (
-    <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white/[0.95] shadow-xl dark:border-zinc-800 dark:bg-zinc-900/[0.95]">
       {/* Toolbar */}
-      <div className="flex items-center justify-between border-b border-zinc-100 bg-zinc-50 px-4 py-2.5 dark:border-zinc-800 dark:bg-zinc-900/80">
+      <div className="flex items-center justify-between border-b border-zinc-100 bg-zinc-50/[0.95] px-4 py-2.5 dark:border-zinc-800 dark:bg-zinc-900/[0.95]">
         <div className="flex items-center gap-2">
           <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
             getTotal.js

@@ -64,7 +64,7 @@ export function HowItWorksSection({
   steps: HomeStep[];
 }) {
   return (
-    <section className="bg-zinc-50 py-20 dark:bg-zinc-950">
+    <section className="relative z-20 bg-zinc-50 py-20 dark:bg-transparent">
       <div className="mx-auto max-w-5xl px-6 lg:px-8">
         <SectionHeader eyebrow={eyebrow} title={title} description={description} />
 
@@ -75,7 +75,7 @@ export function HowItWorksSection({
             return (
               <article
                 key={step.title}
-                className="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900/70 dark:hover:border-teal-700"
+                className="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white/[0.95] p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900/[0.95] dark:hover:border-teal-700"
               >
                 <div className="mb-8 flex items-center justify-between">
                   <span className="font-mono text-xs text-zinc-400 dark:text-zinc-500">
@@ -111,9 +111,9 @@ export function ReviewTypesSection({
   items: ReviewTypeCard[];
 }) {
   return (
-    <section className="border-y border-zinc-100 bg-white py-20 dark:border-zinc-800 dark:bg-zinc-900">
+    <section className="relative z-20 bg-white py-20 dark:bg-transparent">
       <div className="mx-auto max-w-5xl px-6 lg:px-8">
-        <div className="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:items-start">
+        <div className="rounded-3xl border border-zinc-200 bg-white/[0.95] p-6 shadow-sm sm:p-8 lg:grid lg:grid-cols-[0.75fr_1.25fr] lg:items-start lg:gap-10 lg:p-10 dark:border-zinc-800 dark:bg-zinc-900/[0.95]">
           <div className="lg:sticky lg:top-24">
             <h2 className="text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
               {title}
@@ -123,7 +123,7 @@ export function ReviewTypesSection({
             </p>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:mt-0">
             {items.map((item) => {
               const Icon = REVIEW_TYPE_ICONS[item.key];
 
@@ -131,7 +131,7 @@ export function ReviewTypesSection({
                 <article
                   key={item.key}
                   className={cn(
-                    "rounded-2xl border border-zinc-200 bg-zinc-50 p-5 transition hover:border-teal-300 hover:bg-teal-50/40 dark:border-zinc-800 dark:bg-zinc-950/60 dark:hover:border-teal-800 dark:hover:bg-teal-950/20",
+                    "rounded-2xl border border-zinc-200 bg-zinc-50/[0.95] p-5 transition hover:border-teal-300 hover:bg-teal-50/[0.95] dark:border-zinc-800 dark:bg-zinc-900/[0.95] dark:hover:border-teal-800 dark:hover:bg-zinc-800/[0.95]",
                     item.key === "general" && "sm:col-span-2",
                   )}
                 >
@@ -170,9 +170,9 @@ export function LearningFeedbackSection({
   items: HomeInfoItem[];
 }) {
   return (
-    <section className="bg-zinc-50 py-20 dark:bg-zinc-950">
+    <section className="relative z-20 bg-zinc-50 py-20 dark:bg-transparent">
       <div className="mx-auto max-w-5xl px-6 lg:px-8">
-        <div className="overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="overflow-hidden rounded-3xl border border-zinc-200 bg-white/[0.95] shadow-sm dark:border-zinc-800 dark:bg-zinc-900/[0.95]">
           <div className="grid lg:grid-cols-[0.95fr_1.05fr]">
             <div className="border-b border-zinc-100 p-8 sm:p-10 lg:border-r lg:border-b-0 dark:border-zinc-800">
               <p className="font-mono text-xs tracking-[0.24em] text-teal-600 uppercase dark:text-teal-400">
@@ -226,7 +226,7 @@ export function PrivacySection({
   items: HomeInfoItem[];
 }) {
   return (
-    <section className="bg-zinc-950 py-20 text-white">
+    <section className="relative z-20 bg-zinc-950/85 py-20 text-white dark:bg-transparent">
       <div className="mx-auto max-w-5xl px-6 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
           <div>
@@ -242,7 +242,7 @@ export function PrivacySection({
               return (
                 <article
                   key={item.title}
-                  className="rounded-2xl border border-white/10 bg-white/[0.03] p-5"
+                  className="rounded-2xl border border-zinc-800 bg-zinc-900/[0.95] p-5"
                 >
                   <Icon className="h-5 w-5 text-teal-300" strokeWidth={1.6} />
                   <h3 className="mt-5 text-sm font-semibold text-zinc-100">{item.title}</h3>
@@ -269,8 +269,8 @@ export function HomeFinalCta({
   cta: string;
 }) {
   return (
-    <section className="bg-zinc-50 px-6 pb-20 lg:px-8 dark:bg-zinc-950">
-      <div className="mx-auto max-w-5xl overflow-hidden rounded-3xl border border-zinc-200 bg-zinc-900 p-8 text-white shadow-xl sm:p-10 dark:border-zinc-800">
+    <section className="relative z-20 bg-zinc-50 px-6 pb-20 lg:px-8 dark:bg-transparent">
+      <div className="mx-auto max-w-5xl overflow-hidden rounded-3xl border border-zinc-200 bg-zinc-900/[0.95] p-8 text-white shadow-xl sm:p-10 dark:border-zinc-800">
         <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="font-mono text-xs tracking-[0.24em] text-teal-300 uppercase">{eyebrow}</p>
