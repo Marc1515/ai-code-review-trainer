@@ -110,7 +110,7 @@ export default async function HomePage() {
       </div>
 
       {/* Features strip */}
-      <section className="border-t border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+      <section className="relative z-20 bg-white/[0.95] shadow-sm dark:bg-zinc-900/[0.95]">
         <div className="mx-auto max-w-5xl px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-3">
             <div className="flex flex-col gap-2 py-8 sm:py-10 sm:pr-8">

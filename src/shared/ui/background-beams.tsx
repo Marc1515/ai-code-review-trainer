@@ -94,20 +94,20 @@ export function BackgroundBeams({ className }: BackgroundBeamsProps) {
       <style>{`
         [data-background-beams] {
           --background-beam-start: rgba(15, 23, 42, 0.02);
-          --background-beam-mid: rgba(13, 148, 136, 0.26);
-          --background-beam-end: rgba(14, 165, 233, 0.18);
-          --background-beam-hot: rgba(13, 148, 136, 0.46);
-          --background-beam-opacity: 0.4;
-          --background-beam-glow-opacity: 0.16;
+          --background-beam-mid: rgba(13, 148, 136, 0.18);
+          --background-beam-end: rgba(14, 165, 233, 0.12);
+          --background-beam-hot: rgba(13, 148, 136, 0.32);
+          --background-beam-opacity: 0.28;
+          --background-beam-glow-opacity: 0.1;
         }
 
         .dark [data-background-beams] {
           --background-beam-start: rgba(20, 184, 166, 0.04);
-          --background-beam-mid: rgba(20, 184, 166, 0.42);
-          --background-beam-end: rgba(34, 211, 238, 0.32);
-          --background-beam-hot: rgba(45, 212, 191, 0.7);
-          --background-beam-opacity: 0.52;
-          --background-beam-glow-opacity: 0.24;
+          --background-beam-mid: rgba(20, 184, 166, 0.28);
+          --background-beam-end: rgba(34, 211, 238, 0.2);
+          --background-beam-hot: rgba(45, 212, 191, 0.5);
+          --background-beam-opacity: 0.34;
+          --background-beam-glow-opacity: 0.14;
         }
 
         .background-beam-highlight {
