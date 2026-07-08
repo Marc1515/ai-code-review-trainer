@@ -2,11 +2,56 @@ import { getTranslations } from "next-intl/server";
 import { KeyRound, ShieldCheck, Server, ArrowRight } from "lucide-react";
 
 import { Link } from "@/i18n/navigation";
+import {
+  HomeFinalCta,
+  HowItWorksSection,
+  LearningFeedbackSection,
+  PrivacySection,
+  ReviewTypesSection,
+  type HomeInfoItem,
+  type HomeStep,
+  type ReviewTypeCard,
+} from "@/modules/home/ui/home-content-sections";
 import { ReviewPreview } from "@/modules/home/ui/review-preview";
 import { AnimatedDotBackground } from "@/shared/ui/animated-dot-background";
 
+const HOW_STEP_KEYS = ["paste", "choose", "learn"] as const;
+const REVIEW_TYPE_KEYS = [
+  "general",
+  "cleanCode",
+  "bugs",
+  "security",
+  "performance",
+  "architecture",
+  "testing",
+] as const;
+const LEARNING_ITEM_KEYS = ["explain", "prioritize", "improve"] as const;
+const PRIVACY_ITEM_KEYS = ["noExecution", "serverSide", "optionalHistory", "noPaidApi"] as const;
+
 export default async function HomePage() {
   const t = await getTranslations("home");
+  const tReviewTypes = await getTranslations("review.types");
+
+  const howSteps: HomeStep[] = HOW_STEP_KEYS.map((key) => ({
+    title: t(`howItWorks.steps.${key}.title`),
+    description: t(`howItWorks.steps.${key}.description`),
+  }));
+
+  const reviewTypeItems: ReviewTypeCard[] = REVIEW_TYPE_KEYS.map((key) => ({
+    key,
+    title: tReviewTypes(key),
+    description: t(`reviewTypes.items.${key}.description`),
+  }));
+
+  const learningItems: HomeInfoItem[] = LEARNING_ITEM_KEYS.map((key) => ({
+    title: t(`learning.items.${key}.title`),
+    description: t(`learning.items.${key}.description`),
+  }));
+
+  const privacyItems: HomeInfoItem[] = PRIVACY_ITEM_KEYS.map((key) => ({
+    title: t(`privacy.items.${key}.title`),
+    description: t(`privacy.items.${key}.description`),
+  }));
 
   return (
     <div className="flex flex-1 flex-col bg-zinc-50 dark:bg-zinc-950">
@@ -100,6 +145,40 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      <HowItWorksSection
+        eyebrow={t("howItWorks.eyebrow")}
+        title={t("howItWorks.title")}
+        description={t("howItWorks.description")}
+        steps={howSteps}
+      />
+
+      <ReviewTypesSection
+        title={t("reviewTypes.title")}
+        description={t("reviewTypes.description")}
+        items={reviewTypeItems}
+      />
+
+      <LearningFeedbackSection
+        eyebrow={t("learning.eyebrow")}
+        title={t("learning.title")}
+        description={t("learning.description")}
+        items={learningItems}
+      />
+
+      <PrivacySection
+        eyebrow={t("privacy.eyebrow")}
+        title={t("privacy.title")}
+        description={t("privacy.description")}
+        items={privacyItems}
+      />
+
+      <HomeFinalCta
+        eyebrow={t("finalCta.eyebrow")}
+        title={t("finalCta.title")}
+        description={t("finalCta.description")}
+        cta={t("finalCta.cta")}
+      />
     </div>
   );
 }
