@@ -22,7 +22,7 @@ export async function AuthHeader() {
     session?.user?.name?.split(" ")[0] ?? session?.user?.email?.split("@")[0] ?? "—";
 
   return (
-    <header className="border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+    <header className="relative z-30 border-b border-zinc-200 bg-white/[0.95] dark:border-zinc-800 dark:bg-zinc-900/[0.95]">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6 lg:px-8">
         <Link
           href="/"
