@@ -21,7 +21,7 @@ export function BackgroundBeams({ className }: BackgroundBeamsProps) {
       data-background-beams
       className={cn("pointer-events-none absolute inset-0 z-0 overflow-hidden", className)}
     >
-      <div className="fixed inset-x-0 top-14 h-[min(780px,calc(100vh-3.5rem))] overflow-hidden">
+      <div className="fixed inset-0 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_35%_20%,rgba(20,184,166,0.12),transparent_40%),radial-gradient(ellipse_at_75%_35%,rgba(14,165,233,0.1),transparent_42%),linear-gradient(to_bottom,rgba(250,250,250,0.35),rgba(250,250,250,0.78))] dark:bg-[radial-gradient(ellipse_at_35%_20%,rgba(20,184,166,0.18),transparent_42%),radial-gradient(ellipse_at_75%_35%,rgba(34,211,238,0.12),transparent_44%),linear-gradient(to_bottom,rgba(9,9,11,0.25),rgba(9,9,11,0.88))]" />
 
         <svg
