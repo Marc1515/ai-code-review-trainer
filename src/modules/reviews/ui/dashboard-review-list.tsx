@@ -141,7 +141,9 @@ export function DashboardReviewList({
     } else {
       router.refresh();
     }
-    showToast(tToast("reviewDeleted"));
+    showToast(tToast("reviewDeleted"), "success", {
+      eventId: `dashboard:delete-one:${id}:${Date.now()}`,
+    });
   }
 
   async function executeDeleteMany() {
@@ -162,7 +164,9 @@ export function DashboardReviewList({
     } else {
       router.refresh();
     }
-    showToast(tToast("reviewsDeleted", { count: deletedCount }));
+    showToast(tToast("reviewsDeleted", { count: deletedCount }), "success", {
+      eventId: `dashboard:delete-many:${deletedCount}:${Date.now()}`,
+    });
   }
 
   const isModalOpen = confirmState.kind !== "none";

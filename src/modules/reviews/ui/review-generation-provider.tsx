@@ -63,7 +63,6 @@ const ReviewGenerationContext = createContext<ReviewGenerationContextValue | nul
 type ReviewGenerationListener = (state: ReviewGenerationState) => void;
 
 const listeners = new Set<ReviewGenerationListener>();
-const dismissedToastKeys = new Set<string>();
 let storeState: ReviewGenerationState = initialState;
 let storeLoaded = false;
 let activeReviewPromise: Promise<void> | null = null;
@@ -381,25 +380,23 @@ export function ReviewGenerationProvider({ children }: { children: ReactNode }) 
       message: string,
       variant: "success" | "info" | "error",
     ) => {
-      if (dismissedToastKeys.has(key)) return;
       if (lastToastKeyRef.current === key) return;
       lastToastKeyRef.current = key;
       showToast(message, variant, {
         id: REVIEW_TOAST_ID,
-        durationMs: null,
-        onClick: goToReview,
-        onDismiss: () => dismissedToastKeys.add(key),
+        eventId: `review-generation:${key}`,
+        onClick: variant === "success" ? goToReview : undefined,
       });
     };
 
-    if (state.status === "pending") {
+    if (state.status === "pending" && previousStatus !== "pending") {
       const key = `pending:${requestKey}`;
       showReviewToast(key, tToast("reviewStarted"), "info");
       previousStatusRef.current = state.status;
       return;
     }
 
-    if (state.status === "success") {
+    if (state.status === "success" && previousStatus === "pending") {
       const key = `success:${requestKey}`;
       showReviewToast(key, tToast("reviewCompleted"), "success");
       if (justFinishedInCurrentRuntime) router.refresh();
@@ -407,7 +404,7 @@ export function ReviewGenerationProvider({ children }: { children: ReactNode }) 
       return;
     }
 
-    if (state.status === "error") {
+    if (state.status === "error" && previousStatus === "pending") {
       const key = `error:${requestKey}:${state.errorCode ?? "provider"}`;
       showReviewToast(key, getErrorMessage(state.errorCode), "error");
     }

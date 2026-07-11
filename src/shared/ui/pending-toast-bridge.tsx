@@ -55,7 +55,9 @@ export function PendingToastBridge() {
     // No cancelAnimationFrame cleanup — we intentionally let the scheduled frame fire even
     // after Strict Mode cleanup so the toast is not silently dropped.
     requestAnimationFrame(() => {
-      showToast(t("languageChanged"), "success");
+      showToast(t("languageChanged"), "success", {
+        eventId: `language:${pending.id}:${pending.targetLocale}`,
+      });
     });
   }, [locale, showToast, t]);
 

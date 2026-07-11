@@ -27,6 +27,7 @@ export function LanguageSettings() {
           value={preference}
           onChange={(e) => {
             const value = e.target.value as LanguagePreference;
+            if (value === preference) return;
             try {
               sessionStorage.setItem(
                 PENDING_TOAST_KEY,
