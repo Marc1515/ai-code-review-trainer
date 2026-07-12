@@ -2,6 +2,23 @@
   "navigation": {
     "loading": "Cargando página..."
   },
+  "footer": {
+    "description": "Practica revisiones de código con IA local.",
+    "navigationLabel": "Enlaces del pie de página",
+    "links": {
+      "reviewer": "Revisor IA",
+      "faqs": "FAQs",
+      "settings": "Configuración",
+      "repository": "Repositorio"
+    },
+    "copyright": "© {year} AI Code Review Trainer",
+    "socialsLabel": "Redes sociales de Marc España",
+    "socials": {
+      "linkedin": "Perfil de LinkedIn de Marc España",
+      "github": "Perfil de GitHub de Marc España",
+      "instagram": "Perfil de Instagram de Marc España"
+    }
+  },
   "home": {
     "eyebrow": "// mentor de código · IA local",
     "headlineMain": "Tu mentor de código,",

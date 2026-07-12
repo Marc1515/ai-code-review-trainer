@@ -10,6 +10,7 @@ import { NavigationLoadingOverlay } from "@/shared/ui/navigation-loading-overlay
 import { ThemeSync } from "@/shared/theme/theme-sync";
 import { ToastProvider } from "@/shared/ui/toast-provider";
 import { PendingToastBridge } from "@/shared/ui/pending-toast-bridge";
+import { SiteFooter } from "@/shared/ui/site-footer";
 
 export default async function LocaleLayout({
   children,
@@ -36,7 +37,8 @@ export default async function LocaleLayout({
           </Suspense>
           <ThemeSync />
           <AuthHeader />
-          {children}
+          <div className="flex flex-1 flex-col">{children}</div>
+          <SiteFooter />
         </ReviewGenerationProvider>
       </ToastProvider>
     </NextIntlClientProvider>
