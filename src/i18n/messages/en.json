@@ -2,6 +2,23 @@
   "navigation": {
     "loading": "Loading page..."
   },
+  "footer": {
+    "description": "Practice code reviews with local AI.",
+    "navigationLabel": "Footer links",
+    "links": {
+      "reviewer": "Reviewer AI",
+      "faqs": "FAQs",
+      "settings": "Settings",
+      "repository": "Repository"
+    },
+    "copyright": "© {year} AI Code Review Trainer",
+    "socialsLabel": "Marc España's social profiles",
+    "socials": {
+      "linkedin": "Marc España's LinkedIn profile",
+      "github": "Marc España's GitHub profile",
+      "instagram": "Marc España's Instagram profile"
+    }
+  },
   "home": {
     "eyebrow": "// code mentor · local AI",
     "headlineMain": "Your code mentor,",
@@ -27,6 +44,134 @@
         "title": "Local AI",
         "description": "Ollama runs on the server. No API costs. No third-party dependencies."
       }
+    },
+    "howItWorks": {
+      "eyebrow": "workflow",
+      "title": "From pasted snippet to useful review in three steps",
+      "description": "The experience is designed for practicing code review without preparing repositories, branches, or simulated pull requests.",
+      "steps": {
+        "paste": {
+          "title": "Paste a snippet",
+          "description": "Use the editor to paste real code or load a sample. The app treats it as text, not as executable input."
+        },
+        "choose": {
+          "title": "Choose the focus",
+          "description": "Ask for a general review or focus the analysis on bugs, security, performance, testing, or architecture."
+        },
+        "learn": {
+          "title": "Learn from the feedback",
+          "description": "Get a summary, prioritized findings, and practical suggestions for improving the code."
+        }
+      }
+    },
+    "reviewTypes": {
+      "title": "Choose the kind of review you need",
+      "description": "Each mode steers the response toward a specific technical review skill, from spotting bugs to thinking about design.",
+      "items": {
+        "general": {
+          "description": "A balanced review for getting a first read on the code."
+        },
+        "cleanCode": {
+          "description": "Flags unclear names, duplication, readability issues, and small design choices."
+        },
+        "bugs": {
+          "description": "Looks for logic errors, edge cases, and unexpected behavior."
+        },
+        "security": {
+          "description": "Reviews common risks such as weak validation, data exposure, or over-trusting inputs."
+        },
+        "performance": {
+          "description": "Finds expensive operations, avoidable loops, and opportunities to simplify."
+        },
+        "architecture": {
+          "description": "Analyzes responsibility boundaries, coupling, and clarity between layers."
+        },
+        "testing": {
+          "description": "Suggests test cases and scenarios that help build confidence."
+        }
+      }
+    },
+    "learning": {
+      "eyebrow": "mentor, not judge",
+      "title": "Feedback designed to explain the why",
+      "description": "The goal is not only to find issues: it is to help you practice the reasoning behind a real technical review.",
+      "items": {
+        "explain": {
+          "title": "Explains the impact",
+          "description": "Each finding should make clear what happens, why it matters, and when it can become a problem."
+        },
+        "prioritize": {
+          "title": "Prioritizes what matters",
+          "description": "Severity levels help separate small improvements from risks worth fixing first."
+        },
+        "improve": {
+          "title": "Suggests a direction",
+          "description": "Suggestions are written so you can act, compare alternatives, and improve your judgment."
+        }
+      }
+    },
+    "privacy": {
+      "eyebrow": "code safety",
+      "title": "Designed to analyze code without executing it",
+      "description": "The app keeps review, persistence, and AI boundaries separate. Pasted code is treated as untrusted input.",
+      "items": {
+        "noExecution": {
+          "title": "No execution",
+          "description": "No eval, compilation, or execution is performed on user-submitted code."
+        },
+        "serverSide": {
+          "title": "Server-side AI",
+          "description": "The Ollama request runs on the server side so internal details are not exposed to the client."
+        },
+        "optionalHistory": {
+          "title": "Optional history",
+          "description": "Reviews are saved to history only when the user signs in."
+        },
+        "noPaidApi": {
+          "title": "No public AI costs",
+          "description": "The MVP uses local AI by default and does not pass external provider costs to the owner."
+        }
+      }
+    },
+    "finalCta": {
+      "eyebrow": "ready to try",
+      "title": "Start with a small snippet and train your review judgment",
+      "description": "Paste code, choose a focus, and compare the response with what you would have commented in a real review.",
+      "cta": "Review code"
+    }
+  },
+  "faqs": {
+    "navLink": "FAQs",
+    "eyebrow": "frequently asked questions",
+    "title": "Quick questions",
+    "description": "The basics for understanding how to use the app, what is saved, and what to expect from the review experience.",
+    "items": {
+      "signIn": {
+        "question": "Do I need to sign in?",
+        "answer": "Not to try the reviewer. You only need to sign in if you want to keep a history of your reviews."
+      },
+      "savedCode": {
+        "question": "Is my code saved?",
+        "answer": "It is saved as part of a review only if you are signed in. It may also be kept temporarily to recover an in-progress review."
+      },
+      "apiKey": {
+        "question": "Do I need an API key?",
+        "answer": "No. The current setup uses Ollama as the local provider and does not require external keys."
+      },
+      "execution": {
+        "question": "Does the app execute my code?",
+        "answer": "No. Code is analyzed as text and is never executed, compiled, or sandboxed in the MVP."
+      },
+      "docker": {
+        "question": "Can I run it locally?",
+        "answer": "Yes. The README includes a Docker Compose setup for running the app, PostgreSQL, and Ollama."
+      }
+    },
+    "cta": {
+      "eyebrow": "next step",
+      "title": "Try a real review",
+      "description": "If the flow is clear, paste a small snippet and read the feedback at your own pace.",
+      "link": "Go to reviewer"
     }
   },
   "auth": {

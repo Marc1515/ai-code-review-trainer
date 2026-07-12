@@ -31,8 +31,11 @@ export function EditorThemeSettings() {
           value={theme}
           onChange={(e) => {
             const value = e.target.value as EditorTheme;
+            if (value === theme) return;
             saveTheme(value);
-            showToast(tToast(`editorThemeChanged.${THEME_LABEL_KEYS[value]}`));
+            showToast(tToast(`editorThemeChanged.${THEME_LABEL_KEYS[value]}`), "success", {
+              eventId: `settings:editor-theme:${value}:${Date.now()}`,
+            });
           }}
           className="w-full max-w-xs rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 focus:border-zinc-500 focus:ring-2 focus:ring-zinc-500/20 focus:outline-none dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-100"
         >

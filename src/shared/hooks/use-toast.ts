@@ -1,24 +1,29 @@
 import { createContext, useContext } from "react";
 
-export type ToastVariant = "success" | "info" | "error";
+export type ToastVariant = "success" | "info" | "error" | "warning";
 
 export interface ToastItem {
   id: string;
-  message: string;
+  eventId?: string;
+  title: string;
+  description?: string;
   variant: ToastVariant;
+  durationMs: number;
   onClick?: () => void;
   onDismiss?: () => void;
 }
 
 export interface ToastOptions {
   id?: string;
-  durationMs?: number | null;
+  eventId?: string;
+  description?: string;
+  durationMs?: number;
   onClick?: () => void;
   onDismiss?: () => void;
 }
 
 interface ToastContextValue {
-  showToast: (message: string, variant?: ToastVariant, options?: ToastOptions) => string;
+  showToast: (title: string, variant?: ToastVariant, options?: ToastOptions) => string;
   dismissToast: (id: string) => void;
 }
 

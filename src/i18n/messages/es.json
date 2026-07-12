@@ -2,6 +2,23 @@
   "navigation": {
     "loading": "Cargando página..."
   },
+  "footer": {
+    "description": "Practica revisiones de código con IA local.",
+    "navigationLabel": "Enlaces del pie de página",
+    "links": {
+      "reviewer": "Revisor IA",
+      "faqs": "FAQs",
+      "settings": "Configuración",
+      "repository": "Repositorio"
+    },
+    "copyright": "© {year} AI Code Review Trainer",
+    "socialsLabel": "Redes sociales de Marc España",
+    "socials": {
+      "linkedin": "Perfil de LinkedIn de Marc España",
+      "github": "Perfil de GitHub de Marc España",
+      "instagram": "Perfil de Instagram de Marc España"
+    }
+  },
   "home": {
     "eyebrow": "// mentor de código · IA local",
     "headlineMain": "Tu mentor de código,",
@@ -27,6 +44,134 @@
         "title": "IA local",
         "description": "Ollama corre en el servidor. Sin costes de API. Sin dependencia de terceros."
       }
+    },
+    "howItWorks": {
+      "eyebrow": "flujo de trabajo",
+      "title": "De fragmento pegado a revisión útil en tres pasos",
+      "description": "La experiencia está pensada para practicar code review sin preparar repositorios, ramas ni pull requests simuladas.",
+      "steps": {
+        "paste": {
+          "title": "Pega un fragmento",
+          "description": "Usa el editor para pegar código real o cargar un ejemplo. La app lo trata como texto, no como algo ejecutable."
+        },
+        "choose": {
+          "title": "Elige el enfoque",
+          "description": "Puedes pedir una revisión general o centrar el análisis en bugs, seguridad, rendimiento, testing o arquitectura."
+        },
+        "learn": {
+          "title": "Aprende con el feedback",
+          "description": "Recibe un resumen, hallazgos priorizados y sugerencias prácticas para mejorar el código."
+        }
+      }
+    },
+    "reviewTypes": {
+      "title": "Elige el tipo de mirada que necesitas",
+      "description": "Cada modo orienta la respuesta hacia una habilidad concreta de revisión técnica, desde detectar bugs hasta pensar en diseño.",
+      "items": {
+        "general": {
+          "description": "Una revisión equilibrada para obtener una primera lectura del código."
+        },
+        "cleanCode": {
+          "description": "Señala nombres confusos, duplicación, legibilidad y pequeñas decisiones de diseño."
+        },
+        "bugs": {
+          "description": "Busca errores lógicos, casos límite y comportamientos inesperados."
+        },
+        "security": {
+          "description": "Revisa riesgos comunes como validación insuficiente, exposición de datos o confianza excesiva en entradas."
+        },
+        "performance": {
+          "description": "Detecta operaciones costosas, bucles evitables y oportunidades de simplificación."
+        },
+        "architecture": {
+          "description": "Analiza separación de responsabilidades, acoplamiento y claridad entre capas."
+        },
+        "testing": {
+          "description": "Sugiere casos de prueba y escenarios que ayudan a ganar confianza."
+        }
+      }
+    },
+    "learning": {
+      "eyebrow": "mentor, no juez",
+      "title": "Feedback pensado para entender el porqué",
+      "description": "El objetivo no es solo encontrar problemas: es ayudarte a practicar el razonamiento de una revisión técnica real.",
+      "items": {
+        "explain": {
+          "title": "Explica el impacto",
+          "description": "Cada hallazgo debería dejar claro qué ocurre, por qué importa y en qué contexto puede convertirse en un problema."
+        },
+        "prioritize": {
+          "title": "Prioriza lo importante",
+          "description": "Las severidades ayudan a distinguir entre mejoras menores y riesgos que conviene resolver primero."
+        },
+        "improve": {
+          "title": "Propone una dirección",
+          "description": "Las sugerencias están escritas para que puedas actuar, comparar alternativas y mejorar tu criterio."
+        }
+      }
+    },
+    "privacy": {
+      "eyebrow": "seguridad del código",
+      "title": "Diseñada para analizar código sin ejecutarlo",
+      "description": "La app separa claramente revisión, persistencia e IA. El código pegado se trata como entrada no confiable.",
+      "items": {
+        "noExecution": {
+          "title": "Sin ejecución",
+          "description": "No se usa eval, no se compila y no se ejecuta el código enviado por el usuario."
+        },
+        "serverSide": {
+          "title": "IA en servidor",
+          "description": "La llamada a Ollama se realiza del lado servidor para no exponer detalles internos al cliente."
+        },
+        "optionalHistory": {
+          "title": "Historial opcional",
+          "description": "Las reviews se guardan en el historial solo si el usuario inicia sesión."
+        },
+        "noPaidApi": {
+          "title": "Sin costes públicos",
+          "description": "El MVP usa IA local por defecto y no carga costes de proveedores externos al propietario."
+        }
+      }
+    },
+    "finalCta": {
+      "eyebrow": "listo para probar",
+      "title": "Empieza con un fragmento pequeño y entrena tu criterio de revisión",
+      "description": "Pega código, elige un enfoque y compara la respuesta con lo que tú habrías comentado en una revisión real.",
+      "cta": "Revisar código"
+    }
+  },
+  "faqs": {
+    "navLink": "FAQs",
+    "eyebrow": "preguntas frecuentes",
+    "title": "Preguntas rápidas",
+    "description": "Lo básico para entender cómo usar la aplicación, qué se guarda y qué esperar de la experiencia de revisión.",
+    "items": {
+      "signIn": {
+        "question": "¿Necesito iniciar sesión?",
+        "answer": "No para probar el revisor. Sí necesitas iniciar sesión si quieres conservar un historial de tus reviews."
+      },
+      "savedCode": {
+        "question": "¿Se guarda mi código?",
+        "answer": "Solo se guarda como parte de una review si has iniciado sesión. También puede mantenerse temporalmente para recuperar una revisión en curso."
+      },
+      "apiKey": {
+        "question": "¿Necesito una API key?",
+        "answer": "No. La configuración actual usa Ollama como proveedor local y no requiere claves externas."
+      },
+      "execution": {
+        "question": "¿La app ejecuta mi código?",
+        "answer": "No. El código se analiza como texto y nunca se ejecuta, compila ni sandboxea en el MVP."
+      },
+      "docker": {
+        "question": "¿Puedo ejecutarla en local?",
+        "answer": "Sí. El README incluye una configuración con Docker Compose para levantar la app, PostgreSQL y Ollama."
+      }
+    },
+    "cta": {
+      "eyebrow": "siguiente paso",
+      "title": "Prueba una revisión real",
+      "description": "Si ya tienes claro cómo funciona, pega un fragmento y revisa el feedback con calma.",
+      "link": "Ir al revisor"
     }
   },
   "auth": {
