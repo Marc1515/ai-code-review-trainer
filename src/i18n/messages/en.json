@@ -2,6 +2,23 @@
   "navigation": {
     "loading": "Loading page..."
   },
+  "footer": {
+    "description": "Practice code reviews with local AI.",
+    "navigationLabel": "Footer links",
+    "links": {
+      "reviewer": "Reviewer AI",
+      "faqs": "FAQs",
+      "settings": "Settings",
+      "repository": "Repository"
+    },
+    "copyright": "© {year} AI Code Review Trainer",
+    "socialsLabel": "Marc España's social profiles",
+    "socials": {
+      "linkedin": "Marc España's LinkedIn profile",
+      "github": "Marc España's GitHub profile",
+      "instagram": "Marc España's Instagram profile"
+    }
+  },
   "home": {
     "eyebrow": "// code mentor · local AI",
     "headlineMain": "Your code mentor,",
