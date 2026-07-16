@@ -228,13 +228,14 @@
     "aiProvider": {
       "title": "External AI provider",
       "comingSoon": "Coming soon",
-      "description": "The app uses a free local AI server. No API key is needed to use the code reviewer.",
-      "note": "Integration with external providers is planned for a future phase."
+      "description": "Provider settings will be available in a future update.",
+      "helper": "The app currently uses the local server AI provider by default."
     },
     "language": {
       "title": "Language",
       "label": "Language",
       "description": "Choose the application language.",
+      "helper": "Choose the language used across the interface.",
       "options": {
         "system": "System",
         "es": "Spanish",
@@ -245,26 +246,7 @@
       "title": "Application theme",
       "label": "Theme",
       "description": "Choose how you want to view the application.",
-      "options": {
-        "system": "System",
-        "light": "Light",
-        "dark": "Dark"
-      }
-    },
-    "language": {
-      "title": "Language",
-      "label": "Language",
-      "description": "Choose the application language.",
-      "options": {
-        "system": "System",
-        "es": "Spanish",
-        "en": "English"
-      }
-    },
-    "appTheme": {
-      "title": "Application theme",
-      "label": "Theme",
-      "description": "Choose how you want to view the application.",
+      "helper": "Switch between dark, light, or system appearance.",
       "options": {
         "system": "System",
         "light": "Light",
@@ -274,6 +256,7 @@
     "editorTheme": {
       "title": "Code editor theme",
       "label": "Theme",
+      "previewLabel": "Code editor theme preview",
       "themes": {
         "githubLight": "GitHub Light",
         "githubDark": "GitHub Dark",

@@ -7,12 +7,14 @@ import { LANGUAGE_PREFERENCES, type LanguagePreference } from "@/shared/language
 import { resolveLocale } from "@/shared/language/language-utils";
 import { PENDING_TOAST_KEY } from "@/shared/ui/pending-toast-bridge";
 
+import { SettingsCard } from "./settings-card";
+
 export function LanguageSettings() {
   const t = useTranslations("settings.language");
   const { preference, applyPreference } = useLanguagePreference();
 
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-800">
+    <SettingsCard helper={<p>{t("helper")}</p>}>
       <h2 className="mb-1 text-sm font-semibold text-zinc-900 dark:text-zinc-100">{t("title")}</h2>
       <p className="mb-4 text-sm text-zinc-500 dark:text-zinc-400">{t("description")}</p>
       <div>
@@ -51,6 +53,6 @@ export function LanguageSettings() {
           ))}
         </select>
       </div>
-    </div>
+    </SettingsCard>
   );
 }
