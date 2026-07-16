@@ -3,8 +3,10 @@
 import { useTranslations } from "next-intl";
 
 import { useAppTheme } from "@/shared/hooks/use-app-theme";
-import { THEME_PREFERENCES, type ThemePreference } from "@/shared/theme/theme-types";
 import { useToast } from "@/shared/hooks/use-toast";
+import { THEME_PREFERENCES, type ThemePreference } from "@/shared/theme/theme-types";
+
+import { SettingsCard } from "./settings-card";
 
 export function AppThemeSettings() {
   const t = useTranslations("settings.appTheme");
@@ -13,7 +15,7 @@ export function AppThemeSettings() {
   const { showToast } = useToast();
 
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-800">
+    <SettingsCard helper={<p>{t("helper")}</p>}>
       <h2 className="mb-1 text-sm font-semibold text-zinc-900 dark:text-zinc-100">{t("title")}</h2>
       <p className="mb-4 text-sm text-zinc-500 dark:text-zinc-400">{t("description")}</p>
       <div>
@@ -43,6 +45,6 @@ export function AppThemeSettings() {
           ))}
         </select>
       </div>
-    </div>
+    </SettingsCard>
   );
 }

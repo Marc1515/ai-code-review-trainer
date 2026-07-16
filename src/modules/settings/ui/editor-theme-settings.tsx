@@ -1,14 +1,28 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+
 import { EDITOR_THEMES, useEditorTheme, type EditorTheme } from "@/shared/hooks/use-editor-theme";
 import { useToast } from "@/shared/hooks/use-toast";
+import { CodePreview } from "@/shared/ui/code-preview";
+
+import { SettingsCard } from "./settings-card";
 
 const THEME_LABEL_KEYS: Record<EditorTheme, string> = {
   "github-light": "githubLight",
   "github-dark": "githubDark",
   dracula: "dracula",
 };
+
+const PREVIEW_CODE = `const xs = [2, 4];
+
+function total(xs) {
+  return xs.reduce(
+    (sum, x) =>
+      sum + x,
+    0,
+  );
+}`;
 
 export function EditorThemeSettings() {
   const t = useTranslations("settings.editorTheme");
@@ -17,7 +31,9 @@ export function EditorThemeSettings() {
   const { showToast } = useToast();
 
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-800">
+    <SettingsCard
+      helper={<CodePreview value={PREVIEW_CODE} minHeight="160px" ariaLabel={t("previewLabel")} />}
+    >
       <h2 className="mb-4 text-sm font-semibold text-zinc-900 dark:text-zinc-100">{t("title")}</h2>
       <div>
         <label
@@ -46,6 +62,6 @@ export function EditorThemeSettings() {
           ))}
         </select>
       </div>
-    </div>
+    </SettingsCard>
   );
 }
