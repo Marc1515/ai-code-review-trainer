@@ -54,10 +54,11 @@ export default async function HomePage() {
   }));
 
   return (
-    <div className="flex flex-1 flex-col bg-zinc-50 dark:bg-zinc-950">
+    <div className="relative isolate flex flex-1 flex-col overflow-hidden bg-zinc-50 dark:bg-zinc-950">
+      <BackgroundBeams />
+
       {/* Hero — full-viewport-width wrapper so background bleeds edge-to-edge */}
-      <div className="relative isolate flex flex-1 flex-col overflow-hidden">
-        <BackgroundBeams />
+      <div className="relative z-10 flex flex-1 flex-col">
         <section className="relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col items-center gap-12 px-6 py-16 md:flex-row md:items-center md:gap-16 md:py-24 lg:px-8">
           {/* Left: copy */}
           <div className="relative flex flex-col items-start gap-6 md:flex-1">
@@ -110,7 +111,7 @@ export default async function HomePage() {
       </div>
 
       {/* Features strip */}
-      <section className="relative z-20 bg-white/[0.95] shadow-sm dark:bg-zinc-900/[0.95]">
+      <section className="relative z-20 border-y border-zinc-200/70 bg-white/75 shadow-sm backdrop-blur-sm dark:border-zinc-800/80 dark:bg-zinc-900/75">
         <div className="mx-auto max-w-5xl px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-3">
             <div className="flex flex-col gap-2 py-8 sm:py-10 sm:pr-8">
