@@ -228,13 +228,14 @@
     "aiProvider": {
       "title": "Proveedor de IA externo",
       "comingSoon": "Próximamente",
-      "description": "La aplicación usa un servidor de IA local gratuito. No necesitas ninguna clave de API para usar el revisor de código.",
-      "note": "La integración con proveedores externos está planificada para una fase futura."
+      "description": "La configuración del proveedor estará disponible en una futura actualización.",
+      "helper": "La app usa actualmente el proveedor de IA local del servidor por defecto."
     },
     "language": {
       "title": "Idioma",
       "label": "Idioma",
       "description": "Elige el idioma de la aplicación.",
+      "helper": "Elige el idioma utilizado en toda la interfaz.",
       "options": {
         "system": "Sistema",
         "es": "Español",
@@ -245,26 +246,7 @@
       "title": "Tema de la aplicación",
       "label": "Tema",
       "description": "Elige cómo quieres ver la aplicación.",
-      "options": {
-        "system": "Sistema",
-        "light": "Claro",
-        "dark": "Oscuro"
-      }
-    },
-    "language": {
-      "title": "Idioma",
-      "label": "Idioma",
-      "description": "Elige el idioma de la aplicación.",
-      "options": {
-        "system": "Sistema",
-        "es": "Español",
-        "en": "Inglés"
-      }
-    },
-    "appTheme": {
-      "title": "Tema de la aplicación",
-      "label": "Tema",
-      "description": "Elige cómo quieres ver la aplicación.",
+      "helper": "Cambia entre apariencia oscura, clara o del sistema.",
       "options": {
         "system": "Sistema",
         "light": "Claro",
@@ -274,6 +256,7 @@
     "editorTheme": {
       "title": "Tema del editor de código",
       "label": "Tema",
+      "previewLabel": "Vista previa del tema del editor de código",
       "themes": {
         "githubLight": "GitHub Claro",
         "githubDark": "GitHub Oscuro",
