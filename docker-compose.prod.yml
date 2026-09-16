@@ -15,6 +15,10 @@ services:
       - "traefik.http.routers.act-prod.entrypoints=websecure"
       - "traefik.http.routers.act-prod.tls.certresolver=letsencrypt"
       - "traefik.http.services.act-prod.loadbalancer.server.port=3000"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
     restart: unless-stopped
 
 networks:
