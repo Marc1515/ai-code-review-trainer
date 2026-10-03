@@ -51,8 +51,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder /app/node_modules ./node_modules
 
 # Prisma schema, migrations and Prisma 7 config
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=nextjs:nodejs /app/prisma.config.ts ./prisma.config.ts
 
 # Entrypoint
 COPY --chown=nextjs:nodejs docker-entrypoint.sh ./
