@@ -14,10 +14,15 @@ jobs:
     steps:
       - name: Deploy dev app
         run: |
-          cd ~/apps/ai-code-review-trainer
+          cd ~/apps/ai-code-review-trainer-dev
           git fetch origin
           git checkout dev
           git reset --hard origin/dev
-          docker compose -f docker-compose.dev.yml up -d --build --force-recreate
-          docker image prune -af
+          docker compose \
+            --env-file .env.development \
+            --env-file .env.traefik \
+            -f docker-compose.dev.yml \
+            -f docker-compose.dev.secure.yml \
+            up -d --build --remove-orphans
+          docker image prune -f
           docker builder prune -af --filter "until=24h"
